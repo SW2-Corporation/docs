@@ -18,20 +18,98 @@ from pathlib import Path
 
 from verifica import RADICE, data_iso, rilascio, slug
 
+ACCENTO_PREDEFINITO = "#d7262f"
+SOTTOTITOLO = "Progetto didattico di Ingegneria del Software, Università degli Studi di Padova"
+
+# {accento} viene sostituito dal colore del gruppo
 STILE = """
-body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; max-width: 46rem;
-       margin: 0 auto; padding: 1.5rem 1rem; line-height: 1.5; color: #1d1d1f; background: #fff; }
-h1, h2, h3 { color: #1f3d6b; line-height: 1.25; }
-h1 { font-size: 1.8rem; margin-bottom: 0.25rem; }
-h2 { font-size: 1.3rem; margin-top: 2rem; padding-bottom: 0.25rem; border-bottom: 1px solid #d0d7e2; }
-h3 { font-size: 1.05rem; margin-bottom: 0.25rem; }
-a { color: #1f3d6b; }
-ul { padding-left: 1.2rem; }
-li { margin: 0.3rem 0; }
-.nota { color: #666; }
-dt { font-weight: 600; margin-top: 0.9rem; }
-dd { margin: 0.2rem 0 0 0; }
+:root { --accento: {accento}; --sfondo: #f5f5f7; --carta: #ffffff; --testo: #151517; --muto: #6b6b74;
+        --bordo: #e3e3e8; --scuro: #0e0e10; --chiaro: #f4f4f6; --ombra: 0 1px 2px rgba(0,0,0,.05); }
+@media (prefers-color-scheme: dark) {
+  :root { --sfondo: #0e0e10; --carta: #18181c; --testo: #f1f1f3; --muto: #9b9ba4; --bordo: #2a2a31;
+          --ombra: 0 1px 2px rgba(0,0,0,.4); }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+       background: var(--sfondo); color: var(--testo); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+.dentro { max-width: 68rem; margin: 0 auto; padding: 0 1.25rem; }
+
+.hero { background: var(--scuro); color: var(--chiaro); border-bottom: 4px solid var(--accento); }
+.hero > .dentro { display: flex; align-items: center; gap: 2rem; padding-top: 3rem; padding-bottom: 2.25rem; flex-wrap: wrap; }
+.hero.compatto > .dentro { padding-top: 1.75rem; padding-bottom: 1.5rem; gap: 1.25rem; }
+.logo { width: 128px; height: 128px; border-radius: 50%; box-shadow: 0 12px 36px rgba(0,0,0,.5); flex: none; }
+.hero.compatto .logo { width: 64px; height: 64px; }
+.sopra { margin: 0 0 .35rem; font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accento); }
+.hero h1 { margin: 0; font-size: clamp(2rem, 4.5vw, 3rem); letter-spacing: -.02em; line-height: 1.1; }
+.hero.compatto h1 { font-size: clamp(1.5rem, 3vw, 2rem); }
+.hero p.sotto { margin: .5rem 0 0; color: #c7c7cf; font-size: 1.05rem; max-width: 40rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.1rem; }
+.chip { display: inline-flex; align-items: center; gap: .45rem; padding: .4rem .85rem; border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.05); color: #ececf0;
+        font-size: .86rem; font-weight: 500; text-decoration: none; }
+a.chip:hover { border-color: var(--accento); background: rgba(255,255,255,.09); }
+.chip svg { width: 15px; height: 15px; color: var(--accento); }
+.menu { background: var(--scuro); border-top: 1px solid rgba(255,255,255,.08); }
+.menu .dentro { display: flex; gap: 1.75rem; overflow-x: auto; scrollbar-width: none; }
+.menu .dentro::-webkit-scrollbar { display: none; }
+.menu a { padding: .85rem 0; color: #c7c7cf; font-size: .9rem; font-weight: 600; text-decoration: none;
+          border-bottom: 3px solid transparent; margin-bottom: -4px; white-space: nowrap; }
+.menu a:hover { color: #fff; border-color: var(--accento); }
+
+main.dentro { padding-top: 2rem; padding-bottom: 3rem; }
+.griglia { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+@media (min-width: 46rem) { .griglia { grid-template-columns: 1fr 1fr; } }
+.scheda { position: relative; overflow: hidden; background: var(--carta); border: 1px solid var(--bordo);
+          border-radius: 14px; padding: 1.35rem 1.5rem 1.5rem; box-shadow: var(--ombra); }
+.scheda::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--accento); }
+.larga { grid-column: 1 / -1; }
+.scheda h2 { margin: 0; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: baseline; gap: .75rem; }
+.scheda h3 { margin: 1.1rem 0 .3rem; font-size: .76rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muto); }
+.scheda > p { margin: .6rem 0 0; }
+.conta { font-size: .78rem; font-weight: 700; color: var(--muto); background: var(--sfondo); border: 1px solid var(--bordo);
+         border-radius: 999px; padding: .1rem .65rem; white-space: nowrap; }
+.due { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 0 2rem; }
+ul.voci { list-style: none; margin: .4rem 0 0; padding: 0; }
+ul.voci li { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: .55rem 0; border-top: 1px solid var(--bordo); }
+ul.voci li:first-child { border-top: 0; }
+ul.voci a { font-weight: 600; text-decoration: none; }
+ul.voci a:hover { color: var(--accento); text-decoration: underline; }
+.meta { color: var(--muto); font-size: .82rem; white-space: nowrap; }
+.pdf { display: inline-block; vertical-align: middle; margin-left: .45rem; padding: 0 .35rem; border: 1.5px solid var(--accento);
+       border-radius: 4px; color: var(--accento); font-size: .66rem; font-weight: 800; letter-spacing: .06em; line-height: 1.35; }
+.nota { color: var(--muto); margin: .6rem 0 0; font-size: .95rem; }
+.pulsante { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1rem; padding: .6rem 1.1rem; border-radius: 10px;
+            background: var(--accento); color: #fff; font-weight: 700; text-decoration: none; }
+.pulsante:hover { filter: brightness(1.08); }
+.persone { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .9rem; }
+.persona { display: inline-flex; align-items: center; gap: .6rem; padding: .3rem .95rem .3rem .3rem; border-radius: 999px;
+           border: 1px solid var(--bordo); background: var(--sfondo); font-weight: 600; font-size: .92rem; text-decoration: none; }
+a.persona:hover { border-color: var(--accento); }
+.persona img, .persona .iniziali { width: 32px; height: 32px; border-radius: 50%; flex: none; }
+.persona .iniziali { display: inline-grid; place-items: center; background: var(--accento); color: #fff; font-size: .78rem; font-weight: 800; }
+
+.alfabeto { display: flex; flex-wrap: wrap; gap: .35rem; margin: .9rem 0 .4rem; }
+.alfabeto a { width: 2rem; height: 2rem; display: inline-grid; place-items: center; border-radius: 8px; border: 1px solid var(--bordo);
+              font-weight: 700; font-size: .85rem; text-decoration: none; }
+.alfabeto a:hover { border-color: var(--accento); color: var(--accento); }
+dl { margin: 0; }
+dt { font-weight: 700; margin-top: .9rem; }
+dd { margin: .15rem 0 0; color: var(--testo); }
+dd .nota { display: block; margin-top: .15rem; }
+
+footer { border-top: 1px solid var(--bordo); color: var(--muto); font-size: .85rem; }
+footer .dentro { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem 1.5rem; padding-top: 1.25rem; padding-bottom: 1.5rem; }
+footer a { color: inherit; }
 """
+
+ICONE = {
+    "mail": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+    "repo": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg>',
+    "capitolato": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg>',
+    "indietro": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7-7-7 7 7 7"/></svg>',
+}
 
 
 def e(testo):
@@ -42,23 +120,65 @@ def link(href, testo):
     return f'<a href="{e(href)}" target="_blank" rel="noopener">{e(testo)}</a>'
 
 
+def voce(href, testo, meta=""):
+    """Riga di un elenco: link al PDF, etichetta PDF e dettaglio a destra."""
+    dettaglio = f'<span class="meta">{e(meta)}</span>' if meta else ""
+    return f'{link(href, testo)}<span class="pdf">PDF</span>{dettaglio}'
+
+
 def elenco(voci, vuoto):
     if not voci:
-        return f'<p class="nota">{vuoto}</p>'
-    return "<ul>\n" + "\n".join(f"<li>{v}</li>" for v in voci) + "\n</ul>"
+        return f'<p class="nota">{e(vuoto)}</p>'
+    return '<ul class="voci">' + "".join(f"<li>{v}</li>" for v in voci) + "</ul>"
 
 
-def pagina(titolo, corpo):
+def chip(testo, icona, href=None):
+    dentro = f'{ICONE[icona]}<span>{e(testo)}</span>'
+    if href:
+        esterno = "" if href.startswith(("mailto:", "index.html", "#")) else ' target="_blank" rel="noopener"'
+        return f'<a class="chip" href="{e(href)}"{esterno}>{dentro}</a>'
+    return f'<span class="chip">{dentro}</span>'
+
+
+def scheda(identificatore, titolo, contenuto, conta=None, larga=False):
+    badge = f'<span class="conta">{e(conta)}</span>' if conta is not None else ""
+    classe = "scheda larga" if larga else "scheda"
+    return f'<section class="{classe}" id="{e(identificatore)}"><h2>{e(titolo)}{badge}</h2>{contenuto}</section>'
+
+
+def intestazione(titolo, sottotitolo, logo, chips=(), menu=(), compatto=False, sopra="Documentazione di progetto"):
+    immagine = f'<img class="logo" src="{e(logo)}" alt="">' if logo else ""
+    testo_chips = f'<div class="chips">{"".join(chips)}</div>' if chips else ""
+    voci_menu = "".join(f'<a href="{e(href)}">{e(testo)}</a>' for href, testo in menu)
+    testo_menu = f'<nav class="menu"><div class="dentro">{voci_menu}</div></nav>' if menu else ""
+    classe = "hero compatto" if compatto else "hero"
+    return (f'<header class="{classe}"><div class="dentro">{immagine}<div>'
+            f'<p class="sopra">{e(sopra)}</p><h1>{e(titolo)}</h1><p class="sotto">{e(sottotitolo)}</p>{testo_chips}'
+            f"</div></div>{testo_menu}</header>")
+
+
+def pagina(titolo, testata, corpo, gruppo, logo, accento):
+    info = gruppo.get("gruppo", {})
+    nome = info.get("nome") or "Documentazione di progetto"
+    icona = f'<link rel="icon" type="image/png" href="{e(logo)}">' if logo else ""
+    repo = f' · {link(info["repo"], "Sorgenti su GitHub")}' if info.get("repo") else ""
     return f"""<!doctype html>
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#0e0e10">
 <title>{e(titolo)}</title>
-<style>{STILE}</style>
+{icona}
+<style>{STILE.replace("{accento}", accento)}</style>
 </head>
 <body>
+{testata}
+<main class="dentro">
 {corpo}
+</main>
+<footer><div class="dentro"><span>{e(nome)} · Università degli Studi di Padova</span><span>Sito generato dai sorgenti del repository{repo}</span></div></footer>
 </body>
 </html>
 """
@@ -79,7 +199,7 @@ def lettere(typst, out):
         if data_iso(sorgente.stem):
             nome = f"Lettera di Presentazione {sorgente.stem}"
             compila(typst, sorgente, out / (nome.replace(" ", "_") + ".pdf"))
-            voci.append(link(nome.replace(" ", "_") + ".pdf", nome))
+            voci.append(voce(nome.replace(" ", "_") + ".pdf", "Lettera di Presentazione", sorgente.stem))
     return voci
 
 
@@ -95,11 +215,11 @@ def documenti(typst, out, cartella):
         titolo = titolo[1] if titolo else sorgente.stem
         pdf = f"{titolo.replace(' ', '_')}_v{versione}.pdf"
         compila(typst, sorgente, out / pdf)
-        rilasciati.append((data, titolo, f'{link(pdf, titolo)} <span class="nota">v{e(versione)} ({e(data)})</span>'))
+        rilasciati.append((data, titolo, voce(pdf, titolo, f"v{versione} · {data}")))
     # le ultime approvazioni in cima
     rilasciati.sort(key=lambda d: d[1])
     rilasciati.sort(key=lambda d: d[0], reverse=True)
-    return [voce for _, _, voce in rilasciati]
+    return [testo for _, _, testo in rilasciati]
 
 
 def verbali(typst, out, cartella):
@@ -110,65 +230,98 @@ def verbali(typst, out, cartella):
             nome = f"Verbale {tipo} {sorgente.stem}"
             compila(typst, RADICE / "modello/verbale.typ", out / (nome.replace(" ", "_") + ".pdf"),
                     dati=f"/documenti/verbali/{cartella}/{sorgente.name}")
-            voci.append(link(nome.replace(" ", "_") + ".pdf", nome))
+            voci.append(voce(nome.replace(" ", "_") + ".pdf", f"Verbale del {sorgente.stem}"))
     return voci
 
 
-def indice(gruppo, typst, out):
+def persona(membro):
+    nome = f"{membro.get('nome', '')} {membro.get('cognome', '')}".strip()
+    utente = membro.get("github")
+    if utente:
+        return (f'<a class="persona" href="https://github.com/{e(utente)}" target="_blank" rel="noopener">'
+                f'<img src="https://github.com/{e(utente)}.png?size=64" alt="" loading="lazy">{e(nome)}</a>')
+    iniziali = "".join(parte[0] for parte in nome.split()[:2]).upper()
+    return f'<span class="persona"><span class="iniziali">{e(iniziali)}</span>{e(nome)}</span>'
+
+
+def indice(gruppo, typst, out, logo, accento):
     info, progetto = gruppo.get("gruppo", {}), gruppo.get("progetto", {})
     nome = info.get("nome") or "Documentazione di progetto"
-    intestazione = [f"<h1>{e(nome)}</h1>",
-                    "<p>Progetto didattico di Ingegneria del Software, Università degli Studi di Padova</p>"]
-    if progetto.get("capitolato"):
-        intestazione.append(f"<p>Capitolato {e(progetto['capitolato'])}, proposto da {e(progetto.get('proponente', ''))}</p>")
-    if info.get("email"):
-        intestazione.append(f"<p>Contatti: {e(info['email'])}</p>")
 
-    membri = []
-    for m in gruppo.get("membro", []):
-        persona = e(f"{m.get('nome', '')} {m.get('cognome', '')}".strip())
-        membri.append(f"{persona} ({link('https://github.com/' + m['github'], m['github'])})" if m.get("github") else persona)
+    chips = []
+    if progetto.get("capitolato"):
+        testo = f"Capitolato {progetto['capitolato']}"
+        if progetto.get("proponente"):
+            testo += f" · {progetto['proponente']}"
+        chips.append(chip(testo, "capitolato"))
+    if info.get("email"):
+        chips.append(chip(info["email"], "mail", "mailto:" + info["email"]))
+    if info.get("repo"):
+        chips.append(chip("Repository", "repo", info["repo"]))
+    menu = [("#lettere", "Lettere"), ("#documenti", "Documenti"), ("#verbali", "Verbali"),
+            ("glossario.html", "Glossario"), ("#gruppo", "Il gruppo")]
+    testata = intestazione(nome, SOTTOTITOLO, logo, chips, menu)
+
+    voci_lettere = lettere(typst, out)
+    gestionali = documenti(typst, out, "documenti/esterni/gestionali")
+    tecnici = documenti(typst, out, "documenti/esterni/tecnici")
+    interni = documenti(typst, out, "documenti/interni")
+    verbali_esterni = verbali(typst, out, "esterni")
+    verbali_interni = verbali(typst, out, "interni")
+    membri = [persona(m) for m in gruppo.get("membro", [])]
 
     nessuno = "Nessun documento ancora pubblicato."
-    corpo = [
-        "<header>", *intestazione, "</header>",
-        "<h2>Lettere di presentazione</h2>", elenco(lettere(typst, out), "Nessuna lettera ancora pubblicata."),
-        "<h2>Documenti esterni</h2>",
-        "<h3>Gestionali</h3>", elenco(documenti(typst, out, "documenti/esterni/gestionali"), nessuno),
-        "<h3>Tecnici</h3>", elenco(documenti(typst, out, "documenti/esterni/tecnici"), nessuno),
-        "<h2>Documenti interni</h2>", elenco(documenti(typst, out, "documenti/interni"), nessuno),
-        "<h2>Verbali</h2>",
-        "<h3>Esterni</h3>", elenco(verbali(typst, out, "esterni"), "Nessun verbale ancora pubblicato."),
-        "<h3>Interni</h3>", elenco(verbali(typst, out, "interni"), "Nessun verbale ancora pubblicato."),
-        "<h2>Glossario</h2>", f"<p>{link('glossario.html', 'Glossario dei termini del progetto')}</p>",
-        "<h2>Il gruppo</h2>", elenco(membri, "Membri non ancora indicati."),
-    ]
-    return pagina(nome, "\n".join(corpo))
+    nessun_verbale = "Nessun verbale ancora pubblicato."
+    corpo = ['<div class="griglia">',
+             scheda("lettere", "Lettere di presentazione",
+                    elenco(voci_lettere, "Nessuna lettera ancora pubblicata."), len(voci_lettere), larga=True),
+             scheda("documenti", "Documenti esterni",
+                    "<h3>Gestionali</h3>" + elenco(gestionali, nessuno) + "<h3>Tecnici</h3>" + elenco(tecnici, nessuno),
+                    len(gestionali) + len(tecnici)),
+             scheda("interni", "Documenti interni", elenco(interni, nessuno), len(interni)),
+             scheda("verbali", "Verbali",
+                    '<div class="due"><div><h3>Esterni</h3>' + elenco(verbali_esterni, nessun_verbale)
+                    + "</div><div><h3>Interni</h3>" + elenco(verbali_interni, nessun_verbale) + "</div></div>",
+                    len(verbali_esterni) + len(verbali_interni), larga=True),
+             scheda("glossario", "Glossario",
+                    "<p>I termini del progetto, con definizioni e sinonimi, come sono usati nei documenti.</p>"
+                    '<a class="pulsante" href="glossario.html">Apri il glossario</a>'),
+             scheda("gruppo", "Il gruppo",
+                    f'<div class="persone">{"".join(membri)}</div>' if membri else '<p class="nota">Membri non ancora indicati.</p>',
+                    len(membri)),
+             "</div>"]
+    return pagina(nome, testata, "\n".join(corpo), gruppo, logo, accento)
 
 
 def senza_accenti(testo):
     return "".join(c for c in unicodedata.normalize("NFD", testo) if not unicodedata.combining(c)).casefold()
 
 
-def glossario(gruppo, voci):
+def glossario(gruppo, voci, logo, accento):
     nome = gruppo.get("gruppo", {}).get("nome") or "Documentazione di progetto"
     per_iniziale = {}
-    for voce in sorted(voci, key=lambda v: senza_accenti(v["termine"])):
-        iniziale = senza_accenti(voce["termine"])[:1].upper()
-        per_iniziale.setdefault(iniziale if iniziale.isalpha() else "#", []).append(voce)
-    corpo = ["<h1>Glossario</h1>", f"<p>{link('index.html', nome)}</p>"]
-    for iniziale, gruppo_voci in per_iniziale.items():
-        corpo += [f"<h2>{e(iniziale)}</h2>", "<dl>"]
-        for voce in gruppo_voci:
-            sinonimi = voce.get("sinonimi", [])
-            ancore = "".join(f'<span id="{e(slug(s))}"></span>' for s in sinonimi)
-            corpo.append(f'<dt id="{e(slug(voce["termine"]))}">{ancore}{e(voce["termine"])}</dt>')
-            nota = f'<br><span class="nota">Sinonimi: {e(", ".join(sinonimi))}</span>' if sinonimi else ""
-            corpo.append(f"<dd>{e(voce['definizione'])}{nota}</dd>")
-        corpo.append("</dl>")
-    if not per_iniziale:
-        corpo.append('<p class="nota">Nessuna voce ancora presente.</p>')
-    return pagina(f"Glossario - {nome}", "\n".join(corpo))
+    for voce_ in sorted(voci, key=lambda v: senza_accenti(v["termine"])):
+        iniziale = senza_accenti(voce_["termine"])[:1].upper()
+        per_iniziale.setdefault(iniziale if iniziale.isalpha() else "#", []).append(voce_)
+
+    testata = intestazione("Glossario", SOTTOTITOLO, logo, [chip("Torna all'indice", "indietro", "index.html")],
+                           compatto=True, sopra=nome)
+    corpo = []
+    if per_iniziale:
+        alfabeto = "".join(f'<a href="#{e(slug(i)) or "altro"}">{e(i)}</a>' for i in per_iniziale)
+        corpo.append(f'<div class="alfabeto">{alfabeto}</div>')
+        for iniziale, gruppo_voci in per_iniziale.items():
+            righe = []
+            for voce_ in gruppo_voci:
+                sinonimi = voce_.get("sinonimi", [])
+                ancore = "".join(f'<span id="{e(slug(s))}"></span>' for s in sinonimi)
+                nota = f'<span class="nota">Sinonimi: {e(", ".join(sinonimi))}</span>' if sinonimi else ""
+                righe.append(f'<dt id="{e(slug(voce_["termine"]))}">{ancore}{e(voce_["termine"])}</dt>'
+                             f"<dd>{e(voce_['definizione'])}{nota}</dd>")
+            corpo.append(scheda(slug(iniziale) or "altro", iniziale, "<dl>" + "".join(righe) + "</dl>", len(gruppo_voci), larga=True))
+    else:
+        corpo.append(scheda("vuoto", "Glossario", '<p class="nota">Nessuna voce ancora presente.</p>', 0, larga=True))
+    return pagina(f"Glossario - {nome}", testata, '<div class="griglia">' + "\n".join(corpo) + "</div>", gruppo, logo, accento)
 
 
 def main():
@@ -194,8 +347,14 @@ def main():
 
     gruppo = tomllib.loads((RADICE / "dati/gruppo.toml").read_text(encoding="utf-8-sig"))
     voci = tomllib.loads((RADICE / "dati/glossario.toml").read_text(encoding="utf-8-sig")).get("voce", [])
-    (out / "index.html").write_text(indice(gruppo, typst, out), encoding="utf-8")
-    (out / "glossario.html").write_text(glossario(gruppo, voci), encoding="utf-8")
+    info = gruppo.get("gruppo", {})
+    accento = info.get("colore") or ACCENTO_PREDEFINITO
+    logo = None
+    if info.get("logo") and (RADICE / info["logo"]).is_file():
+        logo = "logo" + Path(info["logo"]).suffix.lower()
+        shutil.copy(RADICE / info["logo"], out / logo)
+    (out / "index.html").write_text(indice(gruppo, typst, out, logo, accento), encoding="utf-8")
+    (out / "glossario.html").write_text(glossario(gruppo, voci, logo, accento), encoding="utf-8")
     print(f"sito generato in {out}: {len(list(out.glob('*.pdf')))} PDF")
 
 

@@ -2,7 +2,7 @@
 nome = "SW2 Corporation"
 email = "sw2corporation@gmail.com"
 logo = "assets/SW2CORPLogo.png"   # percorso dalla radice del repo; vuoto = nessun logo
-colore = "#000000"                # colore d'accento di documenti e presentazioni
+colore = "#D7262F"                # colore d'accento di documenti e presentazioni
 sito = "https://sw2-corporation.github.io/docs/"   # URL GitHub Pages con "/" finale
 repo = "https://github.com/SW2-Corporation/docs"
 
