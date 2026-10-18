@@ -1,8 +1,32 @@
-# Documentazione di progetto
+<p align="center"><img src="assets/SW2CORPLogo.png" width="140" alt="Logo di SW2 Corporation"></p>
+<h1 align="center">SW2 Corporation</h1>
+<p align="center">Documentazione del progetto didattico di Ingegneria del Software 2026/27<br>Università degli Studi di Padova</p>
+<p align="center">
+<a href="https://sw2-corporation.github.io/docs/"><img alt="Sito della documentazione" src="https://img.shields.io/badge/sito-sw2--corporation.github.io%2Fdocs-d7262f"></a>
+<a href="https://github.com/SW2-Corporation/docs/actions/workflows/verifica.yml"><img alt="Stato dei controlli automatici" src="https://github.com/SW2-Corporation/docs/actions/workflows/verifica.yml/badge.svg"></a>
+<a href="https://github.com/SW2-Corporation/docs/actions/workflows/pubblica.yml"><img alt="Stato della pubblicazione" src="https://github.com/SW2-Corporation/docs/actions/workflows/pubblica.yml/badge.svg"></a>
+</p>
 
-Sorgenti della documentazione di SW2 Corporation per il progetto didattico di Ingegneria del Software, Università degli Studi di Padova. I documenti sono scritti in [Typst](https://typst.app) 0.15; il sito con i PDF pubblicati si genera da questo repo.
+## Il sito
 
-## Struttura
+I documenti approvati, le Lettere di Presentazione e i verbali sono pubblicati su **[sw2-corporation.github.io/docs](https://sw2-corporation.github.io/docs/)**. Il sito si rigenera da questo repository a ogni push su `main`: sul sito vanno solo le versioni rilasciate, mai le bozze.
+
+## Il gruppo
+
+| Membro | GitHub |
+|---|---|
+| Davide Baraldo | [@davidebaraldo](https://github.com/davidebaraldo) |
+| Matteo Bellato | [@matt8227](https://github.com/matt8227) |
+| Patrizio Eleuteri | [@gin3773](https://github.com/gin3773) |
+| Oussama Mahdi | [@MahdiOussama](https://github.com/MahdiOussama) |
+| Alessandro Paduret | [@AlessandroPaduret](https://github.com/AlessandroPaduret) |
+| David Sirbu | [@davidsirbu](https://github.com/davidsirbu) |
+
+Contatti: [sw2corporation@gmail.com](mailto:sw2corporation@gmail.com). Ruoli e rotazione: [`documenti/interni/ruoli.md`](documenti/interni/ruoli.md).
+
+## Come è fatto il repository
+
+I documenti sono scritti in [Typst](https://typst.app) 0.15; il sito con i PDF pubblicati si genera da questo repo.
 
 ```
 assets/          logo del gruppo
@@ -91,7 +115,7 @@ Il percorso del verbale si può scrivere con o senza `/` iniziale; su Git Bash p
 
 ## Personalizzare lo stile
 
-- Colore d'accento: `colore` in `dati/gruppo.toml` (es. `"#000000"`).
+- Colore d'accento: `colore` in `dati/gruppo.toml` (es. `"#D7262F"`). Il sito lo usa per barre, bottoni e testi in evidenza; sugli sfondi scuri lo schiarisce da solo per tenere il contrasto sopra 4,5:1. Con un colore molto chiaro il contrasto sul tema chiaro va ricontrollato.
 - Logo: il file in `assets/` e il suo percorso in `logo` di `dati/gruppo.toml`.
 - Tutto il resto (font, titoli, tabelle, liste, intestazione e piè di pagina): `modello/stile.typ`.
 
@@ -112,6 +136,8 @@ A ogni push su `main` il workflow `pubblica.yml` ripete i controlli, compila i d
 ```sh
 make sito            # oppure: python strumenti/sito.py --out build/site
 ```
+
+Il sito segue il tema chiaro o scuro del dispositivo; il bottone in alto a destra lo cambia e ricorda la scelta nel browser. Pagine con salto al contenuto, navigazione da tastiera, testi alternativi e contrasti conformi a WCAG 2.2 AA.
 
 ## Convenzioni
 
