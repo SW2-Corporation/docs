@@ -3,11 +3,14 @@
 Uso: python strumenti/sito.py --out site [--typst percorso]
 
 Vanno sul sito i documenti rilasciati (prima riga del registro = approvazione),
-tutte le lettere e tutti i verbali, più la pagina del glossario.
+tutte le lettere e tutti i verbali, più le pagine del glossario e dei ruoli.
 """
 
 import argparse
+import csv
+import datetime
 import html
+import json
 import re
 import shutil
 import subprocess
@@ -16,23 +19,29 @@ import tomllib
 import unicodedata
 from pathlib import Path
 
-from verifica import RADICE, data_iso, rilascio, slug
+from verifica import RADICE, RUOLI, data_iso, rilascio, slug
 
 ACCENTO_PREDEFINITO = "#d7262f"
 SOTTOTITOLO = "Progetto didattico di Ingegneria del Software, Università degli Studi di Padova"
+MESI = ("gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic")
 
 # Tema scuro: usato sia quando il dispositivo lo preferisce sia quando l'utente lo sceglie.
 TEMA_SCURO = """--sfondo: #0e0e10; --carta: #18181c; --testo: #f1f1f3; --muto: #9b9ba4; --bordo: #2a2a31;
-  --accento-testo: var(--accento-chiaro); --ombra: 0 1px 2px rgba(0,0,0,.4); --sole: block; --luna: none; color-scheme: dark;"""
+  --accento-testo: var(--accento-chiaro); --ombra: 0 1px 2px rgba(0,0,0,.4);
+  --fascia: #0e0e10; --fascia-testo: #f4f4f6; --fascia-sotto: #c7c7cf; --fascia-bordo: rgba(255,255,255,.16);
+  --fascia-chip: rgba(255,255,255,.05); --fascia-accento: var(--accento-chiaro); --menu-testo: #c7c7cf;
+  --ombra-logo: 0 12px 36px rgba(0,0,0,.5); --sole: block; --luna: none; color-scheme: dark;"""
 
 # {accento} e {scuro} vengono sostituiti dal colore del gruppo e dal blocco del tema scuro.
 # --accento-testo è la variante dell'accento usata per il testo: sugli sfondi scuri è schiarita
-# per tenere il contrasto sopra 4,5:1.
+# per tenere il contrasto sopra 4,5:1. I colori dei ruoli reggono il testo bianco in entrambi i temi.
 STILE = """
 :root { --accento: {accento}; --accento-chiaro: #f0545b; --accento-chiaro: color-mix(in srgb, var(--accento) 72%, white);
         --accento-testo: var(--accento); --sfondo: #f5f5f7; --carta: #ffffff; --testo: #151517; --muto: #6b6b74;
-        --bordo: #e3e3e8; --scuro: #0e0e10; --chiaro: #f4f4f6; --ombra: 0 1px 2px rgba(0,0,0,.05);
-        --sole: none; --luna: block; color-scheme: light; }
+        --bordo: #e3e3e8; --ombra: 0 1px 2px rgba(0,0,0,.05);
+        --fascia: #ffffff; --fascia-testo: #151517; --fascia-sotto: #5c5c66; --fascia-bordo: #e3e3e8;
+        --fascia-chip: #f5f5f7; --fascia-accento: var(--accento); --menu-testo: #3f3f46;
+        --ombra-logo: 0 12px 36px rgba(0,0,0,.18); --sole: none; --luna: block; color-scheme: light; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { {scuro} } }
 :root[data-theme="dark"] { {scuro} }
 * { box-sizing: border-box; }
@@ -48,33 +57,33 @@ a { color: inherit; }
 .salta:focus { top: 1rem; }
 .dentro { max-width: 68rem; margin: 0 auto; padding: 0 1.25rem; }
 
-.hero { position: relative; background: var(--scuro); color: var(--chiaro); border-bottom: 4px solid var(--accento); --accento-testo: var(--accento-chiaro); }
+.hero { position: relative; background: var(--fascia); color: var(--fascia-testo); border-bottom: 4px solid var(--accento); --accento-testo: var(--fascia-accento); }
 .hero > .dentro { display: flex; align-items: center; gap: 2rem; padding-top: 3rem; padding-bottom: 2.25rem; flex-wrap: wrap; }
 .hero.compatto > .dentro { padding-top: 1.75rem; padding-bottom: 1.5rem; gap: 1.25rem; }
-.logo { width: 128px; height: 128px; border-radius: 50%; box-shadow: 0 12px 36px rgba(0,0,0,.5); flex: none; }
+.logo { width: 128px; height: 128px; border-radius: 50%; box-shadow: var(--ombra-logo); flex: none; }
 .hero.compatto .logo { width: 64px; height: 64px; }
 .sopra { margin: 0 0 .35rem; font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accento-testo); }
 .hero h1 { margin: 0; font-size: clamp(2rem, 4.5vw, 3rem); letter-spacing: -.02em; line-height: 1.1; }
 .hero.compatto h1 { font-size: clamp(1.5rem, 3vw, 2rem); }
-.hero p.sotto { margin: .5rem 0 0; color: #c7c7cf; font-size: 1.05rem; max-width: 40rem; }
+.hero p.sotto { margin: .5rem 0 0; color: var(--fascia-sotto); font-size: 1.05rem; max-width: 40rem; }
 .chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.1rem; }
 .chip { display: inline-flex; align-items: center; gap: .45rem; min-height: 2.25rem; padding: .4rem .85rem; border-radius: 999px;
-        border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.05); color: #ececf0;
+        border: 1px solid var(--fascia-bordo); background: var(--fascia-chip); color: var(--fascia-testo);
         font-size: .86rem; font-weight: 500; text-decoration: none; }
-a.chip:hover { border-color: var(--accento-chiaro); background: rgba(255,255,255,.09); }
+a.chip:hover { border-color: var(--accento-testo); }
 .chip svg { width: 15px; height: 15px; color: var(--accento-testo); }
 .tema { position: absolute; top: 1rem; right: 1.25rem; width: 2.75rem; height: 2.75rem; display: grid; place-items: center;
-        border-radius: 50%; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.05); color: #ececf0; cursor: pointer; }
-.tema:hover { border-color: var(--accento-chiaro); background: rgba(255,255,255,.09); }
+        border-radius: 50%; border: 1px solid var(--fascia-bordo); background: var(--fascia-chip); color: var(--fascia-testo); cursor: pointer; }
+.tema:hover { border-color: var(--accento-testo); }
 .tema svg { width: 20px; height: 20px; }
 .tema .sole { display: var(--sole); }
 .tema .luna { display: var(--luna); }
-.menu { background: var(--scuro); border-top: 1px solid rgba(255,255,255,.08); --accento-testo: var(--accento-chiaro); }
+.menu { background: var(--fascia); border-top: 1px solid var(--fascia-bordo); --accento-testo: var(--fascia-accento); }
 .menu .dentro { display: flex; gap: 1.75rem; overflow-x: auto; scrollbar-width: none; }
 .menu .dentro::-webkit-scrollbar { display: none; }
-.menu a { padding: .85rem 0; color: #c7c7cf; font-size: .9rem; font-weight: 600; text-decoration: none;
+.menu a { padding: .85rem 0; color: var(--menu-testo); font-size: .9rem; font-weight: 600; text-decoration: none;
           border-bottom: 3px solid transparent; margin-bottom: -4px; white-space: nowrap; }
-.menu a:hover { color: #fff; border-color: var(--accento); }
+.menu a:hover { color: var(--fascia-testo); border-color: var(--accento); }
 .menu a:focus-visible { outline-offset: -3px; }
 
 main.dentro { padding-top: 2rem; padding-bottom: 3rem; }
@@ -102,12 +111,40 @@ ul.voci a:hover { color: var(--accento-testo); text-decoration: underline; }
 .pulsante { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1rem; min-height: 2.75rem; padding: .6rem 1.1rem; border-radius: 10px;
             background: var(--accento); color: #fff; font-weight: 700; text-decoration: none; }
 .pulsante:hover { filter: brightness(1.08); }
+.pulsante.secondario { background: transparent; color: var(--testo); border: 1px solid var(--bordo); }
+.pulsante.secondario:hover { border-color: var(--accento-testo); filter: none; }
 .persone { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .9rem; }
 .persona { display: inline-flex; align-items: center; gap: .6rem; padding: .3rem .95rem .3rem .3rem; border-radius: 999px;
            border: 1px solid var(--bordo); background: var(--sfondo); font-weight: 600; font-size: .92rem; text-decoration: none; }
 a.persona:hover { border-color: var(--accento-testo); }
 .persona img, .persona .iniziali { width: 32px; height: 32px; border-radius: 50%; flex: none; }
 .persona .iniziali { display: inline-grid; place-items: center; background: var(--accento); color: #fff; font-size: .78rem; font-weight: 800; }
+
+.ruolo { display: inline-block; color: #fff; font-size: .66rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+         border-radius: 999px; padding: .14rem .55rem; line-height: 1.3; white-space: nowrap; }
+.r-responsabile { background: var(--accento); } .r-amministratore { background: #1d4ed8; } .r-analista { background: #047857; }
+.r-progettista { background: #b45309; } .r-programmatore { background: #6d28d9; } .r-verificatore { background: #0e7490; }
+.legenda { display: flex; flex-wrap: wrap; gap: .5rem 1.1rem; list-style: none; margin: .9rem 0 0; padding: 0; font-size: .86rem; }
+.legenda i { display: inline-block; width: .9rem; height: .9rem; border-radius: 3px; vertical-align: -.1rem; margin-right: .45rem; }
+.linea { --colonna: 11rem; position: relative; margin-top: 1rem; }
+.asse { position: relative; height: 2.6rem; margin-left: var(--colonna); font-size: .75rem; color: var(--muto); }
+.asse span { position: absolute; bottom: 0; transform: translateX(-50%); white-space: nowrap; }
+.asse span::before { content: ""; display: block; width: 1px; height: .4rem; margin: 0 auto .15rem; background: var(--bordo); }
+.asse span.inizio { transform: none; } .asse span.inizio::before { margin-left: 0; }
+.asse span.fine { transform: translateX(-100%); } .asse span.fine::before { margin-right: 0; }
+.riga { display: grid; grid-template-columns: var(--colonna) 1fr; align-items: center; margin: .4rem 0; }
+.chi { font-weight: 600; font-size: .9rem; padding-right: .75rem; }
+.traccia { position: relative; height: 2.2rem; background: var(--sfondo); border: 1px solid var(--bordo); border-radius: 6px; overflow: hidden; }
+.barra { position: absolute; top: .25rem; bottom: .25rem; display: flex; align-items: center; padding: 0 .55rem; border-radius: 4px; color: #fff;
+         font-size: .7rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.con-oggi .traccia::after { content: ""; position: absolute; top: 0; bottom: 0; left: var(--oggi); width: 2px; background: var(--testo); }
+.con-oggi .asse::after { content: "Oggi"; position: absolute; top: 0; left: var(--oggi); transform: translateX(-50%); font-weight: 800; color: var(--testo); }
+@media (max-width: 40rem) { .linea { --colonna: 0px; } .riga { grid-template-columns: 1fr; } .chi { margin: .6rem 0 .2rem; } .asse span.mese { display: none; } }
+.scorri { overflow-x: auto; }
+table.periodi { width: 100%; border-collapse: collapse; margin-top: .6rem; font-size: .92rem; }
+.periodi th, .periodi td { text-align: left; padding: .5rem .5rem; border-top: 1px solid var(--bordo); vertical-align: middle; }
+.periodi td:nth-child(n+3) { white-space: nowrap; }
+.periodi th { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muto); border-top: 0; }
 
 .alfabeto { display: flex; flex-wrap: wrap; gap: .35rem; margin: .9rem 0 .4rem; }
 .alfabeto a { min-width: 2.25rem; height: 2.25rem; display: inline-grid; place-items: center; border-radius: 8px; border: 1px solid var(--bordo);
@@ -131,11 +168,32 @@ var b=document.querySelector('.tema');if(!b)return;
 var mq=window.matchMedia('(prefers-color-scheme: dark)');
 function attuale(){return document.documentElement.getAttribute('data-theme')||(mq.matches?'dark':'light');}
 function aggiorna(){var scuro=attuale()==='dark';b.setAttribute('aria-pressed',scuro?'true':'false');
-b.setAttribute('aria-label',scuro?'Passa al tema chiaro':'Passa al tema scuro');b.title=b.getAttribute('aria-label');}
+b.setAttribute('aria-label',scuro?'Passa al tema chiaro':'Passa al tema scuro');b.title=b.getAttribute('aria-label');
+var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute('content',scuro?'#0e0e10':'#ffffff');}}
 b.addEventListener('click',function(){var nuovo=attuale()==='dark'?'light':'dark';
 document.documentElement.setAttribute('data-theme',nuovo);try{localStorage.setItem('tema',nuovo);}catch(e){}aggiorna();});
 if(mq.addEventListener){mq.addEventListener('change',aggiorna);}
 aggiorna();})();"""
+
+# Ruoli in carica alla data di oggi (calcolati nel browser, perché il sito si genera una volta sola)
+# e marcatore "Oggi" sulla linea del tempo.
+SCRIPT_RUOLI = """(function(){
+var el=document.getElementById('dati-ruoli');if(!el)return;
+var periodi=JSON.parse(el.textContent).periodi;
+var ora=new Date();var oggi=ora.getFullYear()+'-'+String(ora.getMonth()+1).padStart(2,'0')+'-'+String(ora.getDate()).padStart(2,'0');
+function slug(s){return s.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/\\s+/g,'-');}
+var attuali={},ultimo=null;
+periodi.forEach(function(p){if(p.inizio<=oggi&&oggi<=p.fine){attuali[p.membro]=p.ruolo;}if(!ultimo||p.fine>ultimo.fine){ultimo=p;}});
+var vuoto=Object.keys(attuali).length===0;
+if(vuoto&&ultimo){periodi.forEach(function(p){if(p.fine===ultimo.fine){attuali[p.membro]=p.ruolo;}});}
+document.querySelectorAll('[data-membro]').forEach(function(n){var r=attuali[n.getAttribute('data-membro')];var b=n.querySelector('.ruolo');
+if(!b)return;if(r){b.textContent=r;b.className='ruolo r-'+slug(r);b.hidden=false;}else{b.hidden=true;}});
+var nota=document.getElementById('nota-attuali');
+if(nota){nota.textContent=vuoto&&ultimo?'Nessun periodo copre la data di oggi ('+oggi+'): ruoli dell\\'ultimo periodo registrato, fino al '+ultimo.fine+'.':(vuoto?'Nessun periodo registrato.':'Ruoli in carica oggi, '+oggi+'.');}
+var linea=document.querySelector('.linea');
+if(linea){var a=new Date(linea.getAttribute('data-inizio')),b=new Date(linea.getAttribute('data-fine'));var x=(ora-a)/(b-a)*100;
+if(isFinite(x)){linea.style.setProperty('--oggi',Math.max(0,Math.min(100,x)).toFixed(2)+'%');linea.classList.add('con-oggi');}}
+})();"""
 
 ICONE = {
     "mail": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
@@ -198,19 +256,24 @@ def intestazione(titolo, sottotitolo, logo, chips=(), menu=(), compatto=False, s
             f"</div></div>{testo_menu}</header>")
 
 
-def pagina(titolo, testata, corpo, gruppo, logo, accento):
+def pagina(titolo, testata, corpo, gruppo, logo, accento, dati=None):
     info = gruppo.get("gruppo", {})
     nome = info.get("nome") or "Documentazione di progetto"
     icona = f'<link rel="icon" type="image/png" href="{e(logo)}">' if logo else ""
     repo = f' · {link(info["repo"], "Sorgenti su GitHub")}' if info.get("repo") else ""
     stile = STILE.replace("{accento}", accento).replace("{scuro}", TEMA_SCURO)
+    script_dati = ""
+    if dati is not None:
+        # "</" spezzato: il JSON non può chiudere il proprio script
+        testo = json.dumps(dati, ensure_ascii=False).replace("</", "<\\/")
+        script_dati = f'<script id="dati-ruoli" type="application/json">{testo}</script>\n<script>{SCRIPT_RUOLI}</script>'
     return f"""<!doctype html>
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#0e0e10">
+<meta name="theme-color" content="#ffffff">
 <title>{e(titolo)}</title>
 {icona}
 <script>{SCRIPT_TESTA}</script>
@@ -224,6 +287,7 @@ def pagina(titolo, testata, corpo, gruppo, logo, accento):
 </main>
 <footer><div class="dentro"><span>{e(nome)} · Università degli Studi di Padova</span><span>Sito generato dai sorgenti del repository{repo}</span></div></footer>
 <script>{SCRIPT_TEMA}</script>
+{script_dati}
 </body>
 </html>
 """
@@ -279,17 +343,90 @@ def verbali(typst, out, cartella):
     return voci
 
 
-def persona(membro):
-    nome = f"{membro.get('nome', '')} {membro.get('cognome', '')}".strip()
+def nome_membro(membro):
+    return f"{membro.get('nome', '')} {membro.get('cognome', '')}".strip()
+
+
+def persona(membro, con_ruolo=False):
+    nome = nome_membro(membro)
     utente = membro.get("github")
+    # il ruolo lo compila lo script dai periodi di dati/ruoli.csv
+    attributo = f' data-membro="{e(nome)}"' if con_ruolo else ""
+    ruolo = '<span class="ruolo" hidden></span>' if con_ruolo else ""
     if utente:
-        return (f'<a class="persona" href="https://github.com/{e(utente)}" target="_blank" rel="noopener">'
-                f'<img src="https://github.com/{e(utente)}.png?size=64" alt="" loading="lazy">{e(nome)}{NUOVA_SCHEDA}</a>')
+        return (f'<a class="persona" href="https://github.com/{e(utente)}" target="_blank" rel="noopener"{attributo}>'
+                f'<img src="https://github.com/{e(utente)}.png?size=64" alt="" loading="lazy">{e(nome)}{ruolo}{NUOVA_SCHEDA}</a>')
     iniziali = "".join(parte[0] for parte in nome.split()[:2]).upper()
-    return f'<span class="persona"><span class="iniziali" aria-hidden="true">{e(iniziali)}</span>{e(nome)}</span>'
+    return f'<span class="persona"{attributo}><span class="iniziali" aria-hidden="true">{e(iniziali)}</span>{e(nome)}{ruolo}</span>'
 
 
-def indice(gruppo, typst, out, logo, accento):
+def leggi_ruoli():
+    """Periodi di dati/ruoli.csv già validati da verifica.py; le righe malformate si saltano."""
+    percorso = RADICE / "dati/ruoli.csv"
+    if not percorso.exists():
+        return []
+    periodi = []
+    with percorso.open(encoding="utf-8-sig", newline="") as f:
+        for riga in csv.DictReader(f):
+            try:
+                inizio = datetime.date.fromisoformat(riga["inizio"].strip())
+                fine = datetime.date.fromisoformat(riga["fine"].strip())
+            except (KeyError, ValueError, AttributeError):
+                continue
+            periodi.append({"inizio": inizio.isoformat(), "fine": fine.isoformat(),
+                            "membro": riga["membro"].strip(), "ruolo": riga["ruolo"].strip()})
+    periodi.sort(key=lambda p: (p["inizio"], p["membro"]))
+    return periodi
+
+
+def linea_del_tempo(periodi, nomi):
+    """Barre per membro su una scala comune; l'ultimo giorno di ogni periodo è incluso."""
+    giorno = datetime.date.fromisoformat
+    un_giorno = datetime.timedelta(days=1)
+    inizio = min(giorno(p["inizio"]) for p in periodi)
+    fine = max(giorno(p["fine"]) for p in periodi) + un_giorno
+    totale = max((fine - inizio).days, 1)
+
+    def pos(d):
+        # percentuale con al più due decimali, senza ".0" finale
+        return float(f"{(d - inizio).days / totale * 100:.2f}")
+
+    def pct(x):
+        return f"{x:g}"
+
+    tacche = [f'<span class="inizio" style="left:0%">{inizio.isoformat()}</span>']
+    mese = inizio.replace(day=1)
+    while True:
+        mese = (mese.replace(day=28) + datetime.timedelta(days=4)).replace(day=1)
+        if mese >= fine:
+            break
+        # niente mesi troppo vicini alle date di inizio e fine: le etichette si sovrapporrebbero
+        if 12 < pos(mese) < 88:
+            tacche.append(f'<span class="mese" style="left:{pct(pos(mese))}%">{MESI[mese.month - 1]} {mese.year}</span>')
+    tacche.append(f'<span class="fine" style="left:100%">{(fine - un_giorno).isoformat()}</span>')
+
+    righe = []
+    for nome in nomi:
+        barre = []
+        for p in periodi:
+            if p["membro"] != nome:
+                continue
+            a, b = pos(giorno(p["inizio"])), pos(giorno(p["fine"]) + un_giorno)
+            barre.append(f'<span class="barra r-{e(slug(p["ruolo"]))}" style="left:{pct(a)}%;width:{pct(round(b - a, 2))}%" '
+                         f'title="{e(p["ruolo"])} dal {p["inizio"]} al {p["fine"]}">{e(p["ruolo"])}</span>')
+        righe.append(f'<div class="riga"><div class="chi">{e(nome)}</div><div class="traccia">{"".join(barre)}</div></div>')
+    return (f'<div class="linea" aria-hidden="true" data-inizio="{inizio.isoformat()}" data-fine="{fine.isoformat()}">'
+            f'<div class="asse">{"".join(tacche)}</div>{"".join(righe)}</div>')
+
+
+def tabella_periodi(periodi):
+    righe = "".join(f'<tr><td>{e(p["membro"])}</td><td><span class="ruolo r-{e(slug(p["ruolo"]))}">{e(p["ruolo"])}</span></td>'
+                    f'<td>{e(p["inizio"])}</td><td>{e(p["fine"])}</td></tr>' for p in periodi)
+    return ('<div class="scorri"><table class="periodi"><thead><tr><th scope="col">Membro</th><th scope="col">Ruolo</th>'
+            f'<th scope="col">Dal</th><th scope="col">Al</th></tr></thead><tbody>{righe}</tbody></table></div>')
+
+
+def indice(gruppo, typst, out, logo, accento, periodi):
     info, progetto = gruppo.get("gruppo", {}), gruppo.get("progetto", {})
     nome = info.get("nome") or "Documentazione di progetto"
 
@@ -304,7 +441,7 @@ def indice(gruppo, typst, out, logo, accento):
     if info.get("repo"):
         chips.append(chip("Repository", "repo", info["repo"]))
     menu = [("#lettere", "Lettere"), ("#documenti", "Documenti"), ("#verbali", "Verbali"),
-            ("glossario.html", "Glossario"), ("#gruppo", "Il gruppo")]
+            ("glossario.html", "Glossario"), ("ruoli.html", "Ruoli"), ("#gruppo", "Il gruppo")]
     testata = intestazione(nome, SOTTOTITOLO, logo, chips, menu)
 
     voci_lettere = lettere(typst, out)
@@ -313,10 +450,13 @@ def indice(gruppo, typst, out, logo, accento):
     interni = documenti(typst, out, "documenti/interni")
     verbali_esterni = verbali(typst, out, "esterni")
     verbali_interni = verbali(typst, out, "interni")
-    membri = [persona(m) for m in gruppo.get("membro", [])]
+    membri = [persona(m, con_ruolo=True) for m in gruppo.get("membro", [])]
 
     nessuno = "Nessun documento ancora pubblicato."
     nessun_verbale = "Nessun verbale ancora pubblicato."
+    gruppo_html = (f'<p class="nota" id="nota-attuali">Ruoli in carica alla data di oggi.</p><div class="persone">{"".join(membri)}</div>'
+                   '<a class="pulsante secondario" href="ruoli.html">Ruoli e rotazione nel tempo</a>'
+                   if membri else '<p class="nota">Membri non ancora indicati.</p>')
     corpo = ['<div class="griglia">',
              scheda("lettere", "Lettere di presentazione",
                     elenco(voci_lettere, "Nessuna lettera ancora pubblicata."), len(voci_lettere), larga=True),
@@ -331,11 +471,39 @@ def indice(gruppo, typst, out, logo, accento):
              scheda("glossario", "Glossario",
                     "<p>I termini del progetto, con definizioni e sinonimi, come sono usati nei documenti.</p>"
                     '<a class="pulsante" href="glossario.html">Apri il glossario</a>'),
-             scheda("gruppo", "Il gruppo",
-                    f'<div class="persone">{"".join(membri)}</div>' if membri else '<p class="nota">Membri non ancora indicati.</p>',
-                    len(membri)),
+             scheda("gruppo", "Il gruppo", gruppo_html, len(membri)),
              "</div>"]
-    return pagina(nome, testata, "\n".join(corpo), gruppo, logo, accento)
+    return pagina(nome, testata, "\n".join(corpo), gruppo, logo, accento, dati={"periodi": periodi})
+
+
+def ruoli(gruppo, logo, accento, periodi):
+    info = gruppo.get("gruppo", {})
+    nome = info.get("nome") or "Documentazione di progetto"
+    membri = gruppo.get("membro", [])
+    nomi = [nome_membro(m) for m in membri]
+    nomi += sorted({p["membro"] for p in periodi} - set(nomi))
+    chips = [chip("Torna all'indice", "indietro", "index.html")]
+    if info.get("repo"):
+        chips.append(chip("Regole di rotazione", "repo", info["repo"].rstrip("/") + "/blob/main/documenti/interni/ruoli.md"))
+    testata = intestazione("Ruoli", "Chi ricopre quale ruolo, oggi e nel tempo.", logo, chips, compatto=True, sopra=nome)
+
+    attuali = [persona(m, con_ruolo=True) for m in membri]
+    presenti = [r for r in RUOLI if any(p["ruolo"] == r for p in periodi)]
+    legenda = '<ul class="legenda">' + "".join(f'<li><i class="r-{e(slug(r))}" aria-hidden="true"></i>{e(r)}</li>' for r in presenti) + "</ul>"
+    corpo = ['<div class="griglia">',
+             scheda("attuali", "Ruoli attuali",
+                    '<p class="nota" id="nota-attuali">Ruoli in carica alla data di oggi.</p>'
+                    + (f'<div class="persone">{"".join(attuali)}</div>' if attuali else '<p class="nota">Membri non ancora indicati.</p>'),
+                    larga=True)]
+    if periodi:
+        corpo += [scheda("linea", "Linea del tempo", legenda + linea_del_tempo(periodi, nomi), larga=True),
+                  scheda("periodi", "Periodi", tabella_periodi(periodi)
+                         + '<p class="nota">I periodi futuri compaiono quando il gruppo li conferma in dati/ruoli.csv.</p>',
+                         len(periodi), larga=True)]
+    else:
+        corpo.append(scheda("periodi", "Periodi", '<p class="nota">Nessun periodo ancora registrato in dati/ruoli.csv.</p>', 0, larga=True))
+    corpo.append("</div>")
+    return pagina(f"Ruoli - {nome}", testata, "\n".join(corpo), gruppo, logo, accento, dati={"periodi": periodi})
 
 
 def senza_accenti(testo):
@@ -392,14 +560,16 @@ def main():
 
     gruppo = tomllib.loads((RADICE / "dati/gruppo.toml").read_text(encoding="utf-8-sig"))
     voci = tomllib.loads((RADICE / "dati/glossario.toml").read_text(encoding="utf-8-sig")).get("voce", [])
+    periodi = leggi_ruoli()
     info = gruppo.get("gruppo", {})
     accento = info.get("colore") or ACCENTO_PREDEFINITO
     logo = None
     if info.get("logo") and (RADICE / info["logo"]).is_file():
         logo = "logo" + Path(info["logo"]).suffix.lower()
         shutil.copy(RADICE / info["logo"], out / logo)
-    (out / "index.html").write_text(indice(gruppo, typst, out, logo, accento), encoding="utf-8")
+    (out / "index.html").write_text(indice(gruppo, typst, out, logo, accento, periodi), encoding="utf-8")
     (out / "glossario.html").write_text(glossario(gruppo, voci, logo, accento), encoding="utf-8")
+    (out / "ruoli.html").write_text(ruoli(gruppo, logo, accento, periodi), encoding="utf-8")
     print(f"sito generato in {out}: {len(list(out.glob('*.pdf')))} PDF")
 
 

@@ -1,0 +1,64 @@
+tipo = "interno"
+data = 2026-10-12
+inizio = "17:51"
+fine = "23:08"
+luogo = "Telegram, chat del gruppo"
+redattore = "David Sirbu"
+verificatore = "Alessandro Paduret"
+partecipanti = ["Davide Baraldo", "Matteo Bellato", "Patrizio Eleuteri", "Oussama Mahdi", "Alessandro Paduret", "David Sirbu"]
+assenti = []
+ordine_del_giorno = ["Prime impressioni sui capitolati", "Organizzazione GitHub del gruppo", "Nome del gruppo", "Proposte per il logo"]
+
+[[punto]]
+titolo = "Prime impressioni sui capitolati"
+sintesi = """Matteo Bellato indica M31 (C4) come il capitolato più convincente tra quelli letti: è chiaro cosa chiede l'azienda, non prevede componenti di intelligenza artificiale e usa tecnologie diffuse e attuali. Davide Baraldo concorda."""
+
+[[punto]]
+titolo = "Organizzazione GitHub del gruppo"
+sintesi = """Davide Baraldo ha creato un'organizzazione GitHub per il gruppo e chiede a ciascuno l'utente GitHub o l'email per aggiungerlo. L'organizzazione verrà rinominata quando il nome sarà deciso. Matteo Bellato e David Sirbu comunicano il proprio utente."""
+
+[[punto]]
+titolo = "Nome del gruppo"
+sintesi = """Con il gruppo al completo, Matteo Bellato propone "SW2 Corporation", da leggere come "Software 2", il seguito del software. Davide Baraldo e Alessandro Paduret sono d'accordo; un nome alternativo proposto viene ritirato perché poco adatto ai rapporti con le aziende. Oussama Mahdi approva e il nome passa senza obiezioni."""
+
+[[punto]]
+titolo = "Proposte per il logo"
+sintesi = """Davide Baraldo presenta nove proposte di logo costruite sul nome scelto; Oussama Mahdi indica come preferita la proposta 7. La scelta del logo resta aperta alla riunione successiva."""
+
+[[decisione]]
+id = "VI-2026-10-12.1"
+testo = "Il gruppo usa un'organizzazione GitHub comune, creata da Davide Baraldo."
+motivazione = "Ospiterà i repository del progetto e ne rende visibile la storia a tutti i membri."
+
+[[decisione]]
+id = "VI-2026-10-12.2"
+testo = "Il nome del gruppo è SW2 Corporation."
+motivazione = "SW2 sta per \"Software 2\", il seguito del software. L'alternativa proposta è stata scartata perché poco adatta ai rapporti con le aziende."
+
+[[azione]]
+decisione = "VI-2026-10-12.1"
+descrizione = "Aggiungere tutti i membri all'organizzazione GitHub del gruppo."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-16
+issue = "https://github.com/SW2-Corporation/docs/issues/38"
+
+[[azione]]
+decisione = "VI-2026-10-12.2"
+descrizione = "Rinominare l'organizzazione GitHub in SW2-Corporation."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-16
+issue = "https://github.com/SW2-Corporation/docs/issues/39"
+
+[[azione]]
+decisione = "VI-2026-10-12.2"
+descrizione = "Rinominare il gruppo Telegram con il nome scelto."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-13
+issue = "https://github.com/SW2-Corporation/docs/issues/40"
+
+[[azione]]
+decisione = "VI-2026-10-12.2"
+descrizione = "Creare la casella email del gruppo sw2corporation@gmail.com, con inoltro alle email istituzionali dei membri."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-14
+issue = "https://github.com/SW2-Corporation/docs/issues/41"

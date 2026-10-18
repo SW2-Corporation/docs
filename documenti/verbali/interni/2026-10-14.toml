@@ -1,0 +1,44 @@
+tipo = "interno"
+data = 2026-10-14
+inizio = "10:14"
+fine = "19:50"
+luogo = "Telegram, chat del gruppo, e chiamata Discord dalle 17:00"
+redattore = "David Sirbu"
+verificatore = "Alessandro Paduret"
+partecipanti = ["Davide Baraldo", "Matteo Bellato", "Patrizio Eleuteri", "Oussama Mahdi", "Alessandro Paduret", "David Sirbu"]
+assenti = []
+ordine_del_giorno = ["Logo del gruppo", "Analisi delle preferenze sui capitolati", "Contatti con le aziende"]
+
+[[punto]]
+titolo = "Logo del gruppo"
+sintesi = """Matteo Bellato mostra la versione semplificata della proposta 1 di Davide Baraldo, senza le scritte secondarie attorno al cerchio, e chiede un parere. Davide Baraldo la approva e Matteo Bellato la imposta come immagine del gruppo Telegram. In serata Matteo Bellato completa l'inoltro della casella del gruppo verso le email dei membri e lo verifica con una mail di prova."""
+
+[[punto]]
+titolo = "Analisi delle preferenze sui capitolati"
+sintesi = """Nella chiamata il gruppo analizza le preferenze espresse il 13 ottobre. C8 (Sonar, analisi di store Shopify) ha una documentazione completa e risulta pienamente fattibile: il gruppo decide di collocarlo in posizione alta."""
+
+[[punto]]
+titolo = "Contatti con le aziende"
+sintesi = """Il gruppo decide di scrivere alle aziende dei capitolati di interesse con le proprie domande e di chiedere un incontro esplorativo. Resta da definire il modo di lavorare del gruppo, rimandato alla riunione successiva."""
+
+[[decisione]]
+id = "VI-2026-10-14.1"
+testo = "Il logo del gruppo è la proposta 1 di Davide Baraldo senza le scritte secondarie, nella versione semplificata da Matteo Bellato."
+motivazione = "Le scritte secondarie attorno al cerchio distraggono dal nome; la versione semplificata resta leggibile anche in piccolo."
+
+[[decisione]]
+id = "VI-2026-10-14.2"
+testo = "C8 (Sonar) va in posizione alta tra le preferenze del gruppo."
+motivazione = "Documentazione completa e buona fattibilità con le competenze del gruppo."
+
+[[decisione]]
+id = "VI-2026-10-14.3"
+testo = "Il gruppo scrive alle aziende dei capitolati di interesse con le proprie domande e chiede un incontro esplorativo."
+motivazione = "I dubbi sui capitolati vanno chiariti direttamente con i proponenti; il regolamento chiede il resoconto degli incontri esplorativi nella candidatura."
+
+[[azione]]
+decisione = "VI-2026-10-14.1"
+descrizione = "Inserire il logo nel template dei documenti del gruppo."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-14
+issue = "https://github.com/SW2-Corporation/docs/issues/42"

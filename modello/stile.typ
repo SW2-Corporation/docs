@@ -5,9 +5,19 @@
 #let info = gruppo.gruppo
 #let colore = info.at("colore", default: "")
 
+// Margini della pagina A4: servono anche alle fasce a tutta larghezza.
+#let margini = (x: 2.5cm, top: 3cm, bottom: 2.8cm)
+#let larghezza-pagina = 21cm
+
 // Palette derivata dal colore del gruppo.
+#let accento = if colore == "" { black } else { rgb(colore) }
 #let palette = (
-  accento: if colore == "" { black } else { rgb(colore) },
+  accento: accento,
+  // variante schiarita per i testi sugli sfondi scuri: contrasto sopra 4,5:1
+  accento-chiaro: if colore == "" { luma(230) } else { color.mix((accento, 72%), (white, 28%)) },
+  scuro: rgb("#0e0e10"),
+  su-scuro: luma(242),
+  su-scuro-tenue: luma(190),
   inchiostro: luma(25),
   tenue: luma(110),
   filetto: luma(205),
@@ -28,7 +38,7 @@
   text(size: 9pt, fill: palette.tenue)[Università degli Studi di Padova \ Corso di Ingegneria del Software]
 }
 
-// Prima pagina di lettere e verbali: logo e mittente a sinistra, `destra` a destra.
+// Prima pagina delle lettere: logo e mittente a sinistra, `destra` a destra.
 #let carta-intestata(destra) = {
   grid(
     columns: (auto, 1fr, auto),
@@ -41,7 +51,61 @@
 }
 
 // Occhiello sopra il titolo: tipo di documento in maiuscolo spaziato, nel colore d'accento.
-#let occhiello(testo, size: 10pt) = text(size: size, weight: "bold", tracking: 0.18em, fill: palette.accento, upper(testo))
+#let occhiello(testo, size: 10pt, fill: palette.accento) = text(size: size, weight: "bold", tracking: 0.18em, fill: fill, hyphenate: false, upper(testo))
+
+// "https://gruppo.github.io/docs/" -> "gruppo.github.io/docs": l'indirizzo resta cliccabile ma non si spezza
+#let sito-breve = info.sito.replace("https://", "").replace("http://", "").trim("/")
+
+// Fascia scura a tutta larghezza in testa alla prima pagina di copertine e verbali:
+// logo, nome del gruppo, contatti, eventuale elenco dei membri e un blocco `destra`.
+// Va chiamata all'inizio della pagina: sposta il contenuto che segue sotto la fascia.
+#let fascia(altezza: 5.6cm, destra: none, membri: false) = {
+  let nomi = gruppo.at("membro", default: ()).map(m => m.nome + " " + m.cognome)
+  place(top + left, dx: -margini.x, dy: -margini.top, block(
+    width: larghezza-pagina,
+    height: altezza,
+    fill: palette.scuro,
+    inset: (x: margini.x, y: 0pt),
+  )[
+    #set text(fill: palette.su-scuro)
+    #show link: set text(fill: palette.su-scuro)
+    #align(horizon, grid(
+      columns: (auto, 1fr, auto),
+      column-gutter: 1cm,
+      align: (left + horizon, left + horizon, right + horizon),
+      logo(height: calc.min(altezza - 2.6cm, 4.6cm)),
+      [
+        #set par(justify: false)
+        #occhiello("Università degli Studi di Padova · Ingegneria del Software", size: 7.5pt, fill: palette.accento-chiaro)
+        #v(0.1cm)
+        #text(size: if membri { 26pt } else { 18pt }, weight: "bold", hyphenate: false, info.nome)
+        #v(0.1cm)
+        #text(size: 9.5pt, fill: palette.su-scuro-tenue)[
+          #if info.email != "" [#link("mailto:" + info.email, info.email)]
+          #if info.email != "" and info.sito != "" [ · ]
+          #if info.sito != "" [#link(info.sito, sito-breve)]
+        ]
+        #if membri and nomi.len() > 0 [
+          #v(0.25cm)
+          #text(size: 9pt, fill: palette.su-scuro-tenue, nomi.join(" · "))
+        ]
+      ],
+      if destra != none { destra } else { [] },
+    ))
+  ])
+  place(top + left, dx: -margini.x, dy: -margini.top + altezza, rect(width: larghezza-pagina, height: 3pt, fill: palette.accento))
+  v(altezza - margini.top + 0.9cm)
+}
+
+// Riquadro con filetto d'accento a sinistra: scheda dei dati di copertina e verbali.
+#let riquadro(corpo) = block(
+  width: 100%,
+  fill: palette.zebra,
+  radius: 4pt,
+  inset: (x: 1.1em, y: 0.9em),
+  stroke: (left: 3pt + palette.accento),
+  corpo,
+)
 
 // Regole comuni a pagine e slide: testo, tabelle, liste, link e codice.
 #let base(corpo) = {
@@ -95,7 +159,7 @@
 
   set page(
     paper: "a4",
-    margin: (x: 2.5cm, top: 3cm, bottom: 2.8cm),
+    margin: margini,
     // la prima pagina è la copertina o la carta intestata
     header: context if counter(page).get().first() > 1 {
       set text(size: 9pt, fill: palette.tenue)

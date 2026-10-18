@@ -2,7 +2,7 @@
 // typst compile --root . modello/verbale.typ out.pdf --input dati=/documenti/verbali/interni/AAAA-MM-GG.toml
 // Niente copertina, versione o registro: un verbale non ha storia di revisione.
 #import "comuni.typ": *
-#import "stile.typ": carta-intestata, info, occhiello, palette, stile
+#import "stile.typ": fascia, info, occhiello, palette, riquadro, stile
 #import "persone.typ": tabella-persone
 
 #let percorso = sys.inputs.at("dati", default: none)
@@ -39,34 +39,36 @@
   link(url, if numero.match(regex("^\d+$")) != none { "#" + numero } else { url })
 }
 
-#carta-intestata[
-  #occhiello("Verbale " + verbale.tipo) \
-  #text(size: 14pt, weight: "bold", data)
-]
-#v(0.3cm)
+#fascia(destra: align(right)[
+  #occhiello("Verbale " + verbale.tipo, fill: palette.accento-chiaro) \
+  #text(size: 22pt, weight: "bold", data)
+])
 
 #let durata-riunione = durata(campo("inizio"), campo("fine"))
 #let assenti = elenco("assenti")
 #let interno = verbale.tipo == "interno"
 #let voce(etichetta, valore) = (text(fill: palette.tenue, etichetta), grid.cell(colspan: 3, valore))
-#grid(
-  columns: (auto, 1fr, auto, 1fr),
-  column-gutter: 1em,
-  row-gutter: 0.7em,
-  text(fill: palette.tenue)[Orario],
-  [#campo("inizio")–#campo("fine") #if durata-riunione != none [(#durata-riunione)]],
-  text(fill: palette.tenue)[Redattore], campo("redattore"),
-  text(fill: palette.tenue)[Luogo], campo("luogo"),
-  text(fill: palette.tenue)[Verificatore], campo("verificatore"),
-  // un verbale interno ha solo membri del gruppo: basta una riga, la tabella serve con gli esterni
-  ..if interno { voce[Partecipanti][#elenco("partecipanti").join(", ")] },
-  ..if interno and assenti.len() > 0 { voce[Assenti][#assenti.join(", ")] },
-)
-#if verbale.tipo == "esterno" {
-  let approvazione = campo("approvazione_esterna")
-  v(0.2cm)
-  [#text(fill: palette.tenue)[Approvazione del proponente:] #if approvazione == "" [in attesa] else [#approvazione]]
-}
+#riquadro[
+  #set text(size: 10.5pt)
+  #set par(justify: false)
+  #grid(
+    columns: (auto, 1fr, auto, 1fr),
+    column-gutter: 1.2em,
+    row-gutter: 0.75em,
+    text(fill: palette.tenue)[Orario],
+    [#campo("inizio")–#campo("fine") #if durata-riunione != none [(#durata-riunione)]],
+    text(fill: palette.tenue)[Redattore], campo("redattore"),
+    text(fill: palette.tenue)[Luogo], campo("luogo"),
+    text(fill: palette.tenue)[Verificatore], campo("verificatore"),
+    // un verbale interno ha solo membri del gruppo: basta una riga, la tabella serve con gli esterni
+    ..if interno { voce[Partecipanti][#elenco("partecipanti").join(", ")] },
+    ..if interno and assenti.len() > 0 { voce[Assenti][#assenti.join(", ")] },
+    ..if not interno {
+      let approvazione = campo("approvazione_esterna")
+      voce[Approvazione del proponente][#if approvazione == "" [in attesa] else [#approvazione]]
+    },
+  )
+]
 
 #if not interno {
   // la colonna Presenza serve solo se qualcuno manca
