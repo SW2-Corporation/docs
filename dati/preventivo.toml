@@ -1,0 +1,18 @@
+# Tariffe orarie in euro fissate dal regolamento del progetto.
+[tariffe]
+Responsabile = 30
+Amministratore = 20
+Analista = 25
+Progettista = 25
+Programmatore = 15
+Verificatore = 15
+
+# Un blocco per membro: tutti i ruoli con almeno un'ora, totale tra 80 e 95.
+# [[ripartizione]]
+# membro = "Nome Cognome"
+# Responsabile = 0
+# Amministratore = 0
+# Analista = 0
+# Progettista = 0
+# Programmatore = 0
+# Verificatore = 0

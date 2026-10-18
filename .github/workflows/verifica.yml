@@ -1,0 +1,38 @@
+name: Verifica
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verifica:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: typst-community/setup-typst@v4
+        with:
+          typst-version: "0.15.1"
+
+      - name: Controlli automatici
+        run: python strumenti/verifica.py
+
+      - name: Test
+        run: python -m unittest discover -s strumenti
+
+      # anche bozze e presentazioni devono compilare, pur non andando sul sito
+      - name: Compilazione
+        run: make all
+
+      - name: Sito
+        run: python strumenti/sito.py --out site
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: anteprima-sito
+          path: site

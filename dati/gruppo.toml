@@ -1,0 +1,47 @@
+[gruppo]
+nome = "SW2 Corporation"
+email = "sw2corporation@gmail.com"
+logo = "assets/SW2CORPLogo.png"   # percorso dalla radice del repo; vuoto = nessun logo
+colore = "#000000"                # colore d'accento di documenti e presentazioni
+sito = "https://sw2-corporation.github.io/docs/"   # URL GitHub Pages con "/" finale
+repo = "https://github.com/SW2-Corporation/docs"
+
+[progetto]
+capitolato = ""           # es. "C9 - SpecCheck"
+proponente = ""
+costo_aggiudicato = 0.0   # 0 prima dell'aggiudicazione
+consegna_prevista = ""    # AAAA-MM-GG
+
+[soglie]
+gulpease = 40
+
+# Un blocco per membro. Altrove il membro si scrive sempre "Nome Cognome".
+[[membro]]
+nome = "Davide"
+cognome = "Baraldo"
+github = "davidebaraldo"
+
+[[membro]]
+nome = "Matteo"
+cognome = "Bellato"
+github = "matt8227"
+
+[[membro]]
+nome = "Patrizio"
+cognome = "Eleuteri"
+github = ""
+
+[[membro]]
+nome = "Oussama"
+cognome = "Mahdi"
+github = "MahdiOussama"
+
+[[membro]]
+nome = "Alessandro"
+cognome = "Paduret"
+github = "AlessandroPaduret"
+
+[[membro]]
+nome = "David"
+cognome = "Sirbu"
+github = "davidsirbu"

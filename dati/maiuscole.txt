@@ -1,0 +1,48 @@
+Norme di Progetto
+Piano di Progetto
+Piano di Qualifica
+Analisi dei Requisiti
+Specifica Tecnica
+Manuale Utente
+Lettera di Presentazione
+Registro delle Modifiche
+Glossario
+Proof of Concept
+Minimum Viable Product
+Requirements and Technology Baseline
+Product Baseline
+Customer Acceptance
+Tullio Vardanega
+Riccardo Cardin
+Università degli Studi di Padova
+SW2 Corporation
+SW2
+Padova
+Zoom
+Discord
+Telegram
+Google
+Docker
+Python
+React
+Angular
+Scrum
+Gantt
+Jira
+Typst
+Shopify
+ISO
+IEC
+Sanmarco Informatica
+Vimar
+Eggon
+Concierge
+Uranion EMEA
+M31
+Fossdot
+Miriade
+Var Group
+Ergon Informatica
+Halue
+Sonar
+Zucchetti

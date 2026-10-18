@@ -1,0 +1,5 @@
+# Voci del glossario, pubblicate in glossario.html. Esempio:
+# [[voce]]
+# termine = "Proof of Concept"
+# definizione = "Prototipo che dimostra la fattibilità delle tecnologie scelte."
+# sinonimi = ["PoC"]          # opzionale
