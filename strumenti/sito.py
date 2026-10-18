@@ -26,137 +26,158 @@ SOTTOTITOLO = "Progetto didattico di Ingegneria del Software, Università degli 
 MESI = ("gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "nov", "dic")
 
 # Tema scuro: usato sia quando il dispositivo lo preferisce sia quando l'utente lo sceglie.
-TEMA_SCURO = """--sfondo: #0e0e10; --carta: #18181c; --testo: #f1f1f3; --muto: #9b9ba4; --bordo: #2a2a31;
-  --accento-testo: var(--accento-chiaro); --ombra: 0 1px 2px rgba(0,0,0,.4);
-  --fascia: #0e0e10; --fascia-testo: #f4f4f6; --fascia-sotto: #c7c7cf; --fascia-bordo: rgba(255,255,255,.16);
-  --fascia-chip: rgba(255,255,255,.05); --fascia-accento: var(--accento-chiaro); --menu-testo: #c7c7cf;
-  --ombra-logo: 0 12px 36px rgba(0,0,0,.5); --sole: block; --luna: none; color-scheme: dark;"""
+TEMA_SCURO = """--carta: #0f0f0f; --inchiostro: #ece9e2; --tenue: #9c9992; --filetto: #2b2b2b; --superficie: #181818;
+  --accento-testo: var(--accento-chiaro); --sole: block; --luna: none; color-scheme: dark;"""
 
 # {accento} e {scuro} vengono sostituiti dal colore del gruppo e dal blocco del tema scuro.
+# Carta e inchiostro; serif per i titoli, monospazio per date ed etichette.
 # --accento-testo è la variante dell'accento usata per il testo: sugli sfondi scuri è schiarita
 # per tenere il contrasto sopra 4,5:1. I colori dei ruoli reggono il testo bianco in entrambi i temi.
 STILE = """
 :root { --accento: {accento}; --accento-chiaro: #f0545b; --accento-chiaro: color-mix(in srgb, var(--accento) 72%, white);
-        --accento-testo: var(--accento); --sfondo: #f5f5f7; --carta: #ffffff; --testo: #151517; --muto: #6b6b74;
-        --bordo: #e3e3e8; --ombra: 0 1px 2px rgba(0,0,0,.05);
-        --fascia: #ffffff; --fascia-testo: #151517; --fascia-sotto: #5c5c66; --fascia-bordo: #e3e3e8;
-        --fascia-chip: #f5f5f7; --fascia-accento: var(--accento); --menu-testo: #3f3f46;
-        --ombra-logo: 0 12px 36px rgba(0,0,0,.18); --sole: none; --luna: block; color-scheme: light; }
+        --accento-testo: var(--accento); --carta: #faf9f6; --inchiostro: #141414; --tenue: #6a6a66; --filetto: #dcd9d2;
+        --superficie: #f0eee8; --sole: none; --luna: block; color-scheme: light;
+        --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Times New Roman", serif;
+        --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { {scuro} } }
 :root[data-theme="dark"] { {scuro} }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-       background: var(--sfondo); color: var(--testo); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+body { margin: 0; font-family: var(--sans); font-size: 1rem; line-height: 1.6; background: var(--carta); color: var(--inchiostro);
+       -webkit-font-smoothing: antialiased; border-top: 3px solid var(--accento); }
 a { color: inherit; }
-:focus-visible { outline: 3px solid var(--accento-testo); outline-offset: 3px; border-radius: 4px; }
+:focus-visible { outline: 2px solid var(--accento-testo); outline-offset: 3px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.salta { position: absolute; left: 1rem; top: -4rem; z-index: 10; padding: .6rem 1rem; border-radius: 8px;
-         background: var(--carta); color: var(--testo); font-weight: 700; text-decoration: none; box-shadow: 0 4px 16px rgba(0,0,0,.3); }
+.salta { position: absolute; left: 1rem; top: -4rem; z-index: 10; padding: .6rem 1rem; background: var(--inchiostro); color: var(--carta);
+         font-family: var(--mono); font-size: .8rem; text-decoration: none; }
 .salta:focus { top: 1rem; }
-.dentro { max-width: 68rem; margin: 0 auto; padding: 0 1.25rem; }
+.mono, .kicker, .meta, .nota, .vuoto, .conta, .dettaglio, .utente, .indice, .sezione h3, .asse, .legenda, .periodi th, .periodi .data, .freccia, .alfabeto {
+  font-family: var(--mono); font-size: .76rem; letter-spacing: .05em; text-transform: uppercase; }
+.pagina { max-width: 74rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem); }
 
-.hero { position: relative; background: var(--fascia); color: var(--fascia-testo); border-bottom: 4px solid var(--accento); --accento-testo: var(--fascia-accento); }
-.hero > .dentro { display: flex; align-items: center; gap: 2rem; padding-top: 3rem; padding-bottom: 2.25rem; flex-wrap: wrap; }
-.hero.compatto > .dentro { padding-top: 1.75rem; padding-bottom: 1.5rem; gap: 1.25rem; }
-.logo { width: 128px; height: 128px; border-radius: 50%; box-shadow: var(--ombra-logo); flex: none; }
-.hero.compatto .logo { width: 64px; height: 64px; }
-.sopra { margin: 0 0 .35rem; font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accento-testo); }
-.hero h1 { margin: 0; font-size: clamp(2rem, 4.5vw, 3rem); letter-spacing: -.02em; line-height: 1.1; }
-.hero.compatto h1 { font-size: clamp(1.5rem, 3vw, 2rem); }
-.hero p.sotto { margin: .5rem 0 0; color: var(--fascia-sotto); font-size: 1.05rem; max-width: 40rem; }
-.chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.1rem; }
-.chip { display: inline-flex; align-items: center; gap: .45rem; min-height: 2.25rem; padding: .4rem .85rem; border-radius: 999px;
-        border: 1px solid var(--fascia-bordo); background: var(--fascia-chip); color: var(--fascia-testo);
-        font-size: .86rem; font-weight: 500; text-decoration: none; }
-a.chip:hover { border-color: var(--accento-testo); }
-.chip svg { width: 15px; height: 15px; color: var(--accento-testo); }
-.tema { position: absolute; top: 1rem; right: 1.25rem; width: 2.75rem; height: 2.75rem; display: grid; place-items: center;
-        border-radius: 50%; border: 1px solid var(--fascia-bordo); background: var(--fascia-chip); color: var(--fascia-testo); cursor: pointer; }
-.tema:hover { border-color: var(--accento-testo); }
+.testa { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--filetto); }
+.marchio { display: inline-flex; align-items: center; gap: .8rem; text-decoration: none; color: var(--tenue); }
+.marchio img { width: 34px; height: 34px; border-radius: 50%; }
+.marchio b { color: var(--inchiostro); font-weight: 600; }
+.marchio .sep { padding: 0 .4rem; }
+.marchio .sep, .marchio .sotto-marchio { display: none; }
+@media (min-width: 40rem) { .marchio .sep, .marchio .sotto-marchio { display: inline; } }
+.tema { width: 2.75rem; height: 2.75rem; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent;
+        color: var(--inchiostro); cursor: pointer; }
+.tema:hover { background: var(--superficie); }
 .tema svg { width: 20px; height: 20px; }
 .tema .sole { display: var(--sole); }
 .tema .luna { display: var(--luna); }
-.menu { background: var(--fascia); border-top: 1px solid var(--fascia-bordo); --accento-testo: var(--fascia-accento); }
-.menu .dentro { display: flex; gap: 1.75rem; overflow-x: auto; scrollbar-width: none; }
-.menu .dentro::-webkit-scrollbar { display: none; }
-.menu a { padding: .85rem 0; color: var(--menu-testo); font-size: .9rem; font-weight: 600; text-decoration: none;
-          border-bottom: 3px solid transparent; margin-bottom: -4px; white-space: nowrap; }
-.menu a:hover { color: var(--fascia-testo); border-color: var(--accento); }
-.menu a:focus-visible { outline-offset: -3px; }
 
-main.dentro { padding-top: 2rem; padding-bottom: 3rem; }
-.griglia { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
-@media (min-width: 46rem) { .griglia { grid-template-columns: 1fr 1fr; } }
-.scheda { position: relative; overflow: hidden; background: var(--carta); border: 1px solid var(--bordo);
-          border-radius: 14px; padding: 1.35rem 1.5rem 1.5rem; box-shadow: var(--ombra); }
-.scheda::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--accento); }
-.larga { grid-column: 1 / -1; }
-.scheda h2 { margin: 0; font-size: 1.2rem; display: flex; justify-content: space-between; align-items: baseline; gap: .75rem; }
-.scheda h3 { margin: 1.1rem 0 .3rem; font-size: .76rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muto); }
-.scheda > p { margin: .6rem 0 0; }
-.conta { font-size: .78rem; font-weight: 700; color: var(--muto); background: var(--sfondo); border: 1px solid var(--bordo);
-         border-radius: 999px; padding: .1rem .65rem; white-space: nowrap; }
-.due { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 0 2rem; }
-ul.voci { list-style: none; margin: .4rem 0 0; padding: 0; }
-ul.voci li { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: .55rem 0; border-top: 1px solid var(--bordo); }
-ul.voci li:first-child { border-top: 0; }
-ul.voci a { font-weight: 600; text-decoration: none; }
-ul.voci a:hover { color: var(--accento-testo); text-decoration: underline; }
-.meta { color: var(--muto); font-size: .82rem; white-space: nowrap; }
-.pdf { display: inline-block; vertical-align: middle; margin-left: .45rem; padding: 0 .35rem; border: 1.5px solid var(--accento-testo);
-       border-radius: 4px; color: var(--accento-testo); font-size: .7rem; font-weight: 800; letter-spacing: .06em; line-height: 1.35; }
-.nota { color: var(--muto); margin: .6rem 0 0; font-size: .95rem; }
-.pulsante { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1rem; min-height: 2.75rem; padding: .6rem 1.1rem; border-radius: 10px;
-            background: var(--accento); color: #fff; font-weight: 700; text-decoration: none; }
-.pulsante:hover { filter: brightness(1.08); }
-.pulsante.secondario { background: transparent; color: var(--testo); border: 1px solid var(--bordo); }
-.pulsante.secondario:hover { border-color: var(--accento-testo); filter: none; }
-.persone { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .9rem; }
-.persona { display: inline-flex; align-items: center; gap: .6rem; padding: .3rem .95rem .3rem .3rem; border-radius: 999px;
-           border: 1px solid var(--bordo); background: var(--sfondo); font-weight: 600; font-size: .92rem; text-decoration: none; }
-a.persona:hover { border-color: var(--accento-testo); }
-.persona img, .persona .iniziali { width: 32px; height: 32px; border-radius: 50%; flex: none; }
-.persona .iniziali { display: inline-grid; place-items: center; background: var(--accento); color: #fff; font-size: .78rem; font-weight: 800; }
+.apertura { padding: clamp(3rem, 8vw, 6rem) 0 2.5rem; border-bottom: 1px solid var(--inchiostro); }
+.apertura.compatta { padding-top: clamp(2rem, 5vw, 3.5rem); padding-bottom: 2rem; }
+.kicker { margin: 0 0 1rem; color: var(--accento-testo); }
+.titolone { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(2.8rem, 8vw, 6rem); line-height: .96; letter-spacing: -.025em; text-wrap: balance; }
+.compatta .titolone { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+.titolone .accento { color: var(--accento-testo); }
+.sotto { margin: 1.25rem 0 0; max-width: 38rem; font-size: 1.1rem; color: var(--tenue); }
+.meta { list-style: none; margin: 1.75rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: .4rem 0; color: var(--tenue); text-transform: none; letter-spacing: .02em; font-size: .82rem; }
+.meta li + li::before { content: "·"; padding: 0 .7rem; }
+.meta a { color: var(--inchiostro); text-decoration: none; border-bottom: 1px solid var(--filetto); }
+.meta a:hover { border-color: var(--accento-testo); color: var(--accento-testo); }
 
-.ruolo { display: inline-block; color: #fff; font-size: .66rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
-         border-radius: 999px; padding: .14rem .55rem; line-height: 1.3; white-space: nowrap; }
+.colonne { display: grid; grid-template-columns: minmax(0, 1fr); }
+/* su mobile l'indice è una barra fissa a tutta larghezza che scorre in orizzontale */
+.indice { position: sticky; top: 0; z-index: 5; min-width: 0; display: flex; align-items: center; gap: 1.25rem;
+          margin: 0 calc(-1 * clamp(1rem, 4vw, 3rem)); padding: 0 clamp(1rem, 4vw, 3rem); overflow-x: auto; scrollbar-width: none;
+          background: var(--carta); border-bottom: 1px solid var(--filetto); }
+.indice::-webkit-scrollbar { display: none; }
+.indice ol, .indice ul { display: flex; gap: 1.25rem; list-style: none; margin: 0; padding: 0; }
+.indice ul.pagine { padding-left: 1.25rem; border-left: 1px solid var(--filetto); }
+.indice li { flex: none; }
+.indice a { display: flex; gap: .6rem; padding: .9rem 0; color: var(--tenue); text-decoration: none; border-bottom: 2px solid transparent; white-space: nowrap; }
+.indice a:hover, .indice a[aria-current="true"] { color: var(--inchiostro); }
+.indice a[aria-current="true"] { border-bottom-color: var(--accento); }
+.indice a[aria-current="true"] .n { color: var(--accento-testo); }
+.indice .n { color: var(--tenue); }
+.indice .pagine a { gap: .4rem; }
+.indice .pagine a::after { content: "→"; color: var(--accento-testo); }
+@media (min-width: 60rem) {
+  .colonne { grid-template-columns: 13rem minmax(0, 1fr); gap: 0 5rem; }
+  .indice { top: 1.5rem; align-self: start; display: block; margin: 0; padding: 2.5rem 0 0; overflow: visible; background: transparent; border-bottom: 0; }
+  .indice ol, .indice ul { display: block; }
+  .indice ul.pagine { margin-top: 1.25rem; padding-left: 0; border-left: 0; }
+  .indice a { padding: .7rem 0; border-bottom: 1px solid var(--filetto); }
+  .indice a[aria-current="true"] { border-bottom-color: var(--filetto); }
+}
+
+.sezioni { min-width: 0; }
+.sezione { padding: 2.5rem 0; border-bottom: 1px solid var(--filetto); scroll-margin-top: 4rem; }
+@media (min-width: 60rem) { .sezione { scroll-margin-top: 1rem; } }
+.sezione:last-child { border-bottom: 0; }
+.sezione h2 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: clamp(1.7rem, 3vw, 2.3rem); line-height: 1.1; letter-spacing: -.01em; }
+.sezione h2 .num { display: block; margin-bottom: .6rem; font-family: var(--mono); font-size: .76rem; letter-spacing: .05em; color: var(--accento-testo); }
+.sezione h2 .conta { margin-left: .6rem; color: var(--tenue); vertical-align: .35em; }
+.sezione h3 { margin: 2rem 0 .25rem; color: var(--tenue); font-weight: 600; }
+.sezione > p { margin: 1rem 0 0; max-width: 40rem; }
+.vuoto, .nota { margin: 1rem 0 0; color: var(--tenue); }
+.vuoto::before { content: "— "; }
+ol.voci { list-style: none; margin: .75rem 0 0; padding: 0; }
+.voce { display: flex; align-items: baseline; gap: .8rem; padding: .7rem 0; }
+.voce .titolo a { font-family: var(--serif); font-size: 1.2rem; text-decoration: none; }
+.voce .titolo a:hover { color: var(--accento-testo); text-decoration: underline; text-underline-offset: .18em; }
+.voce .puntini { flex: 1 1 2rem; min-width: 2rem; border-bottom: 1px dotted var(--tenue); transform: translateY(-.35em); }
+.voce .dettaglio { flex: none; color: var(--tenue); text-align: right; }
+.freccia { display: inline-block; margin-top: 1.5rem; color: var(--inchiostro); text-decoration: none; border-bottom: 1px solid var(--inchiostro); padding-bottom: .15rem; }
+.freccia::after { content: " →"; color: var(--accento-testo); }
+.freccia:hover { color: var(--accento-testo); border-color: var(--accento-testo); }
+
+ul.persone { list-style: none; margin: .75rem 0 0; padding: 0; }
+.persona { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem 1rem; padding: .8rem 0; border-top: 1px dotted var(--filetto); }
+.persona:first-child { border-top: 0; }
+.persona img, .persona .iniziali { width: 36px; height: 36px; border-radius: 50%; flex: none; }
+.persona img { filter: grayscale(1); }
+.persona:hover img { filter: none; }
+.persona .iniziali { display: inline-grid; place-items: center; background: var(--inchiostro); color: var(--carta); font-family: var(--mono); font-size: .72rem; }
+.persona .nome { font-family: var(--serif); font-size: 1.2rem; flex: 1 1 10rem; }
+.persona .utente { color: var(--tenue); text-decoration: none; text-transform: none; }
+.persona .utente:hover { color: var(--accento-testo); }
+/* su schermi stretti l'utente va a capo, allineato al nome */
+@media (max-width: 40rem) { .persona .utente { flex-basis: 100%; padding-left: calc(36px + 1rem); margin-top: -.4rem; } }
+.ruolo { display: inline-block; padding: .22rem .55rem; border-radius: 2px; color: #fff; font-family: var(--mono); font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; line-height: 1.2; white-space: nowrap; }
 .r-responsabile { background: var(--accento); } .r-amministratore { background: #1d4ed8; } .r-analista { background: #047857; }
 .r-progettista { background: #b45309; } .r-programmatore { background: #6d28d9; } .r-verificatore { background: #0e7490; }
-.legenda { display: flex; flex-wrap: wrap; gap: .5rem 1.1rem; list-style: none; margin: .9rem 0 0; padding: 0; font-size: .86rem; }
-.legenda i { display: inline-block; width: .9rem; height: .9rem; border-radius: 3px; vertical-align: -.1rem; margin-right: .45rem; }
-.linea { --colonna: 11rem; position: relative; margin-top: 1rem; }
-.asse { position: relative; height: 2.6rem; margin-left: var(--colonna); font-size: .75rem; color: var(--muto); }
+
+.legenda { display: flex; flex-wrap: wrap; gap: .5rem 1.4rem; list-style: none; margin: 1.25rem 0 0; padding: 0; color: var(--tenue); }
+.legenda i { display: inline-block; width: .7rem; height: .7rem; margin-right: .5rem; vertical-align: -.05rem; }
+.linea { --colonna: 12rem; position: relative; margin-top: 1.5rem; }
+.asse { position: relative; height: 2.6rem; margin-left: var(--colonna); color: var(--tenue); }
 .asse span { position: absolute; bottom: 0; transform: translateX(-50%); white-space: nowrap; }
-.asse span::before { content: ""; display: block; width: 1px; height: .4rem; margin: 0 auto .15rem; background: var(--bordo); }
+.asse span::before { content: ""; display: block; width: 1px; height: .45rem; margin: 0 auto .2rem; background: var(--filetto); }
 .asse span.inizio { transform: none; } .asse span.inizio::before { margin-left: 0; }
 .asse span.fine { transform: translateX(-100%); } .asse span.fine::before { margin-right: 0; }
-.riga { display: grid; grid-template-columns: var(--colonna) 1fr; align-items: center; margin: .4rem 0; }
-.chi { font-weight: 600; font-size: .9rem; padding-right: .75rem; }
-.traccia { position: relative; height: 2.2rem; background: var(--sfondo); border: 1px solid var(--bordo); border-radius: 6px; overflow: hidden; }
-.barra { position: absolute; top: .25rem; bottom: .25rem; display: flex; align-items: center; padding: 0 .55rem; border-radius: 4px; color: #fff;
-         font-size: .7rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.con-oggi .traccia::after { content: ""; position: absolute; top: 0; bottom: 0; left: var(--oggi); width: 2px; background: var(--testo); }
-.con-oggi .asse::after { content: "Oggi"; position: absolute; top: 0; left: var(--oggi); transform: translateX(-50%); font-weight: 800; color: var(--testo); }
-@media (max-width: 40rem) { .linea { --colonna: 0px; } .riga { grid-template-columns: 1fr; } .chi { margin: .6rem 0 .2rem; } .asse span.mese { display: none; } }
+.riga { display: grid; grid-template-columns: var(--colonna) 1fr; align-items: center; border-top: 1px dotted var(--filetto); }
+.chi { font-family: var(--serif); font-size: 1.05rem; padding: .6rem .75rem .6rem 0; }
+.traccia { position: relative; height: 2.4rem; }
+.barra { position: absolute; top: .55rem; bottom: .55rem; display: flex; align-items: center; padding: 0 .5rem; border-radius: 2px; color: #fff;
+         font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.con-oggi .traccia::after { content: ""; position: absolute; top: 0; bottom: 0; left: var(--oggi); width: 0; border-left: 1px dashed var(--inchiostro); opacity: .75; }
+.con-oggi .asse::after { content: "Oggi"; position: absolute; top: 0; left: var(--oggi); transform: translateX(-50%); color: var(--inchiostro); font-weight: 700; }
+@media (max-width: 40rem) { .linea { --colonna: 0px; } .riga { grid-template-columns: 1fr; } .chi { padding: .6rem 0 0; } .asse span.mese { display: none; } }
 .scorri { overflow-x: auto; }
-table.periodi { width: 100%; border-collapse: collapse; margin-top: .6rem; font-size: .92rem; }
-.periodi th, .periodi td { text-align: left; padding: .5rem .5rem; border-top: 1px solid var(--bordo); vertical-align: middle; }
-.periodi td:nth-child(n+3) { white-space: nowrap; }
-.periodi th { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muto); border-top: 0; }
+table.periodi { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+.periodi th { text-align: left; padding: .5rem .5rem .5rem 0; color: var(--tenue); font-weight: 600; border-bottom: 1px solid var(--inchiostro); }
+.periodi td { padding: .65rem .5rem .65rem 0; border-top: 1px dotted var(--filetto); vertical-align: middle; }
+.periodi td:first-child { font-family: var(--serif); font-size: 1.05rem; white-space: nowrap; }
+.periodi .data { color: var(--tenue); white-space: nowrap; }
 
-.alfabeto { display: flex; flex-wrap: wrap; gap: .35rem; margin: .9rem 0 .4rem; }
-.alfabeto a { min-width: 2.25rem; height: 2.25rem; display: inline-grid; place-items: center; border-radius: 8px; border: 1px solid var(--bordo);
-              font-weight: 700; font-size: .85rem; text-decoration: none; }
-.alfabeto a:hover { border-color: var(--accento-testo); color: var(--accento-testo); }
-dl { margin: 0; }
-dt { font-weight: 700; margin-top: .9rem; }
-dd { margin: .15rem 0 0; color: var(--testo); }
-dd .nota { display: block; margin-top: .15rem; }
+.alfabeto { display: flex; flex-wrap: wrap; gap: .3rem; margin: 0; padding: 0 0 1rem; list-style: none; border-bottom: 1px solid var(--filetto); }
+.alfabeto a { display: inline-grid; place-items: center; min-width: 2rem; height: 2rem; text-decoration: none; color: var(--tenue); }
+.alfabeto a:hover { color: var(--accento-testo); }
+.lettera h2 { font-size: clamp(2.4rem, 5vw, 3.4rem); }
+dl { margin: 1rem 0 0; }
+dt { font-family: var(--serif); font-size: 1.2rem; margin-top: 1.1rem; }
+dd { margin: .2rem 0 0; max-width: 42rem; }
+dd .nota { display: block; margin-top: .25rem; }
 
-footer { border-top: 1px solid var(--bordo); color: var(--muto); font-size: .85rem; }
-footer .dentro { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem 1.5rem; padding-top: 1.25rem; padding-bottom: 1.5rem; }
+footer { margin-top: 3rem; padding: 1.25rem 0 3rem; border-top: 1px solid var(--inchiostro); display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem 2rem; color: var(--tenue); }
 footer a { color: inherit; }
 """
 
@@ -169,11 +190,16 @@ var mq=window.matchMedia('(prefers-color-scheme: dark)');
 function attuale(){return document.documentElement.getAttribute('data-theme')||(mq.matches?'dark':'light');}
 function aggiorna(){var scuro=attuale()==='dark';b.setAttribute('aria-pressed',scuro?'true':'false');
 b.setAttribute('aria-label',scuro?'Passa al tema chiaro':'Passa al tema scuro');b.title=b.getAttribute('aria-label');
-var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute('content',scuro?'#0e0e10':'#ffffff');}}
+var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute('content',scuro?'#0f0f0f':'#faf9f6');}}
 b.addEventListener('click',function(){var nuovo=attuale()==='dark'?'light':'dark';
 document.documentElement.setAttribute('data-theme',nuovo);try{localStorage.setItem('tema',nuovo);}catch(e){}aggiorna();});
 if(mq.addEventListener){mq.addEventListener('change',aggiorna);}
-aggiorna();})();"""
+aggiorna();
+var nav=document.querySelector('.indice');
+if(nav&&'IntersectionObserver' in window){var voci={};nav.querySelectorAll('a[href^="#"]').forEach(function(a){var s=document.querySelector(a.getAttribute('href'));if(s){voci[s.id]=a;}});
+var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){Object.keys(voci).forEach(function(k){voci[k].removeAttribute('aria-current');});voci[x.target.id].setAttribute('aria-current','true');}});},{rootMargin:'-15% 0px -70% 0px'});
+Object.keys(voci).forEach(function(k){io.observe(document.getElementById(k));});}
+})();"""
 
 # Ruoli in carica alla data di oggi (calcolati nel browser, perché il sito si genera una volta sola)
 # e marcatore "Oggi" sulla linea del tempo.
@@ -196,12 +222,8 @@ if(isFinite(x)){linea.style.setProperty('--oggi',Math.max(0,Math.min(100,x)).toF
 })();"""
 
 ICONE = {
-    "mail": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
-    "repo": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></svg>',
-    "capitolato": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg>',
-    "indietro": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5m7-7-7 7 7 7"/></svg>',
-    "sole": '<svg class="sole" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
-    "luna": '<svg class="luna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
+    "sole": '<svg class="sole" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
+    "luna": '<svg class="luna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
 }
 
 NUOVA_SCHEDA = '<span class="sr-only"> (si apre in una nuova scheda)</span>'
@@ -215,65 +237,74 @@ def link(href, testo):
     return f'<a href="{e(href)}" target="_blank" rel="noopener">{e(testo)}{NUOVA_SCHEDA}</a>'
 
 
-def voce(href, testo, meta=""):
-    """Riga di un elenco: link al PDF, etichetta PDF e dettaglio a destra."""
-    dettaglio = f'<span class="meta">{e(meta)}</span>' if meta else ""
-    return f'{link(href, testo)}<span class="pdf" aria-hidden="true">PDF</span>{dettaglio}'
+def evidenzia_cifre(nome):
+    """Le cifre del nome nel colore d'accento, come il 2 del logo."""
+    return re.sub(r"(\d+)", r'<span class="accento">\1</span>', e(nome))
+
+
+def voce(href, testo, meta="", nascosto=""):
+    """Riga di un sommario: titolo, puntini guida e dettaglio (versione, data, PDF).
+
+    `nascosto` completa il nome del link per chi usa uno screen reader quando più voci
+    hanno lo stesso titolo visibile, per esempio " del 2026-10-14".
+    """
+    dettaglio = " · ".join(p for p in (meta, "PDF") if p)
+    extra = f'<span class="sr-only">{e(nascosto)}</span>' if nascosto else ""
+    collegamento = f'<a href="{e(href)}" target="_blank" rel="noopener">{e(testo)}{extra}{NUOVA_SCHEDA}</a>'
+    return (f'<span class="titolo">{collegamento}</span><span class="puntini" aria-hidden="true"></span>'
+            f'<span class="dettaglio">{e(dettaglio)}</span>')
 
 
 def elenco(voci, vuoto):
     if not voci:
-        return f'<p class="nota">{e(vuoto)}</p>'
-    return '<ul class="voci">' + "".join(f"<li>{v}</li>" for v in voci) + "</ul>"
+        return f'<p class="vuoto">{e(vuoto)}</p>'
+    return '<ol class="voci">' + "".join(f'<li class="voce">{v}</li>' for v in voci) + "</ol>"
 
 
-def chip(testo, icona, href=None):
-    dentro = f'{ICONE[icona]}<span>{e(testo)}</span>'
-    if href:
-        esterno = href.startswith(("http://", "https://"))
-        attributi = ' target="_blank" rel="noopener"' if esterno else ""
-        return f'<a class="chip" href="{e(href)}"{attributi}>{dentro}{NUOVA_SCHEDA if esterno else ""}</a>'
-    return f'<span class="chip">{dentro}</span>'
-
-
-def scheda(identificatore, titolo, contenuto, conta=None, larga=False):
+def sezione(identificatore, numero, titolo, contenuto, conta=None):
     badge = f'<span class="conta"><span class="sr-only">Elementi: </span>{e(conta)}</span>' if conta is not None else ""
-    classe = "scheda larga" if larga else "scheda"
-    return (f'<section class="{classe}" id="{e(identificatore)}" aria-labelledby="titolo-{e(identificatore)}">'
-            f'<h2 id="titolo-{e(identificatore)}">{e(titolo)}{badge}</h2>{contenuto}</section>')
+    return (f'<section class="sezione" id="{e(identificatore)}" aria-labelledby="titolo-{e(identificatore)}">'
+            f'<h2 id="titolo-{e(identificatore)}"><span class="num" aria-hidden="true">{e(numero)}</span>{e(titolo)}{badge}</h2>'
+            f"{contenuto}</section>")
 
 
-def intestazione(titolo, sottotitolo, logo, chips=(), menu=(), compatto=False, sopra="Documentazione di progetto"):
-    immagine = f'<img class="logo" src="{e(logo)}" alt="">' if logo else ""
-    testo_chips = f'<div class="chips">{"".join(chips)}</div>' if chips else ""
-    voci_menu = "".join(f'<a href="{e(href)}">{e(testo)}</a>' for href, testo in menu)
-    testo_menu = f'<nav class="menu" aria-label="Sezioni"><div class="dentro">{voci_menu}</div></nav>' if menu else ""
-    classe = "hero compatto" if compatto else "hero"
-    bottone = (f'<button class="tema" type="button" aria-pressed="false" aria-label="Passa al tema scuro">'
-               f'{ICONE["sole"]}{ICONE["luna"]}</button>')
-    return (f'<header class="{classe}">{bottone}<div class="dentro">{immagine}<div>'
-            f'<p class="sopra">{e(sopra)}</p><h1>{e(titolo)}</h1><p class="sotto">{e(sottotitolo)}</p>{testo_chips}'
-            f"</div></div>{testo_menu}</header>")
+def indice(sezioni, pagine=()):
+    """Indice laterale: sezioni numerate della pagina e link alle altre pagine."""
+    voci = "".join(f'<li><a href="{e(href)}"><span class="n">{e(numero)}</span><span>{e(testo)}</span></a></li>' for href, numero, testo in sezioni)
+    altre = "".join(f'<li><a href="{e(href)}">{e(testo)}</a></li>' for href, testo in pagine)
+    altre = f'<ul class="pagine">{altre}</ul>' if altre else ""
+    return f'<nav class="indice" aria-label="Sezioni"><ol>{voci}</ol>{altre}</nav>'
 
 
-def pagina(titolo, testata, corpo, gruppo, logo, accento, dati=None):
+def apertura(titolo_html, kicker, sotto="", meta=(), compatta=False):
+    classe = "apertura compatta" if compatta else "apertura"
+    testo_sotto = f'<p class="sotto">{e(sotto)}</p>' if sotto else ""
+    testo_meta = f'<ul class="meta">{"".join(f"<li>{m}</li>" for m in meta)}</ul>' if meta else ""
+    return f'<section class="{classe}"><p class="kicker">{e(kicker)}</p><h1 class="titolone">{titolo_html}</h1>{testo_sotto}{testo_meta}</section>'
+
+
+def pagina(titolo, testata, corpo, gruppo, logo, accento, dati=None, laterale=""):
     info = gruppo.get("gruppo", {})
     nome = info.get("nome") or "Documentazione di progetto"
     icona = f'<link rel="icon" type="image/png" href="{e(logo)}">' if logo else ""
+    immagine = f'<img src="{e(logo)}" alt="">' if logo else ""
     repo = f' · {link(info["repo"], "Sorgenti su GitHub")}' if info.get("repo") else ""
     stile = STILE.replace("{accento}", accento).replace("{scuro}", TEMA_SCURO)
+    bottone = (f'<button class="tema" type="button" aria-pressed="false" aria-label="Passa al tema scuro">'
+               f'{ICONE["sole"]}{ICONE["luna"]}</button>')
     script_dati = ""
     if dati is not None:
         # "</" spezzato: il JSON non può chiudere il proprio script
         testo = json.dumps(dati, ensure_ascii=False).replace("</", "<\\/")
         script_dati = f'<script id="dati-ruoli" type="application/json">{testo}</script>\n<script>{SCRIPT_RUOLI}</script>'
+    colonne = f'<div class="colonne">{laterale}<div class="sezioni">{corpo}</div></div>' if laterale else corpo
     return f"""<!doctype html>
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#faf9f6">
 <title>{e(titolo)}</title>
 {icona}
 <script>{SCRIPT_TESTA}</script>
@@ -281,11 +312,14 @@ def pagina(titolo, testata, corpo, gruppo, logo, accento, dati=None):
 </head>
 <body>
 <a class="salta" href="#contenuto">Vai al contenuto</a>
+<div class="pagina">
+<header class="testa"><a class="marchio" href="index.html">{immagine}<span class="mono"><b>{e(nome)}</b><span class="sep">·</span><span class="sotto-marchio">Documentazione di progetto</span></span></a>{bottone}</header>
+<main id="contenuto" tabindex="-1">
 {testata}
-<main class="dentro" id="contenuto" tabindex="-1">
-{corpo}
+{colonne}
 </main>
-<footer><div class="dentro"><span>{e(nome)} · Università degli Studi di Padova</span><span>Sito generato dai sorgenti del repository{repo}</span></div></footer>
+<footer class="mono"><span>{e(nome)} · Università degli Studi di Padova</span><span>Sito generato dai sorgenti del repository{repo}</span></footer>
+</div>
 <script>{SCRIPT_TEMA}</script>
 {script_dati}
 </body>
@@ -308,7 +342,7 @@ def lettere(typst, out):
         if data_iso(sorgente.stem):
             nome = f"Lettera di Presentazione {sorgente.stem}"
             compila(typst, sorgente, out / (nome.replace(" ", "_") + ".pdf"))
-            voci.append(voce(nome.replace(" ", "_") + ".pdf", f"Lettera di Presentazione del {sorgente.stem}"))
+            voci.append(voce(nome.replace(" ", "_") + ".pdf", "Lettera di Presentazione", sorgente.stem, nascosto=f" del {sorgente.stem}"))
     return voci
 
 
@@ -339,7 +373,7 @@ def verbali(typst, out, cartella):
             nome = f"Verbale {tipo} {sorgente.stem}"
             compila(typst, RADICE / "modello/verbale.typ", out / (nome.replace(" ", "_") + ".pdf"),
                     dati=f"/documenti/verbali/{cartella}/{sorgente.name}")
-            voci.append(voce(nome.replace(" ", "_") + ".pdf", f"Verbale {tipo} del {sorgente.stem}"))
+            voci.append(voce(nome.replace(" ", "_") + ".pdf", f"Verbale {tipo}", sorgente.stem, nascosto=f" del {sorgente.stem}"))
     return voci
 
 
@@ -354,10 +388,13 @@ def persona(membro, con_ruolo=False):
     attributo = f' data-membro="{e(nome)}"' if con_ruolo else ""
     ruolo = '<span class="ruolo" hidden></span>' if con_ruolo else ""
     if utente:
-        return (f'<a class="persona" href="https://github.com/{e(utente)}" target="_blank" rel="noopener"{attributo}>'
-                f'<img src="https://github.com/{e(utente)}.png?size=64" alt="" loading="lazy">{e(nome)}{ruolo}{NUOVA_SCHEDA}</a>')
-    iniziali = "".join(parte[0] for parte in nome.split()[:2]).upper()
-    return f'<span class="persona"{attributo}><span class="iniziali" aria-hidden="true">{e(iniziali)}</span>{e(nome)}{ruolo}</span>'
+        avatar = f'<img src="https://github.com/{e(utente)}.png?size=72" alt="" loading="lazy">'
+        profilo = f'<a class="utente" href="https://github.com/{e(utente)}" target="_blank" rel="noopener">@{e(utente)}{NUOVA_SCHEDA}</a>'
+    else:
+        iniziali = "".join(parte[0] for parte in nome.split()[:2]).upper()
+        avatar = f'<span class="iniziali" aria-hidden="true">{e(iniziali)}</span>'
+        profilo = ""
+    return f'<li class="persona"{attributo}>{avatar}<span class="nome">{e(nome)}</span>{ruolo}{profilo}</li>'
 
 
 def leggi_ruoli():
@@ -421,28 +458,29 @@ def linea_del_tempo(periodi, nomi):
 
 def tabella_periodi(periodi):
     righe = "".join(f'<tr><td>{e(p["membro"])}</td><td><span class="ruolo r-{e(slug(p["ruolo"]))}">{e(p["ruolo"])}</span></td>'
-                    f'<td>{e(p["inizio"])}</td><td>{e(p["fine"])}</td></tr>' for p in periodi)
-    return ('<div class="scorri"><table class="periodi"><thead><tr><th scope="col">Membro</th><th scope="col">Ruolo</th>'
+                    f'<td class="data">{e(p["inizio"])}</td><td class="data">{e(p["fine"])}</td></tr>' for p in periodi)
+    # la regione scorrevole deve essere raggiungibile da tastiera
+    return ('<div class="scorri" role="region" aria-label="Tabella dei periodi" tabindex="0">'
+            '<table class="periodi"><thead><tr><th scope="col">Membro</th><th scope="col">Ruolo</th>'
             f'<th scope="col">Dal</th><th scope="col">Al</th></tr></thead><tbody>{righe}</tbody></table></div>')
 
 
-def indice(gruppo, typst, out, logo, accento, periodi):
+def pagina_indice(gruppo, typst, out, logo, accento, periodi):
     info, progetto = gruppo.get("gruppo", {}), gruppo.get("progetto", {})
     nome = info.get("nome") or "Documentazione di progetto"
 
-    chips = []
+    meta = []
     if progetto.get("capitolato"):
         testo = f"Capitolato {progetto['capitolato']}"
         if progetto.get("proponente"):
             testo += f" · {progetto['proponente']}"
-        chips.append(chip(testo, "capitolato"))
+        meta.append(e(testo))
     if info.get("email"):
-        chips.append(chip(info["email"], "mail", "mailto:" + info["email"]))
+        meta.append(f'<a href="mailto:{e(info["email"])}">{e(info["email"])}</a>')
     if info.get("repo"):
-        chips.append(chip("Repository", "repo", info["repo"]))
-    menu = [("#lettere", "Lettere"), ("#documenti", "Documenti"), ("#verbali", "Verbali"),
-            ("glossario.html", "Glossario"), ("ruoli.html", "Ruoli"), ("#gruppo", "Il gruppo")]
-    testata = intestazione(nome, SOTTOTITOLO, logo, chips, menu)
+        meta.append(link(info["repo"], "Repository"))
+    meta.append(f"Aggiornato il {datetime.date.today().isoformat()}")
+    testata = apertura(evidenzia_cifre(nome), "Documentazione di progetto", SOTTOTITOLO, meta)
 
     voci_lettere = lettere(typst, out)
     gestionali = documenti(typst, out, "documenti/esterni/gestionali")
@@ -452,78 +490,74 @@ def indice(gruppo, typst, out, logo, accento, periodi):
     verbali_interni = verbali(typst, out, "interni")
     membri = [persona(m, con_ruolo=True) for m in gruppo.get("membro", [])]
 
-    nessuno = "Nessun documento ancora pubblicato."
-    nessun_verbale = "Nessun verbale ancora pubblicato."
-    gruppo_html = (f'<p class="nota" id="nota-attuali">Ruoli in carica alla data di oggi.</p><div class="persone">{"".join(membri)}</div>'
-                   '<a class="pulsante secondario" href="ruoli.html">Ruoli e rotazione nel tempo</a>'
-                   if membri else '<p class="nota">Membri non ancora indicati.</p>')
-    corpo = ['<div class="griglia">',
-             scheda("lettere", "Lettere di presentazione",
-                    elenco(voci_lettere, "Nessuna lettera ancora pubblicata."), len(voci_lettere), larga=True),
-             scheda("documenti", "Documenti esterni",
-                    "<h3>Gestionali</h3>" + elenco(gestionali, nessuno) + "<h3>Tecnici</h3>" + elenco(tecnici, nessuno),
-                    len(gestionali) + len(tecnici)),
-             scheda("interni", "Documenti interni", elenco(interni, nessuno), len(interni)),
-             scheda("verbali", "Verbali",
-                    '<div class="due"><div><h3>Esterni</h3>' + elenco(verbali_esterni, nessun_verbale)
-                    + "</div><div><h3>Interni</h3>" + elenco(verbali_interni, nessun_verbale) + "</div></div>",
-                    len(verbali_esterni) + len(verbali_interni), larga=True),
-             scheda("glossario", "Glossario",
-                    "<p>I termini del progetto, con definizioni e sinonimi, come sono usati nei documenti.</p>"
-                    '<a class="pulsante" href="glossario.html">Apri il glossario</a>'),
-             scheda("gruppo", "Il gruppo", gruppo_html, len(membri)),
-             "</div>"]
-    return pagina(nome, testata, "\n".join(corpo), gruppo, logo, accento, dati={"periodi": periodi})
+    nessuno = "Nessun documento ancora pubblicato"
+    nessun_verbale = "Nessun verbale ancora pubblicato"
+    gruppo_html = (f'<p class="nota" id="nota-attuali">Ruoli in carica alla data di oggi.</p><ul class="persone">{"".join(membri)}</ul>'
+                   '<a class="freccia" href="ruoli.html">Ruoli e rotazione nel tempo</a>'
+                   if membri else '<p class="vuoto">Membri non ancora indicati</p>')
+    corpo = [
+        sezione("lettere", "01", "Lettere di presentazione", elenco(voci_lettere, "Nessuna lettera ancora pubblicata"), len(voci_lettere)),
+        sezione("documenti", "02", "Documenti esterni",
+                "<h3>Gestionali</h3>" + elenco(gestionali, nessuno) + "<h3>Tecnici</h3>" + elenco(tecnici, nessuno),
+                len(gestionali) + len(tecnici)),
+        sezione("interni", "03", "Documenti interni", elenco(interni, nessuno), len(interni)),
+        sezione("verbali", "04", "Verbali",
+                "<h3>Esterni</h3>" + elenco(verbali_esterni, nessun_verbale) + "<h3>Interni</h3>" + elenco(verbali_interni, nessun_verbale),
+                len(verbali_esterni) + len(verbali_interni)),
+        sezione("gruppo", "05", "Il gruppo", gruppo_html, len(membri)),
+    ]
+    laterale = indice([("#lettere", "01", "Lettere"), ("#documenti", "02", "Documenti esterni"), ("#interni", "03", "Documenti interni"),
+                       ("#verbali", "04", "Verbali"), ("#gruppo", "05", "Il gruppo")],
+                      [("glossario.html", "Glossario"), ("ruoli.html", "Ruoli")])
+    return pagina(nome, testata, "\n".join(corpo), gruppo, logo, accento, dati={"periodi": periodi}, laterale=laterale)
 
 
-def ruoli(gruppo, logo, accento, periodi):
+def pagina_ruoli(gruppo, logo, accento, periodi):
     info = gruppo.get("gruppo", {})
     nome = info.get("nome") or "Documentazione di progetto"
     membri = gruppo.get("membro", [])
     nomi = [nome_membro(m) for m in membri]
     nomi += sorted({p["membro"] for p in periodi} - set(nomi))
-    chips = [chip("Torna all'indice", "indietro", "index.html")]
+    meta = ['<a href="index.html">Indice</a>']
     if info.get("repo"):
-        chips.append(chip("Regole di rotazione", "repo", info["repo"].rstrip("/") + "/blob/main/documenti/interni/ruoli.md"))
-    testata = intestazione("Ruoli", "Chi ricopre quale ruolo, oggi e nel tempo.", logo, chips, compatto=True, sopra=nome)
+        meta.append(link(info["repo"].rstrip("/") + "/blob/main/documenti/interni/ruoli.md", "Regole di rotazione"))
+    testata = apertura(e("Ruoli"), nome, "Chi ricopre quale ruolo, oggi e nel tempo.", meta, compatta=True)
 
     attuali = [persona(m, con_ruolo=True) for m in membri]
     presenti = [r for r in RUOLI if any(p["ruolo"] == r for p in periodi)]
     legenda = '<ul class="legenda">' + "".join(f'<li><i class="r-{e(slug(r))}" aria-hidden="true"></i>{e(r)}</li>' for r in presenti) + "</ul>"
-    corpo = ['<div class="griglia">',
-             scheda("attuali", "Ruoli attuali",
-                    '<p class="nota" id="nota-attuali">Ruoli in carica alla data di oggi.</p>'
-                    + (f'<div class="persone">{"".join(attuali)}</div>' if attuali else '<p class="nota">Membri non ancora indicati.</p>'),
-                    larga=True)]
+    corpo = [sezione("attuali", "01", "Ruoli attuali",
+                     '<p class="nota" id="nota-attuali">Ruoli in carica alla data di oggi.</p>'
+                     + (f'<ul class="persone">{"".join(attuali)}</ul>' if attuali else '<p class="vuoto">Membri non ancora indicati</p>'))]
+    voci_indice = [("#attuali", "01", "Ruoli attuali")]
     if periodi:
-        corpo += [scheda("linea", "Linea del tempo", legenda + linea_del_tempo(periodi, nomi), larga=True),
-                  scheda("periodi", "Periodi", tabella_periodi(periodi)
-                         + '<p class="nota">I periodi futuri compaiono quando il gruppo li conferma in dati/ruoli.csv.</p>',
-                         len(periodi), larga=True)]
+        corpo += [sezione("linea", "02", "Linea del tempo", legenda + linea_del_tempo(periodi, nomi)),
+                  sezione("periodi", "03", "Periodi", tabella_periodi(periodi)
+                          + '<p class="nota">I periodi futuri compaiono quando il gruppo li conferma in dati/ruoli.csv.</p>', len(periodi))]
+        voci_indice += [("#linea", "02", "Linea del tempo"), ("#periodi", "03", "Periodi")]
     else:
-        corpo.append(scheda("periodi", "Periodi", '<p class="nota">Nessun periodo ancora registrato in dati/ruoli.csv.</p>', 0, larga=True))
-    corpo.append("</div>")
-    return pagina(f"Ruoli - {nome}", testata, "\n".join(corpo), gruppo, logo, accento, dati={"periodi": periodi})
+        corpo.append(sezione("periodi", "02", "Periodi", '<p class="vuoto">Nessun periodo ancora registrato in dati/ruoli.csv</p>', 0))
+        voci_indice.append(("#periodi", "02", "Periodi"))
+    laterale = indice(voci_indice, [("index.html", "Indice"), ("glossario.html", "Glossario")])
+    return pagina(f"Ruoli - {nome}", testata, "\n".join(corpo), gruppo, logo, accento, dati={"periodi": periodi}, laterale=laterale)
 
 
 def senza_accenti(testo):
     return "".join(c for c in unicodedata.normalize("NFD", testo) if not unicodedata.combining(c)).casefold()
 
 
-def glossario(gruppo, voci, logo, accento):
+def pagina_glossario(gruppo, voci, logo, accento):
     nome = gruppo.get("gruppo", {}).get("nome") or "Documentazione di progetto"
     per_iniziale = {}
     for voce_ in sorted(voci, key=lambda v: senza_accenti(v["termine"])):
         iniziale = senza_accenti(voce_["termine"])[:1].upper()
         per_iniziale.setdefault(iniziale if iniziale.isalpha() else "#", []).append(voce_)
 
-    testata = intestazione("Glossario", SOTTOTITOLO, logo, [chip("Torna all'indice", "indietro", "index.html")],
-                           compatto=True, sopra=nome)
+    testata = apertura(e("Glossario"), nome, "I termini del progetto, con definizioni e sinonimi, come sono usati nei documenti.",
+                       ['<a href="index.html">Indice</a>', f"{len(voci)} voci"], compatta=True)
     corpo = []
     if per_iniziale:
-        alfabeto = "".join(f'<a href="#{e(slug(i)) or "altro"}">{e(i)}</a>' for i in per_iniziale)
-        corpo.append(f'<nav class="alfabeto" aria-label="Iniziali">{alfabeto}</nav>')
-        for iniziale, gruppo_voci in per_iniziale.items():
+        for numero, (iniziale, gruppo_voci) in enumerate(per_iniziale.items(), start=1):
             righe = []
             for voce_ in gruppo_voci:
                 sinonimi = voce_.get("sinonimi", [])
@@ -531,10 +565,15 @@ def glossario(gruppo, voci, logo, accento):
                 nota = f'<span class="nota">Sinonimi: {e(", ".join(sinonimi))}</span>' if sinonimi else ""
                 righe.append(f'<dt id="{e(slug(voce_["termine"]))}">{ancore}{e(voce_["termine"])}</dt>'
                              f"<dd>{e(voce_['definizione'])}{nota}</dd>")
-            corpo.append(scheda(slug(iniziale) or "altro", iniziale, "<dl>" + "".join(righe) + "</dl>", len(gruppo_voci), larga=True))
+            blocco = sezione(slug(iniziale) or "altro", f"{numero:02d}", iniziale, "<dl>" + "".join(righe) + "</dl>", len(gruppo_voci))
+            corpo.append(blocco.replace('class="sezione"', 'class="sezione lettera"', 1))
+        alfabeto = "".join(f'<li><a href="#{e(slug(i)) or "altro"}">{e(i)}</a></li>' for i in per_iniziale)
+        laterale = (f'<nav class="indice" aria-label="Iniziali"><ul class="alfabeto">{alfabeto}</ul>'
+                    '<ul class="pagine"><li><a href="index.html">Indice</a></li><li><a href="ruoli.html">Ruoli</a></li></ul></nav>')
     else:
-        corpo.append(scheda("vuoto", "Glossario", '<p class="nota">Nessuna voce ancora presente.</p>', 0, larga=True))
-    return pagina(f"Glossario - {nome}", testata, '<div class="griglia">' + "\n".join(corpo) + "</div>", gruppo, logo, accento)
+        corpo.append(sezione("vuoto", "01", "Nessuna voce", '<p class="vuoto">Nessuna voce ancora presente</p>'))
+        laterale = indice([("#vuoto", "01", "Glossario")], [("index.html", "Indice"), ("ruoli.html", "Ruoli")])
+    return pagina(f"Glossario - {nome}", testata, "\n".join(corpo), gruppo, logo, accento, laterale=laterale)
 
 
 def main():
@@ -567,9 +606,9 @@ def main():
     if info.get("logo") and (RADICE / info["logo"]).is_file():
         logo = "logo" + Path(info["logo"]).suffix.lower()
         shutil.copy(RADICE / info["logo"], out / logo)
-    (out / "index.html").write_text(indice(gruppo, typst, out, logo, accento, periodi), encoding="utf-8")
-    (out / "glossario.html").write_text(glossario(gruppo, voci, logo, accento), encoding="utf-8")
-    (out / "ruoli.html").write_text(ruoli(gruppo, logo, accento, periodi), encoding="utf-8")
+    (out / "index.html").write_text(pagina_indice(gruppo, typst, out, logo, accento, periodi), encoding="utf-8")
+    (out / "glossario.html").write_text(pagina_glossario(gruppo, voci, logo, accento), encoding="utf-8")
+    (out / "ruoli.html").write_text(pagina_ruoli(gruppo, logo, accento, periodi), encoding="utf-8")
     print(f"sito generato in {out}: {len(list(out.glob('*.pdf')))} PDF")
 
 
