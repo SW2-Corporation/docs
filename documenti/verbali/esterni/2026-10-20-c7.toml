@@ -1,0 +1,93 @@
+tipo = "esterno"
+data = 2026-10-20
+inizio = "14:00"
+fine = "14:30"
+luogo = "Microsoft Teams"
+redattore = "Matteo Bellato"
+verificatore = "David Sirbu"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = []
+approvazione_esterna = ""
+ordine_del_giorno = [
+  "Disponibilità, formato e riservatezza dei dati di studio reali",
+  "Perimetro del Minimum Viable Product e priorità dei widget",
+  "Volumetria dei dati e tempi di risposta attesi per la dashboard",
+  "Integrazione del layer AI, domande di test di accettazione e fornitura chiavi API",
+  "Vincoli di repository pubblico e protezione del dataset aziendale",
+  "Strategie di verifica del software e test sulle parti critiche",
+  "Aspetti architetturali, gestione utenti e canali di comunicazione",
+]
+
+[[esterni]]
+nome = "Gianluca Carlesso"
+azienda = "Ergon Informatica S.r.l."
+ruolo = "Referente aziendale e Product Owner"
+
+[[punto]]
+titolo = "Disponibilità, formato e riservatezza dei dati di studio reali"
+sintesi = """Il proponente ha confermato che il dataset reale di studio può essere fornito al gruppo dopo l'eventuale aggiudicazione, così da poter essere utilizzato fin dalle prime fasi di progettazione e per il Proof of Concept. Sul formato specifico di estrazione e interscambio ci si accorderà in fase di avvio delle attività, in funzione delle esigenze architetturali della pipeline di elaborazione."""
+
+[[punto]]
+titolo = "Perimetro del Minimum Viable Product e priorità dei widget"
+sintesi = """In merito alla fase 1 e all'articolazione iniziale dell'applicazione, il referente ha chiarito che il core essenziale della dashboard deve comprendere widget immediati e ad alto valore informativo: tabelle dati, griglie pivot e schede sintetiche (card con KPI), affiancati da filtri dinamici e grafici a istogramma. Mappe geografiche ed esportazione avanzata sono da considerarsi secondarie (requisiti desiderabili). Il sig. Carlesso ha raccomandato di focalizzarsi prioritariamente sul completamento robusto del core prima di estendere il perimetro."""
+
+[[punto]]
+titolo = "Volumetria dei dati e tempi di risposta attesi per la dashboard"
+sintesi = """Riguardo alla definizione di dataset di dimensioni significative e alle prestazioni attese, la metrica puntuale sarà concordata e tarata sui dati d'impresa effettivi forniti dall'azienda. Per il caricamento completo della dashboard l'ordine di grandezza atteso è nell'ordine dei secondi, con un limite massimo accettabile posto idealmente a 30 secondi per interrogazioni complesse."""
+
+[[punto]]
+titolo = "Integrazione del layer AI, domande di test di accettazione e fornitura chiavi API"
+sintesi = """L'azienda metterà a disposizione del gruppo un insieme di domande di business tipiche poste dai propri clienti, utilizzabili come banco di prova e test di accettazione per l'assistente Text-to-SQL. Riguardo alla privacy, l'utente finale è consapevole che i dati inviati al modello transitano verso provider esterni. Ergon Informatica può fornire direttamente al gruppo le chiavi API con plafond di credito (orientandosi verso OpenAI o Anthropic). È stato inoltre consigliato l'impiego di un modulo architetturale router per gestire l'instradamento e l'eventuale cambio trasparente dei modelli di fondazione."""
+
+[[punto]]
+titolo = "Vincoli di repository pubblico e protezione del dataset aziendale"
+sintesi = """Il codice sorgente dell'applicazione può essere pubblicato in un repository pubblico condiviso con l'azienda. Il proponente ha tuttavia sottolineato come vincolo perentorio e non negoziabile che il dataset aziendale e i dati di produzione non debbano mai essere resi pubblici."""
+
+[[punto]]
+titolo = "Strategie di verifica del software e test sulle parti critiche"
+sintesi = """La copertura e la strategia di test saranno definite nel dettaglio durante la progettazione, ma l'attenzione del committente è orientata principalmente alla robustezza delle componenti più critiche e ad alto rischio qualitativo, con particolare riguardo alla mitigazione delle allucinazioni dell'intelligenza artificiale e alla correttezza delle query SQL generate."""
+
+[[punto]]
+titolo = "Aspetti architetturali, gestione utenti e canali di comunicazione"
+sintesi = """Il proponente ha precisato che un singolo utente potrà gestire dashboard multiple. La differenziazione in ruoli applicativi è un'estensione interessante ma subordinata allo sviluppo del core. Per le comunicazioni ordinarie e straordinarie, oltre ai canali istituzionali e agli incontri quindicinali, il sig. Carlesso ha manifestato disponibilità anche per contatti rapidi e diretti via messaggistica (Telegram o WhatsApp)."""
+
+[[decisione]]
+id = "VE-2026-10-20-C7.1"
+testo = "Il Minimum Viable Product include come requisiti obbligatori tabelle, griglie pivot, card con KPI, istogrammi e filtri dinamici; mappe ed esportazione passano a requisiti desiderabili."
+motivazione = "Accordo con il proponente per garantire il completamento prioritario del core applicativo prima dell'estensione delle funzionalità."
+
+[[decisione]]
+id = "VE-2026-10-20-C7.2"
+testo = "Il repository di progetto sarà pubblico ma il dataset aziendale reale resterà strettamente riservato ed escluso dal controllo di versione."
+motivazione = "Vincolo perentorio di riservatezza e protezione dei dati d'impresa imposto da Ergon Informatica."
+
+[[decisione]]
+id = "VE-2026-10-20-C7.3"
+testo = "L'architettura del layer AI adotterà il pattern router per il disaccoppiamento dai provider e, ove necessario, utilizzerà credenziali con plafond fornite da Ergon Informatica."
+motivazione = "Flessibilità nel cambio modello tra più fornitori ed eventuali costi di inferenza a carico del proponente."
+
+[[decisione]]
+id = "VE-2026-10-20-C7.4"
+testo = "I canali di comunicazione ufficiali con Ergon Informatica comprendono incontri quindicinali di avanzamento e canali telematici per il supporto continuo."
+motivazione = "Garantire allineamento periodico e rapidità di riscontro durante l'intero ciclo di vita del progetto."
+
+[[azione]]
+decisione = "VE-2026-10-20-C7.4"
+descrizione = "Inviare via email a Ergon Informatica il verbale dell'incontro per approvazione formale."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-22
+issue = "#43"
+
+[[azione]]
+decisione = "VE-2026-10-20-C7.1"
+descrizione = "Aggiornare il documento di Valutazione dei capitolati con gli esiti dell'incontro esplorativo su C7."
+assegnatario = "Oussama Mahdi"
+scadenza = 2026-10-23
+issue = "#44"
