@@ -81,6 +81,7 @@ Il percorso del verbale si può scrivere con o senza `/` iniziale; su Git Bash p
 
   ```toml
   tipo = "interno"                 # "interno" | "esterno", come la cartella
+  titolo = "..."                   # facoltativo: oggetto, sul sito e nel PDF; senza, l'azienda o il primo punto
   data = 2026-10-14                # uguale alla data del nome del file
   inizio = "18:00"
   fine = "19:00"
