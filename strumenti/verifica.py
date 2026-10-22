@@ -71,6 +71,16 @@ TABELLE_VERBALE = {
     "azione": {"decisione": str, "descrizione": str, "assegnatario": str, "scadenza": dt.date, "issue": str},
 }
 
+# dati/pianificazione.toml: inizio e fine (o data) previsti obbligatori, gli effettivi solo quando accadono
+CAMPI_PERIODO = {"nome": str, "inizio": dt.date, "fine": dt.date, "inizio_effettivo": dt.date, "fine_effettiva": dt.date}
+CAMPI_PIANO = {
+    "fase": {**CAMPI_PERIODO, "nota": str, "ore_previste": (int, float), "attivita": list, "milestone": list},
+    "fase.attivita": CAMPI_PERIODO,
+    "fase.milestone": {"nome": str, "data": dt.date, "data_effettiva": dt.date},
+}
+OBBLIGATORI_PIANO = {"fase": ("nome", "inizio", "fine"), "fase.attivita": ("nome", "inizio", "fine"),
+                     "fase.milestone": ("nome", "data")}
+
 
 def data_iso(testo):
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", testo):
@@ -79,6 +89,16 @@ def data_iso(testo):
         return dt.date.fromisoformat(testo)
     except ValueError:
         return None
+
+
+def nome_verbale(nome):
+    """(data, suffisso) dal nome di un verbale senza estensione, AAAA-MM-GG o AAAA-MM-GG-suffisso.
+
+    Il suffisso, in minuscolo, distingue più verbali dello stesso tipo nello stesso giorno:
+    per gli esterni è il codice del capitolato (2026-10-20-c7). None se il nome non è valido.
+    """
+    m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})(?:-([a-z0-9]+))?", nome)
+    return (data_iso(m[1]), m[2] or "") if m and data_iso(m[1]) else None
 
 
 def numero(x):
@@ -382,6 +402,8 @@ class Verifica:
             self.controlla_ore()
         elif rel == "dati/preventivo.toml":
             self.controlla_preventivo(testo)
+        elif rel == "dati/pianificazione.toml":
+            self.controlla_pianificazione(testo)
 
     # --- controlli comuni ---
 
@@ -656,7 +678,9 @@ class Verifica:
         for punto in v.get("punto", []):
             self.controlla_titolo(rel, riga_valore(testo, punto["titolo"]), punto["titolo"])
 
-        prefisso = "VI" if tipo == "interno" else "VE"
+        # il suffisso del nome del file entra nell'id: 2026-10-20-c7.toml ha VE-2026-10-20-C7.n
+        suffisso = f"-{nome[1].upper()}" if nome and nome[1] else ""
+        prefisso = ("VI" if tipo == "interno" else "VE") + f"-{data}{suffisso}"
         decisioni = set()
         if not v.get("decisione"):
             errore("E-VERBALE-DECISIONE", "serve almeno una decisione")
@@ -885,6 +909,79 @@ class Verifica:
         elif costo > minimo * 1.07:
             self.segnala(rel, 0, "W-PREVENTIVO",
                          f"costo totale {costo:.2f} € oltre il 107% del minimo di {minimo:.2f} €: conforme ma elevato")
+
+    def controlla_pianificazione(self, testo):
+        rel = "dati/pianificazione.toml"
+        try:
+            piano = tomllib.loads(testo)
+        except tomllib.TOMLDecodeError as e:
+            self.segnala(rel, riga_errore_toml(e), "E-PIANO", f"TOML non valido: {e}")
+            return
+        for chiave in piano.keys() - {"fase"}:
+            self.segnala(rel, riga_valore(testo, chiave), "E-PIANO", f'chiave "{chiave}" non ammessa')
+        fasi = piano.get("fase")
+        if not isinstance(fasi, list) or not fasi:
+            self.segnala(rel, 0, "E-PIANO", "nessuna [[fase]]")
+            return
+        oggi = dt.date.today()
+        # attività e milestone si numerano su tutto il file, per ritrovarne la riga
+        conta = {"attivita": 0, "milestone": 0}
+        precedente = None
+        for i, fase in enumerate(fasi, start=1):
+            valida = self.voce_piano(rel, riga_voce(testo, "fase", i), "fase", fase, oggi)
+            for tabella in conta:
+                voci = fase.get(tabella, []) if isinstance(fase, dict) else []
+                for voce in voci if isinstance(voci, list) else []:
+                    conta[tabella] += 1
+                    riga = riga_voce(testo, f"fase.{tabella}", conta[tabella])
+                    if not (self.voce_piano(rel, riga, f"fase.{tabella}", voce, oggi) and valida):
+                        continue
+                    inizio, fine = (voce["data"], voce["data"]) if tabella == "milestone" else (voce["inizio"], voce["fine"])
+                    if inizio < fase["inizio"] or fine > fase["fine"]:
+                        self.segnala(rel, riga, "W-PIANO", f'"{voce["nome"]}" è prevista fuori dalla fase "{fase["nome"]}"')
+            if valida and precedente:
+                # le fasi si susseguono: così ogni ora di dati/ore.csv cade in una fase sola
+                if fase["inizio"] <= precedente["fine"]:
+                    self.segnala(rel, riga_voce(testo, "fase", i), "E-PIANO",
+                                 f'fase "{fase["nome"]}": inizio previsto non successivo alla fine della fase precedente')
+                fine_precedente = precedente.get("fine_effettiva")
+                if "inizio_effettivo" in fase and (fine_precedente is None or fase["inizio_effettivo"] <= fine_precedente):
+                    self.segnala(rel, riga_voce(testo, "fase", i), "E-PIANO",
+                                 f'fase "{fase["nome"]}": iniziata prima della fine effettiva della fase precedente')
+            precedente = fase if valida else None
+        self.controlla_lessico(rel, testo)
+
+    def voce_piano(self, rel, riga, tabella, voce, oggi):
+        """Campi, tipi e date di una fase, attività o milestone; True se è utilizzabile."""
+        if not isinstance(voce, dict):
+            self.segnala(rel, riga, "E-PIANO", f"[[{tabella}]] non valida")
+            return False
+        campi, problemi = CAMPI_PIANO[tabella], []
+        for chiave, valore in voce.items():
+            if chiave not in campi:
+                problemi.append(f'chiave "{chiave}" non ammessa')
+            elif chiave == "ore_previste":
+                if not (numero(valore) and valore >= 0):
+                    problemi.append("ore_previste deve essere un numero non negativo")
+            elif not di_tipo(valore, campi[chiave]):
+                problemi.append(f"{chiave}: atteso {'una data AAAA-MM-GG' if campi[chiave] is dt.date else 'un altro tipo'}")
+        problemi += [f"{chiave} mancante" for chiave in OBBLIGATORI_PIANO[tabella] if chiave not in voce]
+        if not problemi and not voce["nome"].strip():
+            problemi.append("nome vuoto")
+        if not problemi and tabella != "fase.milestone":
+            if voce["fine"] < voce["inizio"]:
+                problemi.append("la fine prevista precede l'inizio")
+            if "fine_effettiva" in voce and "inizio_effettivo" not in voce:
+                problemi.append("fine_effettiva senza inizio_effettivo")
+            elif "fine_effettiva" in voce and voce["fine_effettiva"] < voce["inizio_effettivo"]:
+                problemi.append("la fine effettiva precede l'inizio effettivo")
+        for chiave in ("inizio_effettivo", "fine_effettiva", "data_effettiva"):
+            if di_tipo(voce.get(chiave), dt.date) and voce[chiave] > oggi:
+                problemi.append(f"{chiave} {voce[chiave]} nel futuro: gli effettivi si scrivono quando accadono")
+        nome = voce.get("nome") if isinstance(voce.get("nome"), str) else ""
+        for problema in problemi:
+            self.segnala(rel, riga, "E-PIANO", f'{tabella} "{nome}": {problema}' if nome else problema)
+        return not problemi
 
 
 def main(argomenti_riga):

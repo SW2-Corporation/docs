@@ -9,7 +9,7 @@
 
 ## Il sito
 
-I documenti approvati, le Lettere di Presentazione e i verbali sono pubblicati su **[sw2-corporation.github.io/docs](https://sw2-corporation.github.io/docs/)**. Il sito si rigenera da questo repository a ogni push su `main`: sul sito vanno solo le versioni rilasciate, mai le bozze. La pagina [Ruoli](https://sw2-corporation.github.io/docs/ruoli.html) mostra chi ricopre quale ruolo oggi e la linea del tempo dei periodi di `dati/ruoli.csv`.
+I documenti approvati, le Lettere di Presentazione e i verbali sono pubblicati su **[sw2-corporation.github.io/docs](https://sw2-corporation.github.io/docs/)**. Il sito si rigenera da questo repository a ogni push su `main`: sul sito vanno solo le versioni rilasciate, mai le bozze. Il menu in alto porta alle quattro pagine: Documenti (lettere, documenti, verbali e gruppo, con lo stato del progetto in apertura), Pianificazione, Ruoli e Glossario, con la ricerca dei termini. La pagina [Ruoli](https://sw2-corporation.github.io/docs/ruoli.html) mostra chi ricopre quale ruolo oggi e la linea del tempo dei periodi di `dati/ruoli.csv`. La pagina [Pianificazione](https://sw2-corporation.github.io/docs/pianificazione.html) mostra il diagramma di Gantt di fasi, attività e milestone di `dati/pianificazione.toml`, con il tempo previsto e quello usato.
 
 ## Il gruppo
 
@@ -29,8 +29,8 @@ Contatti: [sw2corporation@gmail.com](mailto:sw2corporation@gmail.com). Ruoli e r
 I documenti sono scritti in [Typst](https://typst.app) 0.15; il sito con i PDF pubblicati si genera da questo repo.
 
 ```
-assets/          logo del gruppo
-dati/            gruppo, ruoli, ore, preventivo, glossario, nomi propri ammessi nei titoli
+assets/          logo del gruppo; font/ con i caratteri del sito e le loro licenze OFL
+dati/            gruppo, ruoli, ore, preventivo, pianificazione, glossario, nomi propri ammessi nei titoli
 documenti/
   esterni/       gestionali/ e tecnici/: documenti con registro delle modifiche
   interni/       documenti interni con registro (es. Norme di Progetto)
@@ -77,11 +77,11 @@ Il percorso del verbale si può scrivere con o senza `/` iniziale; su Git Bash p
 
 - **Documento con registro**: un file `X.typ` con `#show: documento.with(titolo: ..., uso: "esterno", destinatari: (...), registro: csv("X.registro.csv"))` (vedi `documenti/esterni/gestionali/`) e accanto `X.registro.csv` con la sola intestazione `versione,data,autore,verificatore,descrizione`. `sottotitolo:` è facoltativo. La copertina ricava versione, stato (Bozza, In verifica, Approvato), redattori, verificatori e approvatore dal registro.
 - **Lettera di Presentazione**: `documenti/lettere/AAAA-MM-GG.typ` con `#show: lettera.with(data: "AAAA-MM-GG", oggetto: "...")`, poi il testo.
-- **Verbale**: `documenti/verbali/interni/AAAA-MM-GG.toml` (o `esterni/`). Campi:
+- **Verbale**: `documenti/verbali/interni/AAAA-MM-GG.toml` (o `esterni/`). Più verbali dello stesso tipo nello stesso giorno aggiungono al nome un suffisso in minuscolo, per gli esterni il codice del capitolato: `2026-10-20-c7.toml`, con decisioni `VE-2026-10-20-C7.n`. Campi:
 
   ```toml
   tipo = "interno"                 # "interno" | "esterno", come la cartella
-  data = 2026-10-14                # uguale al nome del file
+  data = 2026-10-14                # uguale alla data del nome del file
   inizio = "18:00"
   fine = "19:00"
   luogo = "Discord"
@@ -113,11 +113,43 @@ Il percorso del verbale si può scrivere con o senza `/` iniziale; su Git Bash p
   Il verbale non ha copertina, versione né registro: intestazione con orari e durata, partecipanti, poi ordine del giorno, sintesi, decisioni e azioni. Gli esterni riportano l'approvazione del proponente, "in attesa" finché manca.
 - **Presentazione**: `presentazioni/diari/AAAA-MM-GG.typ` per il diario di bordo, con `#show: presentazione.with(evento: "Diario di bordo", data: "AAAA-MM-GG", titolo: "...")` e una `#slide(titolo: "...")[...]` per ogni slide. La prima slide è il titolo; ogni slide riporta evento, data, logo e numero "n/N". Poco testo: il resto si dice a voce.
 
+## Pianificazione
+
+`dati/pianificazione.toml` contiene le fasi del progetto in ordine, ognuna con le sue attività e milestone. Da qui il sito genera `pianificazione.html`; i documenti Typst, per esempio il Piano di Progetto, leggono gli stessi dati con `toml("/dati/pianificazione.toml")`.
+
+```toml
+[[fase]]
+nome = "Candidatura"
+nota = "..."                     # facoltativa
+inizio = 2026-10-12              # previsto
+fine = 2026-10-30
+inizio_effettivo = 2026-10-12    # quando accade
+fine_effettiva = 2026-10-30      # assente = in corso
+ore_previste = 0                 # facoltativo
+
+  [[fase.attivita]]
+  nome = "Valutazione dei capitolati"
+  inizio = 2026-10-19
+  fine = 2026-10-28
+  inizio_effettivo = 2026-10-18
+
+  [[fase.milestone]]
+  nome = "Invio della candidatura"
+  data = 2026-10-30
+  data_effettiva = 2026-10-30    # quando è raggiunta
+```
+
+- Gli effettivi si scrivono quando accadono, mai in anticipo: una data effettiva futura è un errore.
+- Le fasi non si sovrappongono. Le ore usate di una fase sono le righe di `dati/ore.csv` che cadono nel suo periodo effettivo.
+- La pagina si apre con la situazione di oggi: fase in corso, prossima milestone, attività concluse, ore usate e voci in ritardo. Nel Gantt la fascia grigia è il previsto e la barra colorata l'effettivo, fino a oggi se la voce è in corso; il colore dice lo stato (verde conclusa, blu in corso, rosso a righe in ritardo). Ogni riga riporta stato e giorni usati su previsti; le date esatte sono nella tabella sotto ogni fase.
+- Il sito si rigenera anche ogni notte, perché stato e giorni usati dipendono dalla data.
+
 ## Personalizzare lo stile
 
 - Colore d'accento: `colore` in `dati/gruppo.toml` (es. `"#D7262F"`). Il sito lo usa per barre, bottoni e testi in evidenza; sugli sfondi scuri lo schiarisce da solo per tenere il contrasto sopra 4,5:1. Con un colore molto chiaro il contrasto sul tema chiaro va ricontrollato.
 - Logo: il file in `assets/` e il suo percorso in `logo` di `dati/gruppo.toml`.
-- Tutto il resto (font, titoli, tabelle, liste, intestazione e piè di pagina): `modello/stile.typ`.
+- Caratteri del sito: Atkinson Hyperlegible Next per testo e titoli, Atkinson Hyperlegible Mono per date e numeri, disegnati per la massima leggibilità. Stanno in `assets/font/` con la loro licenza SIL OFL e il sito li serve da sé, senza servizi esterni.
+- Tutto il resto dei documenti (font, titoli, tabelle, liste, intestazione e piè di pagina): `modello/stile.typ`.
 
 ## Verifica
 
@@ -131,7 +163,7 @@ Senza argomenti `verifica.py` controlla tutto il repo (`dati/`, `documenti/`, `m
 
 ## Pubblicazione
 
-A ogni push su `main` il workflow `pubblica.yml` ripete i controlli, compila i documenti e pubblica il sito su GitHub Pages (in Settings > Pages la sorgente deve essere "GitHub Actions"). Sul sito vanno i documenti rilasciati, tutte le lettere e tutti i verbali, in ordine LIFO; le presentazioni no. Anteprima locale:
+A ogni push su `main`, e ogni notte, il workflow `pubblica.yml` ripete i controlli, compila i documenti e pubblica il sito su GitHub Pages (in Settings > Pages la sorgente deve essere "GitHub Actions"). Sul sito vanno i documenti rilasciati, tutte le lettere e tutti i verbali, in ordine LIFO; le presentazioni no. Anteprima locale:
 
 ```sh
 make sito            # oppure: python strumenti/sito.py --out build/site
