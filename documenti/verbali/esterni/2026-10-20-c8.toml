@@ -3,7 +3,7 @@ data = 2026-10-20
 inizio = "16:00"
 fine = "16:30"
 luogo = "Google Meet"
-redattore = "Bellato Matteo"
+redattore = "Matteo Bellato"
 verificatore = "Alessandro Paduret"
 partecipanti = [
     "Davide Baraldo",
@@ -74,44 +74,44 @@ titolo = "Canali di supporto e cadenza degli incontri di avanzamento"
 sintesi = """Il proponente ha ribadito la ratio dell'assenza di canali chat istantanei: Halue agisce come committente e il progetto è in capo al gruppo, che opera come team di ingegneria autonomo. Il referente unico non fornisce supporto tecnico continuativo né sviluppa insieme al gruppo; in caso di necessità per specifici approfondimenti sull'architettura o su Shopify, il gruppo potrà concordare momenti di confronto con il team di ingegneri di Halue."""
 
 [[decisione]]
-id = "VE-2026-10-20.1"
+id = "VE-2026-10-20-C8.1"
 testo = "Il perimetro del Minimum Viable Product (MVP) comprende i requisiti obbligatori ed eventuali desiderabili concordati con Halue in corso d'opera, prioritizzando quelli a bassa complessità aggiunta."
 motivazione = "Garantisce sostenibilità al progetto didattico e flessibilità collaborativa, dando priorità agli obbligatori secondo quanto concordato con il proponente."
 
 [[decisione]]
-id = "VE-2026-10-20.2"
+id = "VE-2026-10-20-C8.2"
 testo = "Il soddisfacimento del requisito RFO-19 consiste in un riscontro visivo a interfaccia con data e ora dell'ultimo snapshot; le notifiche email restano subordinate a RFD-06."
 motivazione = "Semplifica l'infrastruttura iniziale dell'MVP evitando dipendenze esterne premature per l'invio di email."
 
 [[decisione]]
-id = "VE-2026-10-20.3"
+id = "VE-2026-10-20-C8.3"
 testo = "Il Proof of Concept dimostrerà l'estensibilità del motore di regole (RNF-03) implementando un'interfaccia programmatica modulare, partendo dalle regole R-MF-01 e R-MF-02 o R-WH-01."
 motivazione = "Risponde all'attesa del proponente che privilegia il disaccoppiamento architetturale rispetto alla quantità di regole iniziali."
 
 [[decisione]]
-id = "VE-2026-10-20.4"
+id = "VE-2026-10-20-C8.4"
 testo = "Gli strumenti di intelligenza artificiale vengono impiegati dal gruppo come supporto allo sviluppo e testing (sezione 14), senza introdurre assistenti conversazionali nel prodotto."
 motivazione = "Allinea gli obiettivi implementativi con il perimetro deterministico chiarito dal proponente."
 
 [[decisione]]
-id = "VE-2026-10-20.5"
+id = "VE-2026-10-20-C8.5"
 testo = "L'ambiente di sviluppo si appoggia a Shopify Partners e l'uso di Row Level Security (RLS) su Supabase è finalizzato a limitare l'accesso ai soli dati autorizzati direttamente a livello di database, garantendo la sicurezza anche in caso di difetti nell'applicativo (RQS-02)."
 motivazione = "Impedisce esposizioni errate di dati implementando la gestione dei permessi anche sul database PostgreSQL ed evita costi infrastrutturali grazie ai piani gratuiti concordati."
 
 [[decisione]]
-id = "VE-2026-10-20.6"
+id = "VE-2026-10-20-C8.6"
 testo = "I canali di comunicazione ufficiali con Halue sono la casella email sonar@halue.io e gli incontri quindicinali di allineamento in videoconferenza."
 motivazione = "Rispetta le modalità di supporto stabilite dal capitolato e confermate dal proponente."
 
 [[azione]]
-decisione = "VE-2026-10-20.6"
+decisione = "VE-2026-10-20-C8.6"
 descrizione = "Inviare via email a Halue (sonar@halue.io e valentino.baraldo@halue.io) il presente verbale per approvazione formale."
 assegnatario = "Matteo Bellato"
 scadenza = 2026-10-23
 issue = "#47"
 
 [[azione]]
-decisione = "VE-2026-10-20.1"
+decisione = "VE-2026-10-20-C8.1"
 descrizione = "Aggiornare la Valutazione dei capitolati integrando l'esito formale dell'incontro esplorativo con Halue."
 assegnatario = "Oussama Mahdi"
 scadenza = 2026-10-23
