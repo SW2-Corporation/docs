@@ -31,6 +31,7 @@ Gantt
 Jira
 Typst
 Shopify
+Shopify Plus
 ISO
 IEC
 Sanmarco Informatica
@@ -46,3 +47,4 @@ Ergon Informatica
 Halue
 Sonar
 Zucchetti
+Definition of Done

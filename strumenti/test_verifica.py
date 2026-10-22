@@ -357,6 +357,17 @@ class TestVerbale(Base):
         self.assertIn("E-VERBALE-REDATTORE", codici)
         self.assertIn("E-VERBALE-PARTECIPANTI", codici)
 
+    def test_piu_verbali_nello_stesso_giorno(self):
+        testo = VERBALE.replace("VI-2026-10-14.", "VI-2026-10-14-B.")
+        self.assertEqual(self.verbale(testo, nome="2026-10-14-b"), [])
+        # l'id deve riportare il suffisso del nome del file
+        self.assertEqual(self.verbale(VERBALE, nome="2026-10-14-b"), ["E-VERBALE-DECISIONE"])
+
+    def test_suffisso_non_valido(self):
+        codici = self.verbale(VERBALE, nome="2026-10-14_b")
+        self.assertIn("E-DATA-FILE", codici)
+        self.assertIn("E-VERBALE-DATA", codici)
+
     def test_esterno_senza_esterni(self):
         testo = VERBALE.replace('"interno"', '"esterno"').replace("VI-", "VE-")
         codici = self.verbale(testo, "esterni")
@@ -412,6 +423,84 @@ class TestPreventivo(Base):
     def test_preventivo_elevato(self):
         caro = (40, 11, 11, 11, 11, 11)
         self.assertEqual(self.ripartizione(caro, caro, caro), ["W-PREVENTIVO"])
+
+
+PIANO = """\
+[[fase]]
+nome = "Candidatura"
+inizio = 2026-09-01
+fine = 2026-09-30
+inizio_effettivo = 2026-09-01
+fine_effettiva = 2026-09-30
+ore_previste = 0
+
+  [[fase.attivita]]
+  nome = "Valutazione dei capitolati"
+  inizio = 2026-09-05
+  fine = 2026-09-20
+  inizio_effettivo = 2026-09-06
+
+  [[fase.milestone]]
+  nome = "Invio della candidatura"
+  data = 2026-09-30
+  data_effettiva = 2026-09-30
+
+[[fase]]
+nome = "RTB"
+inizio = 2026-10-01
+fine = 2026-12-20
+
+  [[fase.attivita]]
+  nome = "Analisi dei Requisiti"
+  inizio = 2026-10-02
+  fine = 2026-11-30
+"""
+
+
+class TestPianificazione(Base):
+    def problemi_piano(self, testo):
+        self.scrivi("dati/pianificazione.toml", testo)
+        return [(riga, codice, messaggio) for _, riga, codice, messaggio in self.problemi("dati/pianificazione.toml")]
+
+    def test_piano_corretto(self):
+        self.assertEqual(self.problemi_piano(PIANO), [])
+
+    def test_campi_e_date_errati(self):
+        testo = (PIANO.replace('nome = "Valutazione dei capitolati"', 'nome = "Valutazione dei capitolati"\n  responsabile = "Anna"')
+                 .replace("fine = 2026-11-30", "fine = 2026-10-01")
+                 .replace("data_effettiva = 2026-09-30", "data_effettiva = 2999-01-01")
+                 .replace("ore_previste = 0", "ore_previste = -1"))
+        problemi = self.problemi_piano(testo)
+        self.assertEqual({codice for _, codice, _ in problemi}, {"E-PIANO"})
+        messaggi = " | ".join(m for _, _, m in problemi)
+        self.assertIn('chiave "responsabile" non ammessa', messaggi)
+        self.assertIn("la fine prevista precede l'inizio", messaggi)
+        self.assertIn("data_effettiva 2999-01-01 nel futuro", messaggi)
+        self.assertIn("ore_previste deve essere un numero non negativo", messaggi)
+        # la riga è quella del blocco [[fase.attivita]] che contiene l'errore
+        righe = {m.split(":")[0]: r for r, _, m in problemi}
+        self.assertEqual(righe['fase.attivita "Analisi dei Requisiti"'], testo.splitlines().index("  [[fase.attivita]]", 15) + 1)
+
+    def test_fasi_sovrapposte_e_non_concluse(self):
+        testo = (PIANO.replace("fine_effettiva = 2026-09-30\n", "")
+                 .replace("inizio = 2026-10-01", "inizio = 2026-09-30\ninizio_effettivo = 2026-10-01"))
+        messaggi = " | ".join(m for _, c, m in self.problemi_piano(testo) if c == "E-PIANO")
+        self.assertEqual(messaggi.count("|"), 1)
+        self.assertIn("inizio previsto non successivo alla fine della fase precedente", messaggi)
+        self.assertIn("iniziata prima della fine effettiva della fase precedente", messaggi)
+
+    def test_effettivi_incoerenti_e_voce_fuori_fase(self):
+        testo = (PIANO.replace("  inizio_effettivo = 2026-09-06\n", "  fine_effettiva = 2026-09-21\n")
+                 .replace("  data = 2026-09-30\n", "  data = 2026-10-02\n"))
+        problemi = [(c, m) for _, c, m in self.problemi_piano(testo)]
+        self.assertIn(("E-PIANO", 'fase.attivita "Valutazione dei capitolati": fine_effettiva senza inizio_effettivo'), problemi)
+        self.assertIn(("W-PIANO", '"Invio della candidatura" è prevista fuori dalla fase "Candidatura"'), problemi)
+
+    def test_file_non_valido_o_vuoto(self):
+        self.assertEqual([c for _, c, _ in self.problemi_piano("[[fase]\n")], ["E-PIANO"])
+        self.assertEqual([m for _, _, m in self.problemi_piano("# nessuna fase\n")], ["nessuna [[fase]]"])
+        self.assertEqual([m for _, _, m in self.problemi_piano(PIANO.replace('nome = "RTB"', "nome = 3"))],
+                         ["nome: atteso un altro tipo"])
 
 
 class TestSegnaposto(Base):

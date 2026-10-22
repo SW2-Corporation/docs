@@ -3,6 +3,9 @@ name: Pubblicazione
 on:
   push:
     branches: [main]
+  # ogni notte: stato e giorni usati della pianificazione dipendono dalla data
+  schedule:
+    - cron: "17 3 * * *"
 
 permissions:
   contents: read

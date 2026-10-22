@@ -1,0 +1,188 @@
+# Pianificazione del progetto: fasi in ordine, ognuna con attività e milestone.
+# La legge il sito (pianificazione.html, diagramma di Gantt) e la può leggere ogni documento
+# Typst con toml("/dati/pianificazione.toml").
+#
+# Fasi e attività:
+#   inizio, fine                       previsti, obbligatori
+#   inizio_effettivo, fine_effettiva   si scrivono quando accadono; senza fine_effettiva è in corso
+# Milestone: data prevista, data_effettiva quando è raggiunta.
+# Fase: nota e ore_previste facoltative. Le ore usate si sommano da dati/ore.csv,
+# con le righe che cadono nel periodo effettivo della fase.
+# Le fasi non si sovrappongono: ogni fase inizia dopo la fine della precedente.
+
+[[fase]]
+nome = "Candidatura"
+nota = "Periodo di investimento: le ore non si contabilizzano."
+inizio = 2026-10-12
+fine = 2026-10-30
+inizio_effettivo = 2026-10-12
+ore_previste = 0
+
+  [[fase.attivita]]
+  nome = "Formazione del gruppo e prime regole di lavoro"
+  inizio = 2026-10-12
+  fine = 2026-10-16
+  inizio_effettivo = 2026-10-12
+  fine_effettiva = 2026-10-16
+
+  [[fase.attivita]]
+  nome = "Lettura dei capitolati e scelta della rosa"
+  inizio = 2026-10-13
+  fine = 2026-10-19
+  inizio_effettivo = 2026-10-13
+  fine_effettiva = 2026-10-16
+
+  [[fase.attivita]]
+  nome = "Repository documentale, sito e strumenti"
+  inizio = 2026-10-16
+  fine = 2026-10-23
+  inizio_effettivo = 2026-10-18
+
+  [[fase.attivita]]
+  nome = "Norme di Progetto, prima versione"
+  inizio = 2026-10-16
+  fine = 2026-10-29
+  inizio_effettivo = 2026-10-18
+
+  [[fase.attivita]]
+  nome = "Valutazione dei capitolati"
+  inizio = 2026-10-19
+  fine = 2026-10-28
+  inizio_effettivo = 2026-10-18
+
+  [[fase.attivita]]
+  nome = "Incontri esplorativi con i proponenti"
+  inizio = 2026-10-20
+  fine = 2026-10-27
+
+  [[fase.attivita]]
+  nome = "Dichiarazione degli impegni"
+  inizio = 2026-10-22
+  fine = 2026-10-29
+
+  [[fase.attivita]]
+  nome = "Lettera di Presentazione e verifica finale"
+  inizio = 2026-10-28
+  fine = 2026-10-29
+
+  [[fase.milestone]]
+  nome = "Invio della candidatura"
+  data = 2026-10-30
+
+[[fase]]
+nome = "Requirements and Technology Baseline"
+nota = "Dall'aggiudicazione ogni membro registra le ore in dati/ore.csv."
+inizio = 2026-11-03
+fine = 2027-01-08
+
+  [[fase.milestone]]
+  nome = "Aggiudicazione"
+  data = 2026-11-03
+
+  [[fase.attivita]]
+  nome = "Incontro di avvio con il proponente"
+  inizio = 2026-11-04
+  fine = 2026-11-10
+
+  [[fase.attivita]]
+  nome = "Norme di Progetto"
+  inizio = 2026-11-03
+  fine = 2026-12-09
+
+  [[fase.attivita]]
+  nome = "Glossario"
+  inizio = 2026-11-03
+  fine = 2026-12-09
+
+  [[fase.attivita]]
+  nome = "Analisi dei Requisiti"
+  inizio = 2026-11-04
+  fine = 2026-12-09
+
+  [[fase.attivita]]
+  nome = "Piano di Progetto"
+  inizio = 2026-11-04
+  fine = 2026-12-09
+
+  [[fase.attivita]]
+  nome = "Piano di Qualifica"
+  inizio = 2026-11-11
+  fine = 2026-12-09
+
+  [[fase.attivita]]
+  nome = "Proof of Concept"
+  inizio = 2026-11-11
+  fine = 2026-12-09
+
+  [[fase.milestone]]
+  nome = "Candidatura alla RTB"
+  data = 2026-12-11
+
+  [[fase.milestone]]
+  nome = "Semaforo di Cardin sulla RTB"
+  data = 2026-12-21
+
+  [[fase.attivita]]
+  nome = "Correzioni e preparazione del colloquio RTB"
+  inizio = 2026-12-14
+  fine = 2027-01-07
+
+  [[fase.milestone]]
+  nome = "Colloquio RTB con Vardanega"
+  data = 2027-01-08
+
+[[fase]]
+nome = "Product Baseline"
+inizio = 2027-01-11
+fine = 2027-03-19
+
+  [[fase.attivita]]
+  nome = "Norme di Progetto per codifica e test"
+  inizio = 2027-01-11
+  fine = 2027-01-22
+
+  [[fase.attivita]]
+  nome = "Analisi dei Requisiti, seconda versione"
+  inizio = 2027-01-11
+  fine = 2027-02-19
+
+  [[fase.attivita]]
+  nome = "Specifica Tecnica"
+  inizio = 2027-01-11
+  fine = 2027-02-26
+
+  [[fase.attivita]]
+  nome = "MVP: codifica, verifica e validazione"
+  inizio = 2027-01-18
+  fine = 2027-03-05
+
+  [[fase.attivita]]
+  nome = "Piano di Progetto e Piano di Qualifica aggiornati"
+  inizio = 2027-01-11
+  fine = 2027-03-05
+
+  [[fase.attivita]]
+  nome = "Manuale Utente"
+  inizio = 2027-02-15
+  fine = 2027-03-05
+
+  [[fase.milestone]]
+  nome = "Validazione dell'MVP con il proponente"
+  data = 2027-03-03
+
+  [[fase.milestone]]
+  nome = "Candidatura alla PB"
+  data = 2027-03-08
+
+  [[fase.milestone]]
+  nome = "Semaforo di Cardin sulla PB"
+  data = 2027-03-12
+
+  [[fase.attivita]]
+  nome = "Correzioni e preparazione del colloquio PB"
+  inizio = 2027-03-09
+  fine = 2027-03-18
+
+  [[fase.milestone]]
+  nome = "Colloquio PB con Vardanega e fine dei lavori"
+  data = 2027-03-19
