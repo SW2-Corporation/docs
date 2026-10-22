@@ -76,18 +76,20 @@
       logo(height: calc.min(altezza - 2.6cm, 4.6cm)),
       [
         #set par(justify: false)
-        #occhiello("Università degli Studi di Padova · Ingegneria del Software", size: 7.5pt, fill: palette.accento-chiaro)
+        // a capo tra università e corso; nelle colonne strette "di Padova" va a capo intero
+        #occhiello([Università degli Studi #box[di Padova] \ Ingegneria del Software], size: 7.5pt, fill: palette.accento-chiaro)
         #v(0.1cm)
         #text(size: if membri { 26pt } else { 18pt }, weight: "bold", hyphenate: false, info.nome)
         #v(0.1cm)
         #text(size: 9.5pt, fill: palette.su-scuro-tenue)[
           #if info.email != "" [#link("mailto:" + info.email, info.email)]
-          #if info.email != "" and info.sito != "" [ · ]
-          #if info.sito != "" [#link(info.sito, sito-breve)]
+          // accanto al blocco `destra` la colonna è stretta: un contatto per riga
+          #if info.email != "" and info.sito != "" { if destra != none { linebreak() } else [ · ] }
+          #if info.sito != "" [#box(link(info.sito, sito-breve))]
         ]
         #if membri and nomi.len() > 0 [
           #v(0.25cm)
-          #text(size: 9pt, fill: palette.su-scuro-tenue, nomi.join(" · "))
+          #text(size: 9pt, fill: palette.su-scuro-tenue, nomi.map(box).join[~· ])
         ]
       ],
       if destra != none { destra } else { [] },

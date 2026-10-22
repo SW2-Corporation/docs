@@ -3,3 +3,8 @@
 # termine = "Proof of Concept"
 # definizione = "Prototipo che dimostra la fattibilità delle tecnologie scelte."
 # sinonimi = ["PoC"]          # opzionale
+
+[[voce]]
+termine = "Definition of Done"
+definizione = "Elenco delle condizioni verificabili che un prodotto di lavoro soddisfa perché il gruppo lo consideri fatto. Vale per issue, sprint e consegne ed è fissata nelle Norme di Progetto."
+sinonimi = ["DoD"]
