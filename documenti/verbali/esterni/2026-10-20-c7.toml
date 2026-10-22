@@ -59,34 +59,34 @@ titolo = "Aspetti architetturali, gestione utenti e canali di comunicazione"
 sintesi = """Il proponente ha precisato che un singolo utente potrà gestire dashboard multiple. La differenziazione in ruoli applicativi è un'estensione interessante ma subordinata allo sviluppo del core. Per le comunicazioni ordinarie e straordinarie, oltre ai canali istituzionali e agli incontri quindicinali, il sig. Carlesso ha manifestato disponibilità anche per contatti rapidi e diretti via messaggistica (Telegram o WhatsApp)."""
 
 [[decisione]]
-id = "VE-2026-10-20.1"
+id = "VE-2026-10-20-C7.1"
 testo = "Il Minimum Viable Product include come requisiti obbligatori tabelle, griglie pivot, card con KPI, istogrammi e filtri dinamici; mappe ed esportazione passano a requisiti desiderabili."
 motivazione = "Accordo con il proponente per garantire il completamento prioritario del core applicativo prima dell'estensione delle funzionalità."
 
 [[decisione]]
-id = "VE-2026-10-20.2"
+id = "VE-2026-10-20-C7.2"
 testo = "Il repository di progetto sarà pubblico ma il dataset aziendale reale resterà strettamente riservato ed escluso dal controllo di versione."
 motivazione = "Vincolo perentorio di riservatezza e protezione dei dati d'impresa imposto da Ergon Informatica."
 
 [[decisione]]
-id = "VE-2026-10-20.3"
+id = "VE-2026-10-20-C7.3"
 testo = "L'architettura del layer AI adotterà il pattern router per il disaccoppiamento dai provider e, ove necessario, utilizzerà credenziali con plafond fornite da Ergon Informatica."
 motivazione = "Flessibilità nel cambio modello tra più fornitori ed eventuali costi di inferenza a carico del proponente."
 
 [[decisione]]
-id = "VE-2026-10-20.4"
+id = "VE-2026-10-20-C7.4"
 testo = "I canali di comunicazione ufficiali con Ergon Informatica comprendono incontri quindicinali di avanzamento e canali telematici per il supporto continuo."
 motivazione = "Garantire allineamento periodico e rapidità di riscontro durante l'intero ciclo di vita del progetto."
 
 [[azione]]
-decisione = "VE-2026-10-20.4"
+decisione = "VE-2026-10-20-C7.4"
 descrizione = "Inviare via email a Ergon Informatica il verbale dell'incontro per approvazione formale."
 assegnatario = "Matteo Bellato"
 scadenza = 2026-10-22
 issue = "#43"
 
 [[azione]]
-decisione = "VE-2026-10-20.1"
+decisione = "VE-2026-10-20-C7.1"
 descrizione = "Aggiornare il documento di Valutazione dei capitolati con gli esiti dell'incontro esplorativo su C7."
 assegnatario = "Oussama Mahdi"
 scadenza = 2026-10-23
