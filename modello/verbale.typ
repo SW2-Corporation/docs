@@ -14,10 +14,19 @@
 #let campo(chiave) = verbale.at(chiave, default: "")
 #let elenco(chiave) = verbale.at(chiave, default: ())
 #let data = data-it(verbale.data)
+// con più verbali dello stesso tipo in un giorno il file ha un suffisso: AAAA-MM-GG-c7.toml
+#let suffisso = percorso.match(regex("\d{4}-\d{2}-\d{2}-([a-z0-9]+)\.toml$"))
+#let codice = if suffisso != none { upper(suffisso.captures.first()) }
 #let titolo = "Verbale " + verbale.tipo + " " + data
+#if codice != none { titolo += " " + codice }
 
 #set document(title: titolo, author: campo("redattore"))
 #show: stile.with(titolo: titolo, etichetta: info.nome)
+// i testi del TOML non passano dal markup: apostrofi e virgolette tipografici come nei documenti
+#show "'": smartquote(double: false)
+#show "\"": smartquote()
+// codici come R-MF-01 o RFO-19 non vanno a capo sul trattino
+#show regex("\b[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+\b"): it => box(it)
 // una riga di tabella non si spezza tra due pagine
 #set table.cell(breakable: false)
 
@@ -42,6 +51,7 @@
 #fascia(destra: align(right)[
   #occhiello("Verbale " + verbale.tipo, fill: palette.accento-chiaro) \
   #text(size: 22pt, weight: "bold", data)
+  #if codice != none [\ #text(size: 22pt, weight: "bold", fill: palette.accento-chiaro, codice)]
 ])
 
 #let durata-riunione = durata(campo("inizio"), campo("fine"))
@@ -73,10 +83,16 @@
 #if not interno {
   // la colonna Presenza serve solo se qualcuno manca
   let presente = if assenti.len() > 0 { "Presente" } else { "" }
+  // ruolo di progetto di ogni membro il giorno della riunione, da dati/ruoli.csv
+  let periodi = csv("/dati/ruoli.csv").slice(1).filter(r => r.len() == 4).map(r => r.map(c => c.trim()))
+  let ruolo(nome) = {
+    let periodo = periodi.find(p => p.at(2) == nome and p.at(0) <= data and data <= p.at(1))
+    if periodo == none { "" } else { periodo.at(3) }
+  }
   let persone = (
-    ..elenco("partecipanti").map(nome => (nome: nome, azienda: info.nome, presenza: presente)),
+    ..elenco("partecipanti").map(nome => (nome: nome, azienda: info.nome, ruolo: ruolo(nome), presenza: presente)),
     ..elenco("esterni").map(e => (nome: e.nome, azienda: e.azienda, ruolo: e.ruolo, presenza: presente)),
-    ..assenti.map(nome => (nome: nome, azienda: info.nome, presenza: "Assente")),
+    ..assenti.map(nome => (nome: nome, azienda: info.nome, ruolo: ruolo(nome), presenza: "Assente")),
   )
   if persone.len() > 0 {
     v(0.3cm)
