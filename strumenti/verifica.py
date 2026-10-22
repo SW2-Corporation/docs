@@ -79,6 +79,16 @@ def data_iso(testo):
         return None
 
 
+def nome_verbale(nome):
+    """(data, suffisso) dal nome di un verbale senza estensione, AAAA-MM-GG o AAAA-MM-GG-suffisso.
+
+    Il suffisso, in minuscolo, distingue più verbali dello stesso tipo nello stesso giorno:
+    per gli esterni è il codice del capitolato (2026-10-20-c7). None se il nome non è valido.
+    """
+    m = re.fullmatch(r"(\d{4}-\d{2}-\d{2})(?:-([a-z0-9]+))?", nome)
+    return (data_iso(m[1]), m[2] or "") if m and data_iso(m[1]) else None
+
+
 def numero(x):
     return isinstance(x, (int, float)) and not isinstance(x, bool)
 
@@ -393,10 +403,12 @@ class Verifica:
                     self.segnala("/".join(parti[:i + 1]), 0, "E-DATA-FILE",
                                  f'"{parti[i]}": data non nel formato AAAA-MM-GG')
         cartella, nome = "/".join(parti[:-1]), parti[-1]
-        datato = (cartella in ("documenti/lettere", "presentazioni/diari") and nome.endswith(".typ")
-                  or cartella in ("documenti/verbali/interni", "documenti/verbali/esterni") and nome.endswith(".toml"))
-        if datato and not sospetta and not data_iso(nome.rsplit(".", 1)[0]):
-            self.segnala(rel, 0, "E-DATA-FILE", f'"{nome}": il nome deve essere la data AAAA-MM-GG')
+        verbale = cartella in ("documenti/verbali/interni", "documenti/verbali/esterni") and nome.endswith(".toml")
+        datato = verbale or cartella in ("documenti/lettere", "presentazioni/diari") and nome.endswith(".typ")
+        base = nome.rsplit(".", 1)[0]
+        if datato and not sospetta and not (nome_verbale(base) if verbale else data_iso(base)):
+            suffisso = ", con un eventuale suffisso in minuscolo (AAAA-MM-GG-c7)" if verbale else ""
+            self.segnala(rel, 0, "E-DATA-FILE", f'"{nome}": il nome deve essere la data AAAA-MM-GG{suffisso}')
 
     def controlla_date(self, rel, testo):
         for n, riga in enumerate(testo.splitlines(), start=1):
@@ -627,7 +639,8 @@ class Verifica:
             errore("E-VERBALE-TIPO", "i verbali vanno in documenti/verbali/interni o documenti/verbali/esterni")
         elif tipo != atteso:
             errore("E-VERBALE-TIPO", f'tipo "{tipo}" incoerente con la cartella {cartella}', riga_valore(testo, "tipo"))
-        if data.isoformat() != Path(rel).stem:
+        nome = nome_verbale(Path(rel).stem)
+        if not nome or nome[0] != data:
             errore("E-VERBALE-DATA", f"data {data} diversa dal nome del file", riga_valore(testo, data.isoformat()))
 
         orari = {}
@@ -649,14 +662,16 @@ class Verifica:
         for punto in v.get("punto", []):
             self.controlla_titolo(rel, riga_valore(testo, punto["titolo"]), punto["titolo"])
 
-        prefisso = "VI" if tipo == "interno" else "VE"
+        # il suffisso del nome del file entra nell'id: 2026-10-20-c7.toml ha VE-2026-10-20-C7.n
+        suffisso = f"-{nome[1].upper()}" if nome and nome[1] else ""
+        prefisso = ("VI" if tipo == "interno" else "VE") + f"-{data}{suffisso}"
         decisioni = set()
         if not v.get("decisione"):
             errore("E-VERBALE-DECISIONE", "serve almeno una decisione")
         for d in v.get("decisione", []):
             riga = riga_valore(testo, d["id"])
-            if not re.fullmatch(rf"{prefisso}-{data}\.\d+", d["id"]):
-                errore("E-VERBALE-DECISIONE", f'id "{d["id"]}" non nel formato {prefisso}-{data}.n', riga)
+            if not re.fullmatch(rf"{re.escape(prefisso)}\.\d+", d["id"]):
+                errore("E-VERBALE-DECISIONE", f'id "{d["id"]}" non nel formato {prefisso}.n', riga)
             if d["id"] in decisioni:
                 errore("E-VERBALE-DECISIONE", f'id "{d["id"]}" ripetuto', riga)
             decisioni.add(d["id"])

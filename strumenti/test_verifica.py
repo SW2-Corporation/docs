@@ -357,6 +357,17 @@ class TestVerbale(Base):
         self.assertIn("E-VERBALE-REDATTORE", codici)
         self.assertIn("E-VERBALE-PARTECIPANTI", codici)
 
+    def test_piu_verbali_nello_stesso_giorno(self):
+        testo = VERBALE.replace("VI-2026-10-14.", "VI-2026-10-14-B.")
+        self.assertEqual(self.verbale(testo, nome="2026-10-14-b"), [])
+        # l'id deve riportare il suffisso del nome del file
+        self.assertEqual(self.verbale(VERBALE, nome="2026-10-14-b"), ["E-VERBALE-DECISIONE"])
+
+    def test_suffisso_non_valido(self):
+        codici = self.verbale(VERBALE, nome="2026-10-14_b")
+        self.assertIn("E-DATA-FILE", codici)
+        self.assertIn("E-VERBALE-DATA", codici)
+
     def test_esterno_senza_esterni(self):
         testo = VERBALE.replace('"interno"', '"esterno"').replace("VI-", "VE-")
         codici = self.verbale(testo, "esterni")

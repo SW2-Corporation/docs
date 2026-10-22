@@ -77,11 +77,11 @@ Il percorso del verbale si può scrivere con o senza `/` iniziale; su Git Bash p
 
 - **Documento con registro**: un file `X.typ` con `#show: documento.with(titolo: ..., uso: "esterno", destinatari: (...), registro: csv("X.registro.csv"))` (vedi `documenti/esterni/gestionali/`) e accanto `X.registro.csv` con la sola intestazione `versione,data,autore,verificatore,descrizione`. `sottotitolo:` è facoltativo. La copertina ricava versione, stato (Bozza, In verifica, Approvato), redattori, verificatori e approvatore dal registro.
 - **Lettera di Presentazione**: `documenti/lettere/AAAA-MM-GG.typ` con `#show: lettera.with(data: "AAAA-MM-GG", oggetto: "...")`, poi il testo.
-- **Verbale**: `documenti/verbali/interni/AAAA-MM-GG.toml` (o `esterni/`). Campi:
+- **Verbale**: `documenti/verbali/interni/AAAA-MM-GG.toml` (o `esterni/`). Più verbali dello stesso tipo nello stesso giorno aggiungono al nome un suffisso in minuscolo, per gli esterni il codice del capitolato: `2026-10-20-c7.toml`, con decisioni `VE-2026-10-20-C7.n`. Campi:
 
   ```toml
   tipo = "interno"                 # "interno" | "esterno", come la cartella
-  data = 2026-10-14                # uguale al nome del file
+  data = 2026-10-14                # uguale alla data del nome del file
   inizio = "18:00"
   fine = "19:00"
   luogo = "Discord"

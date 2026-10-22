@@ -19,7 +19,7 @@ import tomllib
 import unicodedata
 from pathlib import Path
 
-from verifica import RADICE, RUOLI, data_iso, rilascio, slug
+from verifica import RADICE, RUOLI, data_iso, nome_verbale, rilascio, slug
 
 ACCENTO_PREDEFINITO = "#d7262f"
 SOTTOTITOLO = "Progetto didattico di Ingegneria del Software, Università degli Studi di Padova"
@@ -369,11 +369,13 @@ def verbali(typst, out, cartella):
     tipo = {"interni": "interno", "esterni": "esterno"}[cartella]
     voci = []
     for sorgente in sorted((RADICE / "documenti/verbali" / cartella).glob("*.toml"), reverse=True):
-        if data_iso(sorgente.stem):
+        if parti := nome_verbale(sorgente.stem):
             nome = f"Verbale {tipo} {sorgente.stem}"
             compila(typst, RADICE / "modello/verbale.typ", out / (nome.replace(" ", "_") + ".pdf"),
                     dati=f"/documenti/verbali/{cartella}/{sorgente.name}")
-            voci.append(voce(nome.replace(" ", "_") + ".pdf", f"Verbale {tipo}", sorgente.stem, nascosto=f" del {sorgente.stem}"))
+            # due verbali dello stesso giorno si distinguono per il suffisso: "2026-10-20 C7"
+            quando = f"{parti[0]} {parti[1].upper()}".strip()
+            voci.append(voce(nome.replace(" ", "_") + ".pdf", f"Verbale {tipo}", quando, nascosto=f" del {quando}"))
     return voci
 
 

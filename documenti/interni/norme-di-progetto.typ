@@ -158,6 +158,7 @@ Regole:
 - l'ordine del giorno viene sempre per primo;
 - la sintesi di ogni punto è breve: il verbale registra decisioni motivate, non la discussione;
 - ogni decisione ha un identificativo, il testo e la motivazione. Gli identificativi hanno la forma VI-AAAA-MM-GG.n per i verbali interni e VE-AAAA-MM-GG.n per gli esterni;
+- se nello stesso giorno ci sono più verbali dello stesso tipo, il nome del file e gli identificativi aggiungono un suffisso. Per gli esterni il suffisso è il codice del capitolato: `2026-10-20-c7.toml` ha le decisioni VE-2026-10-20-C7.n;
 - ogni decisione che richiede lavoro genera almeno un'azione, con un assegnatario, una scadenza e il link alla issue. L'assegnatario è un membro, mai "tutti";
 - il verbale esterno riporta i partecipanti esterni con ruolo e azienda, e l'approvazione del proponente;
 - il verbale non contiene giudizi su persone o aziende, motivi personali di assenza, dati privati né linguaggio informale.
@@ -193,7 +194,7 @@ La struttura del repository della documentazione è fissa:
 Il branch `main` contiene solo lavoro verificato. Nessuno scrive direttamente su `main`: ogni modifica nasce in un branch e arriva su `main` con una pull request.
 
 I branch prendono il nome dal tipo di lavoro:
-- `verbale/AAAA-MM-GG` per un verbale;
+- `verbale/AAAA-MM-GG` per un verbale, con l'eventuale suffisso del nome del file;
 - `documento/nome-argomento` per un documento, per esempio `documento/norme-di-progetto-verifica`;
 - `dati/argomento` per i dati del gruppo;
 - `sito/argomento` per modello, strumenti e sito.

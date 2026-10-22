@@ -31,6 +31,7 @@ Gantt
 Jira
 Typst
 Shopify
+Shopify Plus
 ISO
 IEC
 Sanmarco Informatica
