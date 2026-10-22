@@ -95,6 +95,23 @@ class TestSito(unittest.TestCase):
         self.assertIn('<p class="vuoto">vuoto &amp; basta</p>', sito.elenco([], "vuoto & basta"))
         self.assertIn('<ol class="voci"><li class="voce">riga</li></ol>', sito.elenco(["riga"], "vuoto"))
 
+    def test_verbali_con_titolo_e_approvazione(self):
+        esterno = {"tipo": "esterno", "esterni": [{"azienda": "Ergon"}, {"azienda": "Ergon"}], "ordine_del_giorno": ["Dati"],
+                   "verificatore": "Anna Rossi", "approvazione_esterna": ""}
+        self.assertEqual(sito.titolo_verbale(esterno), "Incontro con Ergon")
+        self.assertEqual(sito.titolo_verbale({**esterno, "titolo": "Avvio"}), "Avvio")
+        self.assertEqual(sito.titolo_verbale({"tipo": "interno", "ordine_del_giorno": ["Logo", "Ruoli", "Calendario"]}),
+                         "Logo e altri 2 punti")
+        self.assertEqual(sito.titolo_verbale({"tipo": "interno", "ordine_del_giorno": ["Logo", "Ruoli"]}), "Logo e Ruoli")
+        self.assertIn("In attesa di approvazione del proponente", sito.stato_verbale(esterno))
+        self.assertIn("✓</span> Approvato via email il 2026-10-21",
+                      sito.stato_verbale({**esterno, "approvazione_esterna": "Approvato via email il 2026-10-21"}))
+        self.assertIn("Approvato: per email", sito.stato_verbale({**esterno, "approvazione_esterna": "per email"}))
+        self.assertIn("Verificato da Anna Rossi", sito.stato_verbale({**esterno, "tipo": "interno"}))
+        riga = sito.voce("v.pdf", "Incontro con Ergon", "2026-10-20 C7", sotto="<b>stato</b>")
+        self.assertTrue(riga.endswith('<span class="sotto-voce"><b>stato</b></span>'))
+        self.assertNotIn("sotto-voce", sito.voce("v.pdf", "Doc"))
+
     def test_sezione_e_indice(self):
         html = sito.sezione("id", "A & B", "<p>c</p>", 3)
         self.assertIn('<section class="sezione" id="id" aria-labelledby="titolo-id">', html)

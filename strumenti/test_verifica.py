@@ -330,6 +330,12 @@ class TestVerbale(Base):
                           'approvazione_esterna = "Approvato via email il 2026-10-16"\nordine_del_giorno'))
         self.assertEqual(self.verbale(testo, "esterni"), [])
 
+    def test_titolo_facoltativo(self):
+        con_titolo = VERBALE.replace('tipo = "interno"', 'tipo = "interno"\ntitolo = "Scelta del capitolato"')
+        self.assertEqual(self.verbale(con_titolo), [])
+        errato = con_titolo.replace('titolo = "Scelta del capitolato"', 'titolo = "Scelta del Capitolato"')
+        self.assertEqual(self.verbale(errato), ["E-MAIUSCOLE"])
+
     def test_schema(self):
         codici = self.verbale(VERBALE.replace('luogo = "Discord"', 'sede = "Discord"'))
         self.assertEqual(codici.count("E-VERBALE-SCHEMA"), 2)

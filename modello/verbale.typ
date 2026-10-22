@@ -65,6 +65,7 @@
     columns: (auto, 1fr, auto, 1fr),
     column-gutter: 1.2em,
     row-gutter: 0.75em,
+    ..if campo("titolo") != "" { voce[Oggetto][#campo("titolo")] },
     text(fill: palette.tenue)[Orario],
     [#campo("inizio")–#campo("fine") #if durata-riunione != none [(#durata-riunione)]],
     text(fill: palette.tenue)[Redattore], campo("redattore"),

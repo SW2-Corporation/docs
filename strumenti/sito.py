@@ -137,11 +137,15 @@ a { color: inherit; }
 .vuoto, .nota { margin: 1rem 0 0; max-width: 42rem; color: var(--tenue); font-size: .95rem; }
 .vuoto::before { content: "— "; }
 ol.voci { list-style: none; margin: .75rem 0 0; padding: 0; }
-.voce { display: flex; align-items: baseline; gap: .8rem; padding: .7rem 0; }
+.voce { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .8rem; padding: .7rem 0; }
 .voce .titolo a { font-size: 1.2rem; font-weight: 600; text-decoration: none; }
 .voce .titolo a:hover { color: var(--accento-testo); text-decoration: underline; text-underline-offset: .18em; }
 .voce .puntini { flex: 1 1 2rem; min-width: 2rem; border-bottom: 1px dotted var(--tenue); transform: translateY(-.35em); }
 .voce .dettaglio { flex: none; color: var(--tenue); text-align: right; }
+.voce .sotto-voce { flex-basis: 100%; font-size: .95rem; }
+.approvazione { font-weight: 600; }
+.a-approvato .icona { color: var(--fatto); }
+.a-attesa { color: var(--accento-testo); }
 .freccia { display: inline-block; margin-top: 1.5rem; color: var(--inchiostro); font-size: .95rem; font-weight: 600; text-decoration: none;
            border-bottom: 1px solid var(--inchiostro); padding-bottom: .15rem; }
 .freccia::after { content: " →"; color: var(--accento-testo); }
@@ -353,17 +357,19 @@ def evidenzia_cifre(nome):
     return re.sub(r"(\d+)", r'<span class="accento">\1</span>', e(nome))
 
 
-def voce(href, testo, meta="", nascosto=""):
+def voce(href, testo, meta="", nascosto="", sotto=""):
     """Riga di un sommario: titolo, puntini guida e dettaglio (versione, data, PDF).
 
     `nascosto` completa il nome del link per chi usa uno screen reader quando più voci
-    hanno lo stesso titolo visibile, per esempio " del 2026-10-14".
+    hanno lo stesso titolo visibile, per esempio " del 2026-10-14". `sotto` è una seconda
+    riga già in HTML, per esempio lo stato di approvazione di un verbale.
     """
     dettaglio = " · ".join(p for p in (meta, "PDF") if p)
     extra = f'<span class="sr-only">{e(nascosto)}</span>' if nascosto else ""
     collegamento = f'<a href="{e(href)}" target="_blank" rel="noopener">{e(testo)}{extra}{NUOVA_SCHEDA}</a>'
+    seconda = f'<span class="sotto-voce">{sotto}</span>' if sotto else ""
     return (f'<span class="titolo">{collegamento}</span><span class="puntini" aria-hidden="true"></span>'
-            f'<span class="dettaglio">{e(dettaglio)}</span>')
+            f'<span class="dettaglio">{e(dettaglio)}</span>{seconda}')
 
 
 def elenco(voci, vuoto):
@@ -503,8 +509,36 @@ def verbali(typst, out, cartella):
                     dati=f"/documenti/verbali/{cartella}/{sorgente.name}")
             # due verbali dello stesso giorno si distinguono per il suffisso: "2026-10-20 C7"
             quando = f"{parti[0]} {parti[1].upper()}".strip()
-            voci.append(voce(nome.replace(" ", "_") + ".pdf", f"Verbale {tipo}", quando, nascosto=f" del {quando}"))
+            dati = tomllib.loads(sorgente.read_text(encoding="utf-8-sig"))
+            voci.append(voce(nome.replace(" ", "_") + ".pdf", titolo_verbale(dati), quando, nascosto=f", verbale del {quando}",
+                             sotto=stato_verbale(dati)))
     return voci
+
+
+def titolo_verbale(v):
+    """Il campo titolo; senza, l'azienda incontrata (esterni) o il primo punto dell'ordine del giorno."""
+    if v.get("titolo"):
+        return v["titolo"]
+    aziende = list(dict.fromkeys(x["azienda"] for x in v.get("esterni", []) if x.get("azienda")))
+    if v.get("tipo") == "esterno" and aziende:
+        return "Incontro con " + " e ".join(aziende)
+    punti = v.get("ordine_del_giorno", [])
+    if len(punti) > 2:
+        return f"{punti[0]} e altri {len(punti) - 1} punti"
+    return " e ".join(punti) or f"Verbale {v.get('tipo', '')}".strip()
+
+
+def stato_verbale(v):
+    """Approvazione del proponente per gli esterni; gli interni sono verificati da un membro diverso dal redattore."""
+    if v.get("tipo") == "esterno":
+        approvazione = v.get("approvazione_esterna", "").strip()
+        if not approvazione:
+            return ('<span class="approvazione a-attesa"><span class="icona" aria-hidden="true">○</span> '
+                    'In attesa di approvazione del proponente</span>')
+        testo = approvazione if approvazione.lower().startswith("approvat") else f"Approvato: {approvazione}"
+        return f'<span class="approvazione a-approvato"><span class="icona" aria-hidden="true">✓</span> {e(testo)}</span>'
+    return (f'<span class="approvazione a-approvato"><span class="icona" aria-hidden="true">✓</span> '
+            f'Verificato da {e(v.get("verificatore", ""))}</span>')
 
 
 def nome_membro(membro):

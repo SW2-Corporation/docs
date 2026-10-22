@@ -57,7 +57,7 @@ SPRINT_MASCHILE = {"la": "lo", "una": "uno", "della": "dello", "nella": "nello",
 CAMPI_VERBALE = {
     "tipo": str, "data": dt.date, "inizio": str, "fine": str, "luogo": str,
     "redattore": str, "verificatore": str, "partecipanti": list, "assenti": list,
-    "esterni": list, "approvazione_esterna": str, "ordine_del_giorno": list,
+    "esterni": list, "approvazione_esterna": str, "ordine_del_giorno": list, "titolo": str,
     "punto": list, "decisione": list, "azione": list,
 }
 OBBLIGATORI_VERBALE = ("tipo", "data", "inizio", "fine", "luogo", "redattore", "verificatore",
@@ -671,6 +671,8 @@ class Verifica:
             errore("E-VERBALE-ODG", "ordine del giorno vuoto", riga_valore(testo, "ordine_del_giorno"))
         for voce in v["ordine_del_giorno"]:
             self.controlla_titolo(rel, riga_valore(testo, voce), voce)
+        if v.get("titolo"):
+            self.controlla_titolo(rel, riga_valore(testo, v["titolo"]), v["titolo"])
         for punto in v.get("punto", []):
             self.controlla_titolo(rel, riga_valore(testo, punto["titolo"]), punto["titolo"])
 
