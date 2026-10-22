@@ -1,0 +1,118 @@
+tipo = "esterno"
+data = 2026-10-20
+inizio = "16:00"
+fine = "16:30"
+luogo = "Google Meet"
+redattore = "Bellato Matteo"
+verificatore = "Alessandro Paduret"
+partecipanti = [
+    "Davide Baraldo",
+    "Matteo Bellato",
+    "Patrizio Eleuteri",
+    "Oussama Mahdi",
+    "Alessandro Paduret",
+    "David Sirbu",
+]
+assenti = []
+approvazione_esterna = ""
+ordine_del_giorno = [
+    "Allineamento sulla visione generale del capitolato C8 (Sonar)",
+    "Perimetro del Minimum Viable Product e criteri per i requisiti desiderabili",
+    "Tempi di scansione e gestione delle risorse",
+    "Requisito di notifica delle scansioni pianificate (RFO-19 vs RFD-06)",
+    "Regole per il Proof of Concept ed estensibilità architetturale (RNF-03)",
+    "Requisito di internazionalizzazione dell'interfaccia e del bundle (RNF-07)",
+    "Chiarimento sull'uso dell'intelligenza artificiale nello sviluppo",
+    "Ambiente di test su Shopify Partners e differenze con Shopify Plus",
+    "Controllo degli accessi ai dati tramite Row Level Security (RQS-02)",
+    "Canali di supporto e cadenza degli incontri di avanzamento",
+]
+
+[[esterni]]
+nome = "Valentino Baraldo"
+ruolo = "Amministratore e Referente Unico"
+azienda = "Halue S.r.l. SB"
+
+[[punto]]
+titolo = "Allineamento sulla visione generale del capitolato C8 (Sonar)"
+sintesi = """Matteo Bellato ha illustrato la comprensione del capitolato da parte del gruppo: Sonar si pone come strumento di sola lettura per creare una documentazione vivente e una mappa a grafo delle dipendenze di uno store Shopify Plus, rilevando codice morto e componenti orfani per facilitare i passaggi di consegne. Il referente Valentino Baraldo ha confermato la correttezza della visione."""
+
+[[punto]]
+titolo = "Perimetro del Minimum Viable Product e criteri per i requisiti desiderabili"
+sintesi = """In merito al perimetro del Minimum Viable Product (MVP), il proponente ha chiarito che lo scope è flessibile e viene concordato congiuntamente in corso d'opera. Halue è disponibile a ridefinire lo scope per iscritto qualora emergano complessità. I requisiti desiderabili verranno selezionati favorendo quelli facilmente integrabili durante lo sviluppo dei moduli (low-hanging fruit)."""
+
+[[punto]]
+titolo = "Tempi di scansione e gestione delle risorse"
+sintesi = """Su richiesta di chiarimenti circa i tempi di scansione per store con decine di migliaia di prodotti, il proponente ha evidenziato che la durata precisa (secondi o minuti) è irrilevante (con cognizione di causa) per gli obiettivi di business. Ciò che conta è la corretta esecuzione del processo asincrono e la generazione di uno snapshot immutabile e affidabile dello stato di salute dello store."""
+
+[[punto]]
+titolo = "Requisito di notifica delle scansioni pianificate (RFO-19 vs RFD-06)"
+sintesi = """Riguardo alla notifica delle scansioni pianificate (RFO-19), il proponente ha confermato che è sufficiente un feedback a video nella dashboard indicante data e ora dell'ultimo snapshot scattato. L'invio di notifiche via email rimane classificato come requisito desiderabile (RFD-06)."""
+
+[[punto]]
+titolo = "Regole per il Proof of Concept ed estensibilità architetturale (RNF-03)"
+sintesi = """Per il Proof of Concept (PoC) che richiede due regole attive, il proponente ha specificato che la priorità risiede nel dimostrare l'estensibilità architetturale del motore a livello di codice (disaccoppiamento tramite interfacce e pattern dedicati, RNF-03), non nella complessità delle specifiche regole. Vengono suggerite le regole sui metafield (R-MF-01 e R-MF-02) o su app e webhook (R-WH-01 e R-APP-01)."""
+
+[[punto]]
+titolo = "Requisito di internazionalizzazione dell'interfaccia e del bundle (RNF-07)"
+sintesi = """Il proponente ha chiarito che il requisito RNF-07 impone che l'architettura dell'interfaccia utente sia predisposta all'aggiunta di altre lingue, ma non richiede la traduzione multilingua del bundle di documentazione esportato."""
+
+[[punto]]
+titolo = "Chiarimento sull'uso dell'intelligenza artificiale nello sviluppo"
+sintesi = """Davide Baraldo ha chiesto se fosse previsto lo sviluppo di assistenti intelligenti all'interno del prodotto. Il proponente ha precisato che la sezione 14 del capitolato incoraggia l'uso dell'intelligenza artificiale (Claude, ChatGPT, Codex) esclusivamente come strumento a supporto dei programmatori per la scrittura del codice, refactoring e test, e non come componente utente all'interno di Sonar."""
+
+[[punto]]
+titolo = "Ambiente di test su Shopify Partners e differenze con Shopify Plus"
+sintesi = """Il proponente ha confermato che un development store gratuito creato tramite account Shopify Partners è pienamente adeguato per coprire le Admin API (GraphQL) e testare l'idea del prodotto. Qualora servissero funzionalità esclusive di Shopify Plus, Halue metterà a disposizione uno store di supporto. I workflow di Shopify Flow potranno essere acquisiti da file di export qualora non direttamente interrogabili via API."""
+
+[[punto]]
+titolo = "Controllo degli accessi ai dati tramite Row Level Security (RQS-02)"
+sintesi = """Su richiesta di chiarimenti circa il requisito RQS-02, il proponente ha spiegato che l'uso della Row Level Security (RLS) su PostgreSQL (Supabase) serve in generale a far sì che ciascun utente possa accedere esclusivamente ai dati a cui ha diritto direttamente a livello di database. Un esempio di tale applicazione è l'isolamento multi-tenant: confinando le regole di controllo dell'accesso sul motore di persistenza, si garantisce che, anche in presenza di errori o bug logici nel codice applicativo, sia tecnicamente impossibile accedere a store per i quali non si è autorizzati."""
+
+[[punto]]
+titolo = "Canali di supporto e cadenza degli incontri di avanzamento"
+sintesi = """Il proponente ha ribadito la ratio dell'assenza di canali chat istantanei: Halue agisce come committente e il progetto è in capo al gruppo, che opera come team di ingegneria autonomo. Il referente unico non fornisce supporto tecnico continuativo né sviluppa insieme al gruppo; in caso di necessità per specifici approfondimenti sull'architettura o su Shopify, il gruppo potrà concordare momenti di confronto con il team di ingegneri di Halue."""
+
+[[decisione]]
+id = "VE-2026-10-20.1"
+testo = "Il perimetro del Minimum Viable Product (MVP) comprende i requisiti obbligatori ed eventuali desiderabili concordati con Halue in corso d'opera, prioritizzando quelli a bassa complessità aggiunta."
+motivazione = "Garantisce sostenibilità al progetto didattico e flessibilità collaborativa, dando priorità agli obbligatori secondo quanto concordato con il proponente."
+
+[[decisione]]
+id = "VE-2026-10-20.2"
+testo = "Il soddisfacimento del requisito RFO-19 consiste in un riscontro visivo a interfaccia con data e ora dell'ultimo snapshot; le notifiche email restano subordinate a RFD-06."
+motivazione = "Semplifica l'infrastruttura iniziale dell'MVP evitando dipendenze esterne premature per l'invio di email."
+
+[[decisione]]
+id = "VE-2026-10-20.3"
+testo = "Il Proof of Concept dimostrerà l'estensibilità del motore di regole (RNF-03) implementando un'interfaccia programmatica modulare, partendo dalle regole R-MF-01 e R-MF-02 o R-WH-01."
+motivazione = "Risponde all'attesa del proponente che privilegia il disaccoppiamento architetturale rispetto alla quantità di regole iniziali."
+
+[[decisione]]
+id = "VE-2026-10-20.4"
+testo = "Gli strumenti di intelligenza artificiale vengono impiegati dal gruppo come supporto allo sviluppo e testing (sezione 14), senza introdurre assistenti conversazionali nel prodotto."
+motivazione = "Allinea gli obiettivi implementativi con il perimetro deterministico chiarito dal proponente."
+
+[[decisione]]
+id = "VE-2026-10-20.5"
+testo = "L'ambiente di sviluppo si appoggia a Shopify Partners e l'uso di Row Level Security (RLS) su Supabase è finalizzato a limitare l'accesso ai soli dati autorizzati direttamente a livello di database, garantendo la sicurezza anche in caso di difetti nell'applicativo (RQS-02)."
+motivazione = "Impedisce esposizioni errate di dati implementando la gestione dei permessi anche sul database PostgreSQL ed evita costi infrastrutturali grazie ai piani gratuiti concordati."
+
+[[decisione]]
+id = "VE-2026-10-20.6"
+testo = "I canali di comunicazione ufficiali con Halue sono la casella email sonar@halue.io e gli incontri quindicinali di allineamento in videoconferenza."
+motivazione = "Rispetta le modalità di supporto stabilite dal capitolato e confermate dal proponente."
+
+[[azione]]
+decisione = "VE-2026-10-20.6"
+descrizione = "Inviare via email a Halue (sonar@halue.io e valentino.baraldo@halue.io) il presente verbale per approvazione formale."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-23
+issue = "#47"
+
+[[azione]]
+decisione = "VE-2026-10-20.1"
+descrizione = "Aggiornare la Valutazione dei capitolati integrando l'esito formale dell'incontro esplorativo con Halue."
+assegnatario = "Oussama Mahdi"
+scadenza = 2026-10-23
+issue = "#48"
