@@ -31,6 +31,7 @@ Gantt
 Jira
 Typst
 Shopify
+Shopify Partners
 Shopify Plus
 ISO
 IEC
@@ -47,4 +48,5 @@ Ergon Informatica
 Halue
 Sonar
 Zucchetti
+Row Level Security
 Definition of Done
