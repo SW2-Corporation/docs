@@ -1,5 +1,5 @@
 #import "/modello/documento.typ": documento
-#import "/modello/comuni.typ": rif-doc, rif-web
+#import "/modello/comuni.typ": g, rif-doc, rif-web
 
 #show: documento.with(
   titolo: "Norme di Progetto",
@@ -33,6 +33,7 @@ I termini con un significato specifico per il progetto stanno nel glossario del 
 === Riferimenti informativi
 - ISO/IEC 12207:1995, Information technology, Software life cycle processes: la tassonomia dei processi usata in questo documento.
 - #rif-web("Capitolati d'appalto 2026/27", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/Capitolati.html", "2026-10-18").
+- #rif-web("K. Schwaber, J. Sutherland, The Scrum Guide, novembre 2020", "https://scrumguides.org/scrum-guide.html", "2026-10-20").
 
 == Struttura del documento
 I processi seguono la tassonomia di ISO/IEC 12207:1995, adattata al progetto. Un processo è un insieme di attività, mai un documento o un prodotto. Ogni processo ha:
@@ -59,7 +60,7 @@ Il regolamento chiede di normare ogni attività prima di svolgerla. La tabella s
     [Verifica], [Controlli automatici e verifica dei documenti], [Normato], [--],
     [Accertamento della qualità], [Metriche, cruscotto, cicli di miglioramento], [Da normare], [2026-11-02],
     [Risoluzione dei problemi], [Rischi e problemi], [Da normare], [2026-11-02],
-    [Gestione dei processi], [Ruoli, rotazione, riunioni, comunicazione, issue], [Normato], [--],
+    [Gestione dei processi], [Ruoli, rotazione, riunioni, comunicazione, issue, #g("Definition of Done")], [Normato], [--],
     [Gestione dei processi], [Sprint, preventivi e consuntivi, registro delle ore], [Da normare], [2026-11-02],
     [Infrastruttura], [Strumenti del gruppo], [Normato], [--],
     [Miglioramento], [Ciclo PDCA sui processi], [Da normare], [2026-11-02],
@@ -202,10 +203,10 @@ Ogni commit porta l'identità git del membro, con nome e cognome. Il messaggio �
 
 === Pull request
 Procedura:
-+ L'autore apre la pull request verso `main`. Il titolo dice cosa cambia. La descrizione riporta la issue, il contenuto della modifica e come verificarla.
++ L'autore apre la pull request verso `main`. Il titolo dice cosa cambia. La descrizione cita la issue nella forma `Closes #N`, così l'integrazione la chiude, e riporta il contenuto della modifica e come verificarla.
 + I controlli automatici devono risultare verdi. Un errore si corregge nel contenuto, mai nel controllo.
 + L'autore chiede la verifica a un membro diverso da sé. Per un documento è un Verificatore, per il sito e gli strumenti l'Amministratore o un Verificatore.
-+ Il verificatore legge la modifica e scrive l'esito come revisione della pull request: approvata oppure con le modifiche richieste.
++ Il verificatore controlla la modifica con la Definition of Done e scrive l'esito come revisione della pull request: approvata oppure con le modifiche richieste.
 + A esito positivo il verificatore integra la pull request con un commit di merge, senza riscrivere la storia.
 + L'integrazione chiude la issue collegata.
 
@@ -301,11 +302,27 @@ Ogni attività del gruppo è una issue GitHub nella board del progetto. Una issu
 - un assegnatario, un solo membro;
 - la scadenza e il ruolo con cui si svolge;
 - la stima in ore, dal 2026-11-03;
-- l'origine: la decisione del verbale o il documento che la richiede.
+- l'origine: la decisione del verbale o il documento che la richiede;
+- i criteri di accettazione: le condizioni specifiche del prodotto della issue, ognuna verificabile con un sì o con un no.
 
-La issue passa per gli stati della board: da fare, in corso, fatto. Una issue si chiude solo dopo la verifica del prodotto, di norma con l'integrazione della pull request. Le etichette distinguono il ruolo, il documento e il tipo di attività; le crea l'Amministratore.
+La issue passa per gli stati della board: da fare, in corso, fatto. Una issue passa a fatto solo quando soddisfa la Definition of Done. Di norma la chiude l'integrazione della pull request. Le etichette distinguono il ruolo, il documento e il tipo di attività; le crea l'Amministratore.
 
 Dal 2026-11-03 ogni membro registra ogni settimana le ore produttive per ruolo e le ore di orologio in `dati/ore.csv`. Il gruppo norma entro il 2026-11-02 il ciclo dello sprint: preventivo di periodo, consuntivo, retrospettiva e preventivo a finire.
+
+=== Definition of Done
+La Definition of Done dice quando il lavoro è fatto. Il lavoro che non la soddisfa non è fatto: non esiste uno stato "quasi fatto" e il lavoro non fatto non entra nel valore conseguito del periodo. Fatto non vuol dire approvato: l'approvazione del Responsabile autorizza il rilascio di un documento e viene dopo.
+
+Una issue è fatta quando la sua pull request è integrata su `main`. La protezione di `main` permette l'integrazione solo con il controllo `verifica` verde, l'approvazione di un membro diverso dall'autore e tutte le conversazioni risolte. Una issue che non modifica il repository, per esempio un'email o un incontro, è fatta quando riporta l'evidenza del risultato e un altro membro la conferma con un commento.
+
+Uno sprint è fatto quando ogni sua issue è fatta oppure torna da fare con la stima residua. Una consegna è fatta quando ogni documento consegnato ha la riga di approvazione del Responsabile.
+
+Procedura:
++ Chi apre una issue scrive i criteri di accettazione.
++ Il verificatore approva la pull request solo se il prodotto soddisfa i criteri di accettazione e supera la lista di controllo del suo tipo, nella sezione Verifica. Altrimenti chiede le modifiche.
+
+Chi trova una issue fatta che non soddisfa la Definition of Done la riapre e scrive la condizione mancata. Il gruppo modifica la Definition of Done solo con una decisione a verbale, che vale dall'apertura dello sprint successivo.
+
+Strumenti: protezione di `main` su GitHub, configurata dall'Amministratore; modello di pull request `.github/pull_request_template.md`; workflow `Verifica`. Metriche: MPC-06.
 
 == Infrastruttura
 #figure(
@@ -347,6 +364,7 @@ Le metriche di processo hanno codice MPC-nn, quelle di prodotto MPD-nn. I codici
     [MPC-03], [Indice di leggibilità], [89 + (300 × frasi − 10 × lettere) / parole, per documento], [Documenti leggibili], [`strumenti/verifica.py`],
     [MPC-04], [Azioni tracciate], [Azioni dei verbali con issue / azioni totali], [Nessuna azione fuori dal tracciamento], [`strumenti/verifica.py`],
     [MPC-05], [Errori dei controlli automatici], [Numero di errori segnalati dai controlli su `main`], [Repository sempre conforme alle norme], [Workflow `Verifica`],
+    [MPC-06], [Issue riaperte], [Issue riaperte nel periodo / issue fatte nel periodo], [Nessun lavoro dichiarato fatto senza esserlo], [Eventi delle issue su GitHub],
   ),
   caption: [Metriche di processo definite],
 )
