@@ -34,8 +34,6 @@ MESI = "gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|otto
 DATA_ESTESA = re.compile(rf"\b\d{{1,2}}\s+(?:{MESI})\s+\d{{4}}\b", re.IGNORECASE)
 URL = re.compile(r"https?://[^\s\"'<>()\[\]]+")
 VERSIONE = re.compile(r"(\d+)\.(\d+)\.(\d+)")
-# nome di un verbale: la data, con il capitolato se nello stesso giorno ce n'è più d'uno
-NOME_VERBALE = re.compile(r"(.*?)(-c\d+)?")
 STRINGA = re.compile(r'"(?:[^"\\\n]|\\.)*"')
 COMMENTO = re.compile(r"/\*.*?\*/|(?<!:)//[^\n]*", re.DOTALL)
 TITOLO_TYP = re.compile(r"^[ \t]*(=+)[ \t]+(.*?)[ \t]*$", re.MULTILINE)
@@ -417,13 +415,12 @@ class Verifica:
                     self.segnala("/".join(parti[:i + 1]), 0, "E-DATA-FILE",
                                  f'"{parti[i]}": data non nel formato AAAA-MM-GG')
         cartella, nome = "/".join(parti[:-1]), parti[-1]
-        datato = (cartella in ("documenti/lettere", "presentazioni/diari") and nome.endswith(".typ")
-                  or cartella in ("documenti/verbali/interni", "documenti/verbali/esterni") and nome.endswith(".toml"))
-        radice = nome.rsplit(".", 1)[0]
-        if nome.endswith(".toml"):
-            radice = NOME_VERBALE.fullmatch(radice)[1]
-        if datato and not sospetta and not data_iso(radice):
-            self.segnala(rel, 0, "E-DATA-FILE", f'"{nome}": il nome deve essere la data AAAA-MM-GG')
+        verbale = cartella in ("documenti/verbali/interni", "documenti/verbali/esterni") and nome.endswith(".toml")
+        datato = verbale or cartella in ("documenti/lettere", "presentazioni/diari") and nome.endswith(".typ")
+        base = nome.rsplit(".", 1)[0]
+        if datato and not sospetta and not (nome_verbale(base) if verbale else data_iso(base)):
+            suffisso = ", con un eventuale suffisso in minuscolo (AAAA-MM-GG-c7)" if verbale else ""
+            self.segnala(rel, 0, "E-DATA-FILE", f'"{nome}": il nome deve essere la data AAAA-MM-GG{suffisso}')
 
     def controlla_date(self, rel, testo):
         for n, riga in enumerate(testo.splitlines(), start=1):
@@ -646,8 +643,6 @@ class Verifica:
             self.segnala(rel, riga, codice, messaggio)
 
         data, tipo = v["data"], v["tipo"]
-        giorno, capitolato = NOME_VERBALE.fullmatch(Path(rel).stem).groups()
-        capitolato = (capitolato or "").upper()
         cartella = Path(rel).parent.name
         atteso = {"interni": "interno", "esterni": "esterno"}.get(cartella)
         if tipo not in ("interno", "esterno"):
@@ -656,7 +651,8 @@ class Verifica:
             errore("E-VERBALE-TIPO", "i verbali vanno in documenti/verbali/interni o documenti/verbali/esterni")
         elif tipo != atteso:
             errore("E-VERBALE-TIPO", f'tipo "{tipo}" incoerente con la cartella {cartella}', riga_valore(testo, "tipo"))
-        if data.isoformat() != giorno:
+        nome = nome_verbale(Path(rel).stem)
+        if not nome or nome[0] != data:
             errore("E-VERBALE-DATA", f"data {data} diversa dal nome del file", riga_valore(testo, data.isoformat()))
 
         orari = {}
@@ -686,8 +682,8 @@ class Verifica:
             errore("E-VERBALE-DECISIONE", "serve almeno una decisione")
         for d in v.get("decisione", []):
             riga = riga_valore(testo, d["id"])
-            if not re.fullmatch(rf"{prefisso}-{data}{capitolato}\.\d+", d["id"]):
-                errore("E-VERBALE-DECISIONE", f'id "{d["id"]}" non nel formato {prefisso}-{data}{capitolato}.n', riga)
+            if not re.fullmatch(rf"{re.escape(prefisso)}\.\d+", d["id"]):
+                errore("E-VERBALE-DECISIONE", f'id "{d["id"]}" non nel formato {prefisso}.n', riga)
             if d["id"] in decisioni:
                 errore("E-VERBALE-DECISIONE", f'id "{d["id"]}" ripetuto', riga)
             decisioni.add(d["id"])
