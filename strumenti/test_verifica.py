@@ -539,7 +539,8 @@ class TestSegnaposto(Base):
 
 DIARIO = """\
 #import "/modello/slide.typ": presentazione, slide
-#show: presentazione.with(evento: "Diario di bordo", data: "2026-10-26", titolo: "Settimana dal 2026-10-19 al 2026-10-25")
+#show: presentazione.with(evento: "Diario di bordo", data: "2026-10-26", versione: "1.0.0", aggiornato: "2026-10-22",
+                          titolo: "Settimana dal 2026-10-19 al 2026-10-25")
 
 #slide(titolo: "Fatto e da fare")[
   - Analisi dei capitolati completata
@@ -560,6 +561,21 @@ class TestPresentazioni(Base):
         codici = self.codici()
         for codice in ("E-DATA-TESTO", "E-LESSICO", "E-SEGNAPOSTO", "E-MAIUSCOLE", "E-DATA-FILE"):
             self.assertIn(codice, codici)
+
+    def test_versione_e_aggiornamento(self):
+        diario = "presentazioni/diari/2026-10-26.typ"
+        self.scrivi(diario, DIARIO.replace('"1.0.0"', '"1.2.3"'))
+        self.assertEqual(self.codici(), [])
+        self.scrivi(diario, DIARIO.replace('versione: "1.0.0", aggiornato: "2026-10-22",', ""))
+        self.assertEqual(self.codici(), ["E-DIARIO-VERSIONE", "E-DIARIO-DATA"])
+        self.scrivi(diario, DIARIO.replace('"1.0.0"', '"0.1.0"').replace('"2026-10-22"', '"2999-01-01"'))
+        self.assertEqual(self.codici(), ["E-DIARIO-VERSIONE", "E-DIARIO-DATA"])
+        self.scrivi(diario, DIARIO.replace('"2026-10-22"', '"22/10/2026"'))
+        self.assertEqual(self.codici(), ["E-DATA-TESTO", "E-DIARIO-DATA"])
+        # le altre presentazioni, come quelle dei colloqui, non hanno versione
+        (self.radice / diario).unlink()
+        self.scrivi("presentazioni/rtb.typ", DIARIO.replace('versione: "1.0.0", aggiornato: "2026-10-22",', ""))
+        self.assertEqual(self.codici(), [])
 
     def test_nome_del_diario(self):
         self.scrivi("presentazioni/diari/26-10-2026.typ", DIARIO)

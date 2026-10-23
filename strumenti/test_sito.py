@@ -150,6 +150,30 @@ class TestSito(unittest.TestCase):
             self.assertIn("proponente</span> · aggiornato\u00a0il\u00a02026-10-23</span>", voci[0])
             self.assertIn('<span class="dettaglio">2026-10-20 C7 · PDF</span>', voci[1])
 
+    def test_diari_con_versione_e_aggiornamento(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            radice, out = Path(tmp), Path(tmp) / "site"
+            cartella = radice / "presentazioni/diari"
+            cartella.mkdir(parents=True)
+            out.mkdir()
+            (cartella / "2026-10-26.typ").write_text(
+                '#show: presentazione.with(evento: "Diario di bordo", data: "2026-10-26", versione: "1.0.1",\n'
+                '  aggiornato: "2026-10-27", titolo: "Settimana dal 2026-10-19 al 2026-10-25")\n'
+                '#slide(titolo: "Fatto e da fare")[]\n', encoding="utf-8")
+            (cartella / "2026-11-02.typ").write_text('#show: presentazione.with(data: "2026-11-02")\n', encoding="utf-8")
+            compilati = []
+            with mock.patch.object(sito, "RADICE", radice), \
+                    mock.patch.object(sito, "compila", lambda typst, sorgente, pdf, dati=None: compilati.append(pdf.name)):
+                voci = sito.diari("typst", out)
+            # data e versione nel nome del PDF, il più recente in cima
+            self.assertEqual(compilati, ["Diario_di_bordo_2026-11-02.pdf", "Diario_di_bordo_2026-10-26_v1.0.1.pdf"])
+            self.assertIn('<a href="Diario_di_bordo_2026-10-26_v1.0.1.html">Settimana dal 2026-10-19 al 2026-10-25'
+                          '<span class="sr-only">, diario di bordo del 2026-10-26</span></a>', voci[1])
+            self.assertIn('<span class="dettaglio">2026-10-26 · v1.0.1 · PDF</span>', voci[1])
+            self.assertIn('<span class="sotto-voce">Aggiornato il 2026-10-27</span>', voci[1])
+            self.assertIn('<span class="dettaglio">2026-11-02 · PDF</span>', voci[0])
+            self.assertNotIn("sotto-voce", voci[0])
+
     def test_sezione_e_indice(self):
         html = sito.sezione("id", "A & B", "<p>c</p>", 3)
         self.assertIn('<section class="sezione" id="id" aria-labelledby="titolo-id">', html)
