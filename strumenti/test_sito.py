@@ -20,6 +20,20 @@ PERIODI = [{"inizio": "2026-10-16", "fine": "2026-11-02", "membro": "Anna Rossi"
            {"inizio": "2026-10-16", "fine": "2026-11-02", "membro": "Luca Bianchi", "ruolo": "Verificatore"},
            {"inizio": "2026-11-03", "fine": "2026-11-16", "membro": "Luca Bianchi", "ruolo": "Analista"}]
 
+# 90 ore e 1750 euro a testa
+PREVENTIVO = {"tariffe": {"Responsabile": 30, "Amministratore": 20, "Analista": 25, "Progettista": 25, "Programmatore": 15,
+                          "Verificatore": 15},
+              "ripartizione": [{"membro": m, "Responsabile": 10, "Amministratore": 10, "Analista": 10, "Progettista": 10,
+                                "Programmatore": 40, "Verificatore": 10} for m in ("Anna Rossi", "Luca Bianchi")]}
+# la RTB dura 20 giorni con 180 ore previste: 9 al giorno, 90 al 2026-10-25
+FASI_ORE = [{"nome": "Candidatura", "inizio": D(2026, 10, 1), "fine": D(2026, 10, 15), "inizio_effettivo": D(2026, 10, 1),
+             "fine_effettiva": D(2026, 10, 15), "ore_previste": 0},
+            {"nome": "RTB", "inizio": D(2026, 10, 16), "fine": D(2026, 11, 4), "inizio_effettivo": D(2026, 10, 16), "ore_previste": 180,
+             "attivita": [{"nome": "Analisi", "inizio": D(2026, 10, 16), "fine": D(2026, 10, 20), "inizio_effettivo": D(2026, 10, 16)}],
+             "milestone": [{"nome": "Revisione", "data": D(2026, 11, 4)}]}]
+ORE = [(D(2026, 10, 20), 40.0, "Anna Rossi", "Responsabile"), (D(2026, 10, 22), 45.0, "Luca Bianchi", "Verificatore")]
+OGGI = D(2026, 10, 25)
+
 
 class TestSito(unittest.TestCase):
     def test_pagina_ha_logo_colore_e_marchio(self):
@@ -44,8 +58,9 @@ class TestSito(unittest.TestCase):
 
     def test_menu_delle_pagine(self):
         html = sito.pagina("T", "", "", GRUPPO, None, "#000000", corrente="ruoli.html")
-        self.assertIn('<nav class="menu" aria-label="Pagine del sito"><ul><li><a href="index.html">Documenti</a></li>', html)
-        self.assertIn('<li><a href="ruoli.html" aria-current="page">Ruoli</a></li>', html)
+        self.assertIn('<nav class="menu" aria-label="Pagine del sito"><ul><li><a href="index.html">Documenti</a></li>'
+                      '<li><a href="cruscotto.html">Cruscotto</a></li>', html)
+        self.assertIn('<li><a href="ruoli.html" aria-current="page">Gruppo</a></li>', html)
         self.assertEqual(html.count(' aria-current="page">'), 1)  # il CSS ne contiene un'altra
         self.assertNotIn(' aria-current="page">', sito.pagina("T", "", "", GRUPPO, None, "#000000"))
 
@@ -87,16 +102,16 @@ class TestSito(unittest.TestCase):
         self.assertIn('<span class="ruolo" hidden></span>', con_ruolo)
 
     def test_voce_ed_elenco(self):
-        riga = sito.voce("a.pdf", "Doc", "v1.0.0 · 2026-10-29")
-        self.assertIn('<span class="dettaglio">v1.0.0 · 2026-10-29 · PDF</span>', riga)
-        self.assertIn('<span class="puntini" aria-hidden="true"></span>', riga)
-        # il titolo apre la pagina di lettura del PDF, nella stessa scheda
-        self.assertIn('<a href="a.html">Doc</a>', riga)
+        riga = sito.voce("a.pdf", "Doc", "v1.0.0", sotto="aggiornato il 2026-10-29")
+        # il titolo apre la pagina di lettura del PDF, nella stessa scheda; il PDF si scarica dal suo link
+        self.assertIn('<a class="titolo" href="a.html">Doc</a>', riga)
+        self.assertIn('<span class="dettaglio"><span class="mono">v1.0.0</span> · aggiornato il 2026-10-29</span>', riga)
+        self.assertIn('<a class="pdf" href="a.pdf" download>PDF<span class="sr-only"> di Doc</span></a>', riga)
         self.assertNotIn("nuova scheda", riga)
-        self.assertIn('<span class="dettaglio">PDF</span>', sito.voce("a.pdf", "Doc"))
-        self.assertNotIn('<span class="sr-only"> del', sito.voce("a.pdf", "Doc"))
+        self.assertNotIn("dettaglio", sito.voce("a.pdf", "Doc"))
         con_data = sito.voce("v.pdf", "Verbale interno", "2026-10-14", nascosto=" del 2026-10-14")
-        self.assertIn('<a href="v.html">Verbale interno<span class="sr-only"> del 2026-10-14</span></a>', con_data)
+        self.assertIn('<a class="titolo" href="v.html">Verbale interno<span class="sr-only"> del 2026-10-14</span></a>', con_data)
+        self.assertIn('PDF<span class="sr-only"> di Verbale interno del 2026-10-14</span>', con_data)
         self.assertIn('<p class="vuoto">vuoto &amp; basta</p>', sito.elenco([], "vuoto & basta"))
         self.assertIn('<ol class="voci"><li class="voce">riga</li></ol>', sito.elenco(["riga"], "vuoto"))
 
@@ -126,8 +141,7 @@ class TestSito(unittest.TestCase):
         self.assertIn("Approvato: per email", sito.stato_verbale({**esterno, "approvazione_esterna": "per email"}))
         self.assertIn("Verificato da Anna Rossi", sito.stato_verbale({**esterno, "tipo": "interno"}))
         riga = sito.voce("v.pdf", "Incontro con Ergon", "2026-10-20 C7", sotto="<b>stato</b>")
-        self.assertTrue(riga.endswith('<span class="sotto-voce"><b>stato</b></span>'))
-        self.assertNotIn("sotto-voce", sito.voce("v.pdf", "Doc"))
+        self.assertIn('<span class="dettaglio"><span class="mono">2026-10-20 C7</span> · <b>stato</b></span>', riga)
 
     def test_verbale_firmato_pubblicato_com_e(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -146,9 +160,10 @@ class TestSito(unittest.TestCase):
             self.assertEqual(compilati, ["Verbale_esterno_2026-10-21.pdf"])
             self.assertEqual(len(voci), 2)
             # versione accanto alla data della riunione, ultimo aggiornamento dopo lo stato
-            self.assertIn('<span class="dettaglio">2026-10-21 · v1.0.1 · PDF</span>', voci[0])
+            self.assertIn('<span class="dettaglio"><span class="mono">2026-10-21 · v1.0.1</span> · '
+                          '<span class="approvazione a-attesa">', voci[0])
             self.assertIn("proponente</span> · aggiornato\u00a0il\u00a02026-10-23</span>", voci[0])
-            self.assertIn('<span class="dettaglio">2026-10-20 C7 · PDF</span>', voci[1])
+            self.assertIn('<span class="dettaglio"><span class="mono">2026-10-20 C7</span> · ', voci[1])
 
     def test_diari_con_versione_e_aggiornamento(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -167,12 +182,12 @@ class TestSito(unittest.TestCase):
                 voci = sito.diari("typst", out)
             # data e versione nel nome del PDF, il più recente in cima
             self.assertEqual(compilati, ["Diario_di_bordo_2026-11-02.pdf", "Diario_di_bordo_2026-10-26_v1.0.1.pdf"])
-            self.assertIn('<a href="Diario_di_bordo_2026-10-26_v1.0.1.html">Settimana dal 2026-10-19 al 2026-10-25'
+            self.assertIn('<a class="titolo" href="Diario_di_bordo_2026-10-26_v1.0.1.html">Settimana dal 2026-10-19 al 2026-10-25'
                           '<span class="sr-only">, diario di bordo del 2026-10-26</span></a>', voci[1])
-            self.assertIn('<span class="dettaglio">2026-10-26 · v1.0.1 · PDF</span>', voci[1])
-            self.assertIn('<span class="sotto-voce">Aggiornato il 2026-10-27</span>', voci[1])
-            self.assertIn('<span class="dettaglio">2026-11-02 · PDF</span>', voci[0])
-            self.assertNotIn("sotto-voce", voci[0])
+            self.assertIn('<span class="dettaglio"><span class="mono">2026-10-26 · v1.0.1</span> · '
+                          'aggiornato\u00a0il\u00a02026-10-27</span>', voci[1])
+            self.assertIn('<a class="pdf" href="Diario_di_bordo_2026-10-26_v1.0.1.pdf" download>', voci[1])
+            self.assertIn('<span class="dettaglio"><span class="mono">2026-11-02</span></span>', voci[0])
 
     def test_sezione_e_indice(self):
         html = sito.sezione("id", "A & B", "<p>c</p>", 3)
@@ -208,7 +223,9 @@ class TestSito(unittest.TestCase):
         self.assertIn('id="nota-attuali"', html)
         self.assertIn("documenti/interni/ruoli.md", html)
         self.assertIn('<li><a href="#linea">Linea del tempo</a></li>', html)
-        self.assertIn('<a href="ruoli.html" aria-current="page">Ruoli</a>', html)
+        self.assertIn('<a href="ruoli.html" aria-current="page">Gruppo</a>', html)
+        self.assertIn("<title>Gruppo - Gruppo 42</title>", html)
+        self.assertIn("Membri e ruoli attuali", html)
         vuota = sito.pagina_ruoli(GRUPPO, None, "#000000", [])
         self.assertIn("Nessun periodo ancora registrato", vuota)
         self.assertNotIn('class="linea"', vuota)
@@ -287,13 +304,129 @@ class TestSito(unittest.TestCase):
         self.assertEqual(sito.stato_progetto(FASI, D(2026, 10, 3)),
                          '<p class="stato-progetto"><span>Fase in corso: <b>Candidatura</b></span>'
                          '<span>Prossima milestone: <b>Invio</b>, 2026-10-10 (fra 7 giorni)</span>'
-                         '<a href="pianificazione.html">Pianificazione</a></p>')
+                         '<a href="cruscotto.html">Cruscotto</a></p>')
         self.assertEqual(sito.stato_progetto([], D(2026, 10, 3)), "")
         in_ritardo = sito.pagina_pianificazione(GRUPPO, None, "#000000", FASI, [], D(2026, 10, 12))
         self.assertIn("<li><b>Capitolati</b> (Candidatura): 7 giorni oltre la fine prevista</li>", in_ritardo)
         self.assertIn("<li><b>Invio</b> (Candidatura): 2 giorni oltre la data prevista</li>", in_ritardo)
         self.assertIn("Nessuna fase ancora pianificata", sito.pagina_pianificazione(GRUPPO, None, "#000000", [], [], D(2026, 10, 3)))
         self.assertIn('<a href="pianificazione.html">Pianificazione</a>', sito.pagina_ruoli(GRUPPO, None, "#000000", PERIODI))
+
+    def test_pagina_documenti(self):
+        testata = sito.apertura("G", "k")
+        html = sito.pagina_documenti(GRUPPO, None, "#000000", testata, ["lettera"], ([], [], []), (["esterno"], ["interno"]), [])
+        # la lettera in cima e in evidenza; le sezioni vuote non compaiono e una riga le elenca
+        self.assertLess(html.index('id="lettere"'), html.index('id="verbali"'))
+        self.assertIn('<section class="sezione in-evidenza" id="lettere"', html)
+        self.assertNotIn('id="documenti"', html)
+        self.assertNotIn('id="diari"', html)
+        self.assertIn('<p class="nota">Ancora da pubblicare: documenti e diari di bordo.</p>', html)
+        self.assertIn('<p class="titoletto" aria-hidden="true">In questa pagina</p>'
+                      '<ol><li><a href="#lettere">Lettere</a></li><li><a href="#verbali">Verbali</a></li></ol>', html)
+        self.assertIn('<h3>Esterni</h3><ol class="voci"><li class="voce">esterno</li></ol><h3>Interni</h3>', html)
+        # la ricerca compare solo con lo script
+        self.assertIn('<div class="cerca" hidden><label for="cerca">Cerca tra i documenti</label>', html)
+        self.assertIn("getElementById('cerca')", html)
+        # i membri stanno nella pagina Gruppo
+        self.assertNotIn("data-membro", html)
+        vuota = sito.pagina_documenti(GRUPPO, None, "#000000", testata, [], ([], [], []), ([], []), [])
+        self.assertIn("Ancora da pubblicare: lettere di presentazione, documenti, verbali e diari di bordo.", vuota)
+        self.assertNotIn('class="cerca"', vuota)
+        self.assertNotIn('class="colonne"', vuota)
+
+    def test_numeri_e_tacche(self):
+        self.assertEqual(sito.euro(12600.5), "12.600,50\u00a0€")
+        self.assertEqual(sito.euro(0), "0,00\u00a0€")
+        self.assertEqual(sito.ore_h(12.345), "12,3\u00a0h")
+        self.assertEqual(sito.percento(-500 / 90, segno=True), "\u22125,6%")
+        self.assertEqual(sito.percento(1875 / 3500 * 100), "54%")
+        self.assertEqual(sito.tacche(180), [0, 50, 100, 150, 200])
+        self.assertEqual(sito.tacche(12.5), [0, 5, 10, 15])
+        self.assertEqual(sito.tacche(540), [0, 200, 400, 600])
+
+    def test_ore_previste_e_conti(self):
+        self.assertEqual(sito.ore_previste_al(FASI_ORE, D(2026, 10, 15)), 0)
+        self.assertEqual(sito.ore_previste_al(FASI_ORE, OGGI), 90)
+        self.assertEqual(sito.ore_previste_al(FASI_ORE, D(2026, 12, 1)), 180)
+        # una fase già iniziata senza ore previste rende ignoto il previsto da quel giorno
+        con_pb = FASI_ORE + [{"nome": "PB", "inizio": D(2026, 11, 5), "fine": D(2026, 11, 30)}]
+        self.assertEqual(sito.ore_previste_al(con_pb, D(2026, 11, 4)), 180)
+        self.assertIsNone(sito.ore_previste_al(con_pb, D(2026, 11, 5)))
+        c = sito.conti(ORE, PREVENTIVO)
+        self.assertEqual((c["ore_preventivo"], c["costo_preventivo"], c["ore_consuntivo"], c["costo_consuntivo"]), (180, 3500, 85, 1875))
+        self.assertEqual(c["preventivo_membro"], {"Anna Rossi": 90, "Luca Bianchi": 90})
+        self.assertEqual(c["consuntivo_ruolo"]["Verificatore"], 45)
+        vuoto = sito.conti([], {})
+        self.assertEqual((vuoto["ore_preventivo"], vuoto["costo_consuntivo"]), (0, 0))
+
+    def test_controlli_ed_esito(self):
+        risultati = sito.controlli(GRUPPO, FASI_ORE, ORE, sito.conti(ORE, PREVENTIVO), OGGI)
+        self.assertEqual([(n, s) for n, s, _, _ in risultati],
+                         [("Costo", "Sotto controllo"), ("Ore rispetto al previsto", "Sotto controllo"), ("Tempi", "Fuori soglia"),
+                          ("Ore per membro", "Sotto controllo")])
+        valori = [v for _, _, v, _ in risultati]
+        self.assertEqual(valori[0], "1.875,00\u00a0€ di 3.500,00\u00a0€, il 54%.")
+        self.assertEqual(valori[1], "85\u00a0h consumate e 90\u00a0h previste a oggi: \u22125,6%.")
+        self.assertIn('1 voce in ritardo: Analisi. <a href="pianificazione.html#situazione">', valori[2])
+        self.assertEqual(valori[3], "Al massimo 45\u00a0h per membro.")
+        self.assertEqual(risultati[1][3], "scostamento entro ±10% dalle ore previste a oggi.")
+        self.assertIn("Fuori soglia</span>: 1 indicatore su 4 (tempi).", sito.esito(risultati))
+        # costo aggiudicato superato, soglia più stretta, un membro oltre la sua ripartizione
+        gruppo = {**GRUPPO, "progetto": {"costo_aggiudicato": 1800.0}, "soglie": {"scostamento_ore": 5}}
+        troppe = ORE + [(D(2026, 10, 23), 60.0, "Anna Rossi", "Responsabile")]
+        risultati = sito.controlli(gruppo, FASI_ORE, troppe, sito.conti(troppe, PREVENTIVO), OGGI)
+        self.assertEqual({s for _, s, _, _ in risultati}, {"Fuori soglia"})
+        self.assertEqual(risultati[0][3], "il costo consuntivo non supera il costo aggiudicato.")
+        self.assertEqual(risultati[3][2], "Oltre il limite: Anna Rossi.")
+        self.assertIn("4 indicatori su 4 (costo, ore rispetto al previsto, tempi, ore per membro).", sito.esito(risultati))
+        vuoti = sito.controlli({"gruppo": {}}, [], [], sito.conti([], {}), OGGI)
+        self.assertEqual({s for _, s, _, _ in vuoti}, {"Da misurare"})
+        self.assertIn("Da misurare</span>: nessun indicatore ha ancora i dati che servono.", sito.esito(vuoti))
+        self.assertIn("tutti e 2 gli indicatori sono nella soglia.", sito.esito([("A", "Sotto controllo", "", "")] * 2))
+        self.assertIn("1 indicatore su 2 nella soglia, 1 ancora da misurare.",
+                      sito.esito([("A", "Sotto controllo", "", ""), ("B", "Da misurare", "", "")]))
+
+    def test_grafico_ore(self):
+        html = sito.grafico_ore(FASI_ORE, ORE, 180, OGGI)
+        # 20 giorni dal 2026-10-16 e asse fino a 200 ore: x = giorni / 20, y = ore / 200; un punto ogni 7 giorni più oggi
+        self.assertIn('<polyline class="l-previste" points="0,100 35,68.5 50,55 70,37 100,10"', html)
+        self.assertIn('<polyline class="l-consumate" points="0,100 35,57.5 50,57.5"', html)
+        self.assertIn('<span class="tacca-y" style="bottom:25%"><b>50</b></span>', html)
+        self.assertIn('<span class="rif-g" style="bottom:90%"><span>Preventivo 180\u00a0h</span></span>', html)
+        self.assertIn('<span class="oggi-g" style="left:50%"></span><span class="punto-g" style="left:50%;bottom:42.5%"></span>', html)
+        self.assertIn("&quot;al&quot;: &quot;Al 2026-10-22&quot;, &quot;p&quot;: &quot;63\u00a0h&quot;, &quot;c&quot;: &quot;85\u00a0h&quot;", html)
+        self.assertIn("&quot;al&quot;: &quot;Al 2026-10-29&quot;, &quot;p&quot;: &quot;126\u00a0h&quot;, &quot;c&quot;: null", html)
+        self.assertIn("Al 2026-10-25: 85\u00a0h consumate e 90\u00a0h previste, su 180\u00a0h del preventivo.", html)
+        self.assertIn('<td class="data">2026-11-04</td><td class="numeri">180\u00a0h</td><td class="numeri">—</td>', html)
+        self.assertEqual(sito.grafico_ore(FASI[:1], [], 0, OGGI), "")
+
+    def test_consuntivo_periodi(self):
+        ore = ORE + [(D(2026, 11, 5), 6.0, "Luca Bianchi", "Analista")]
+        html = sito.consuntivo_periodi(PERIODI, ore, PREVENTIVO["tariffe"], OGGI)
+        self.assertIn('<td class="data"><span>2026-10-16</span> <span>→ 2026-11-02</span></td><td><span class="stato s-in-corso">', html)
+        self.assertIn('In corso</span></td><td class="numeri">85\u00a0h</td><td class="numeri">1.875,00\u00a0€</td>', html)
+        # l'ora del 2026-11-05 conta nel periodo di Luca Bianchi da Analista
+        self.assertIn('Da iniziare</span></td><td class="numeri">6\u00a0h</td><td class="numeri">150,00\u00a0€</td>', html)
+
+    def test_pagina_cruscotto(self):
+        html = sito.pagina_cruscotto(GRUPPO, None, "#000000", FASI_ORE, ORE, PREVENTIVO, PERIODI, OGGI)
+        self.assertIn('<a href="cruscotto.html" aria-current="page">Cruscotto</a>', html)
+        for identificatore in ("controllo", "ore-e-costi", "andamento", "avanzamento", "periodi"):
+            self.assertIn(f'<li><a href="#{identificatore}">', html)
+        self.assertIn('<span class="etichetta">Tempi</span><span class="valore"><span class="stato s-fuori-soglia">', html)
+        self.assertIn('<span class="soglia">Soglia: il costo consuntivo non supera il costo preventivato.</span>', html)
+        self.assertIn('<td><span class="ruolo r-responsabile">Responsabile</span></td><td class="numeri">30 €/h</td>'
+                      '<td class="numeri">20\u00a0h</td><td class="numeri">40\u00a0h</td>', html)
+        self.assertIn('<tr><td>Anna Rossi</td><td class="numeri">90\u00a0h</td><td class="numeri">40\u00a0h</td>'
+                      '<td class="numeri">50\u00a0h</td><td class="numeri">44%', html)
+        self.assertIn('<td>RTB</td><td class="numeri">0 di 1</td><td class="numeri">0 di 1</td>', html)
+        self.assertIn("getAttribute('data-punti')", html)
+        vuota = sito.pagina_cruscotto(GRUPPO, None, "#000000", [], [], {}, [], OGGI)
+        self.assertIn("Il grafico compare quando", vuota)
+        self.assertIn("La ripartizione delle ore di dati/preventivo.toml è ancora vuota", vuota)
+        self.assertNotIn("<h3>Per ruolo</h3>", vuota)  # senza preventivo né ore le tabelle sarebbero solo zeri
+        self.assertIn("Nessun periodo ancora registrato in dati/ruoli.csv", vuota)
+        self.assertNotIn("data-punti", vuota)
 
     def test_json_non_chiude_lo_script(self):
         html = sito.pagina("T", "", "", {"gruppo": {}}, None, "#000000", dati={"periodi": [{"membro": "</script>"}]})
