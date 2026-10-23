@@ -794,6 +794,10 @@ class Verifica:
             self.segnala(rel, riga_valore(testo, "costo_aggiudicato"), "E-DATI", "costo_aggiudicato deve essere un numero")
         if not numero(soglie.get("gulpease", 40)):
             self.segnala(rel, riga_valore(testo, "gulpease"), "E-DATI", "la soglia gulpease deve essere un numero")
+        scostamento = soglie.get("scostamento_ore", 10)
+        if not (numero(scostamento) and 0 < scostamento <= 100):
+            self.segnala(rel, riga_valore(testo, "scostamento_ore"), "E-DATI",
+                         "la soglia scostamento_ore deve essere una percentuale tra 0 e 100")
         for i, membro in enumerate(self.gruppo.get("membro", []), start=1):
             if not isinstance(membro, dict) or not membro.get("nome") or not membro.get("cognome"):
                 self.segnala(rel, riga_voce(testo, "membro", i), "E-DATI", "membro senza nome o cognome")
