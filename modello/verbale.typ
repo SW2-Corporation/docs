@@ -1,6 +1,6 @@
 // Si compila indicando il verbale da rendere:
 // typst compile --root . modello/verbale.typ out.pdf --input dati=/documenti/verbali/interni/AAAA-MM-GG.toml
-// Niente copertina, versione o registro: un verbale non ha storia di revisione.
+// Niente copertina né registro: versione e data dell'ultimo aggiornamento sono campi del TOML.
 #import "comuni.typ": *
 #import "stile.typ": fascia, info, occhiello, palette, riquadro, stile
 #import "persone.typ": tabella-persone
@@ -14,6 +14,8 @@
 #let campo(chiave) = verbale.at(chiave, default: "")
 #let elenco(chiave) = verbale.at(chiave, default: ())
 #let data = data-it(verbale.data)
+#let versione = verbale.versione
+#let aggiornato = data-it(verbale.aggiornato)
 // con più verbali dello stesso tipo in un giorno il file ha un suffisso: AAAA-MM-GG-c7.toml
 #let suffisso = percorso.match(regex("\d{4}-\d{2}-\d{2}-([a-z0-9]+)\.toml$"))
 #let codice = if suffisso != none { upper(suffisso.captures.first()) }
@@ -21,7 +23,7 @@
 #if codice != none { titolo += " " + codice }
 
 #set document(title: titolo, author: campo("redattore"))
-#show: stile.with(titolo: titolo, etichetta: info.nome)
+#show: stile.with(titolo: titolo, etichetta: info.nome + " · v" + versione + " · aggiornato il " + aggiornato)
 // i testi del TOML non passano dal markup: apostrofi e virgolette tipografici come nei documenti
 #show "'": smartquote(double: false)
 #show "\"": smartquote()
@@ -71,6 +73,9 @@
     text(fill: palette.tenue)[Redattore], campo("redattore"),
     text(fill: palette.tenue)[Luogo], campo("luogo"),
     text(fill: palette.tenue)[Verificatore], campo("verificatore"),
+    // l'etichetta lunga a sinistra, come "Approvazione del proponente": la colonna di destra resta stretta
+    text(fill: palette.tenue)[Ultimo aggiornamento], aggiornato,
+    text(fill: palette.tenue)[Versione], versione,
     // un verbale interno ha solo membri del gruppo: basta una riga, la tabella serve con gli esterni
     ..if interno { voce[Partecipanti][#elenco("partecipanti").join(", ")] },
     ..if interno and assenti.len() > 0 { voce[Assenti][#assenti.join(", ")] },

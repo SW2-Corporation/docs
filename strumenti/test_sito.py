@@ -135,8 +135,8 @@ class TestSito(unittest.TestCase):
             cartella = radice / "documenti/verbali/esterni"
             cartella.mkdir(parents=True)
             out.mkdir()
-            for nome in ("2026-10-20-c7", "2026-10-21"):
-                (cartella / f"{nome}.toml").write_text('tipo = "esterno"\n', encoding="utf-8")
+            (cartella / "2026-10-20-c7.toml").write_text('tipo = "esterno"\n', encoding="utf-8")
+            (cartella / "2026-10-21.toml").write_text('tipo = "esterno"\nversione = "1.0.1"\naggiornato = 2026-10-23\n', encoding="utf-8")
             (cartella / "2026-10-20-c7.firmato.pdf").write_bytes(b"%PDF firmato")
             compilati = []
             with mock.patch.object(sito, "RADICE", radice), \
@@ -145,6 +145,10 @@ class TestSito(unittest.TestCase):
             self.assertEqual((out / "Verbale_esterno_2026-10-20-c7.pdf").read_bytes(), b"%PDF firmato")
             self.assertEqual(compilati, ["Verbale_esterno_2026-10-21.pdf"])
             self.assertEqual(len(voci), 2)
+            # versione accanto alla data della riunione, ultimo aggiornamento dopo lo stato
+            self.assertIn('<span class="dettaglio">2026-10-21 · v1.0.1 · PDF</span>', voci[0])
+            self.assertIn("proponente</span> · aggiornato\u00a0il\u00a02026-10-23</span>", voci[0])
+            self.assertIn('<span class="dettaglio">2026-10-20 C7 · PDF</span>', voci[1])
 
     def test_sezione_e_indice(self):
         html = sito.sezione("id", "A & B", "<p>c</p>", 3)

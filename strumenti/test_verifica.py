@@ -70,6 +70,8 @@ definizione = "Periodo di lavoro di durata fissa."
 VERBALE = """\
 tipo = "interno"
 data = 2026-10-14
+versione = "1.0.0"
+aggiornato = 2026-10-15
 inizio = "18:00"
 fine = "19:00"
 luogo = "Discord"
@@ -345,6 +347,14 @@ class TestVerbale(Base):
         codici = self.verbale(testo, "esterni", "2026-10-15")
         for codice in ("E-VERBALE-TIPO", "E-VERBALE-DATA", "E-VERBALE-ORARIO"):
             self.assertIn(codice, codici)
+
+    def test_versione_e_aggiornamento(self):
+        self.assertEqual(self.verbale(VERBALE.replace('versione = "1.0.0"\n', "")), ["E-VERBALE-SCHEMA"])
+        self.assertEqual(self.verbale(VERBALE.replace('"1.0.0"', '"1.2.3"')), [])
+        # versione dei documenti con registro e aggiornamento prima della riunione
+        errato = VERBALE.replace('"1.0.0"', '"0.1.0"').replace("aggiornato = 2026-10-15", "aggiornato = 2026-10-13")
+        self.assertEqual(self.verbale(errato), ["E-VERBALE-VERSIONE", "E-VERBALE-DATA"])
+        self.assertEqual(self.verbale(VERBALE.replace("aggiornato = 2026-10-15", "aggiornato = 2999-01-01")), ["E-VERBALE-DATA"])
 
     def test_decisioni_e_azioni(self):
         testo = (VERBALE.replace('decisione = "VI-2026-10-14.1"', 'decisione = "VI-2026-10-14.2"')
