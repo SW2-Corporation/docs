@@ -562,11 +562,27 @@ class Verifica:
             self.controlla_titolo(rel, riga_di(codice, inizio), titolo)
         self.controlla_lessico(rel, codice)
         self.controlla_segnaposto(rel, testo)
+        if not rel.startswith("presentazioni/diari/"):
+            return
         data = re.search(r'\bdata:\s*"([^"]*)"', codice)
         nome = Path(rel).stem
-        if rel.startswith("presentazioni/diari/") and data and data_iso(nome) and data[1] != nome:
+        if data and data_iso(nome) and data[1] != nome:
             self.segnala(rel, riga_di(codice, data.start()), "E-DATA-FILE",
                          f"la data del diario ({data[1]}) differisce dal nome del file")
+        # nessun registro, come i verbali: il diario nasce alla 1.0.0 e ogni modifica verificata fa crescere Y o Z
+        versione = re.search(r'\bversione:\s*"([^"]*)"', codice)
+        if not versione:
+            self.segnala(rel, 0, "E-DIARIO-VERSIONE", 'manca versione: "1.0.0" in presentazione.with(...)')
+        elif not re.fullmatch(r"1\.\d+\.\d+", versione[1]):
+            self.segnala(rel, riga_di(codice, versione.start()), "E-DIARIO-VERSIONE",
+                         f'versione "{versione[1]}" non valida: un diario nasce alla 1.0.0 e cresce in Y o Z')
+        aggiornato = re.search(r'\baggiornato:\s*"([^"]*)"', codice)
+        giorno = data_iso(aggiornato[1]) if aggiornato else None
+        if not giorno:
+            self.segnala(rel, riga_di(codice, aggiornato.start()) if aggiornato else 0, "E-DIARIO-DATA",
+                         'aggiornato: "AAAA-MM-GG" mancante o non valido in presentazione.with(...)')
+        elif giorno > dt.date.today():
+            self.segnala(rel, riga_di(codice, aggiornato.start()), "E-DIARIO-DATA", f"aggiornato {giorno} nel futuro")
 
     # --- registro delle modifiche ---
 
