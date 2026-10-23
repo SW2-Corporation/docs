@@ -374,6 +374,14 @@ class TestVerbale(Base):
         self.assertIn("E-DATA-FILE", codici)
         self.assertIn("E-VERBALE-DATA", codici)
 
+    def test_copia_firmata(self):
+        self.scrivi("documenti/verbali/interni/2026-10-14.firmato.pdf", "%PDF")
+        self.assertEqual(self.verbale(VERBALE), [])
+        # senza verbale accanto, oppure con un altro nome, il sito non la pubblicherebbe
+        self.scrivi("documenti/verbali/interni/2026-10-15.firmato.pdf", "%PDF")
+        self.scrivi("documenti/verbali/interni/2026-10-14_firmato.pdf", "%PDF")
+        self.assertEqual(self.codici(), ["E-VERBALE-FIRMATO", "E-VERBALE-FIRMATO"])
+
     def test_esterno_senza_esterni(self):
         testo = VERBALE.replace('"interno"', '"esterno"').replace("VI-", "VE-")
         codici = self.verbale(testo, "esterni")

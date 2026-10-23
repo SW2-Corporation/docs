@@ -372,6 +372,11 @@ class Verifica:
         if parti[0] in ("documenti", "dati", "presentazioni"):
             self.controlla_nome(rel)
         suffisso = Path(rel).suffix
+        # con un altro nome il sito ignorerebbe la copia firmata e pubblicherebbe quella compilata
+        if suffisso == ".pdf" and parti[:2] == ["documenti", "verbali"] and not (
+                rel.endswith(".firmato.pdf") and (self.radice / (rel.removesuffix(".firmato.pdf") + ".toml")).is_file()):
+            self.segnala(rel, 0, "E-VERBALE-FIRMATO",
+                         "la copia firmata va accanto al suo verbale, con lo stesso nome e l'estensione .firmato.pdf")
         if suffisso not in (".typ", ".toml", ".csv"):
             return
         testo = self.leggi(rel)
