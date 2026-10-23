@@ -131,9 +131,9 @@
     table(
       columns: (auto, 1fr, auto, auto, auto),
       table.header([Decisione], [Azione], [Assegnatario], [Scadenza], [Issue]),
-      // basta il numero: verifica.py accetta solo decisioni di questo verbale
+      // ID completo della decisione per massima tracciabilità
       ..elenco("azione")
-        .map(a => (a.decisione.split(".").last(), a.descrizione, a.assegnatario, data-it(a.scadenza), issue(a.at("issue", default: ""))))
+        .map(a => (a.decisione, a.descrizione, a.assegnatario, data-it(a.scadenza), issue(a.at("issue", default: ""))))
         .flatten(),
     ),
     caption: [Azioni assegnate],
