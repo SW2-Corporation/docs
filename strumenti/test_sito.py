@@ -87,13 +87,27 @@ class TestSito(unittest.TestCase):
         riga = sito.voce("a.pdf", "Doc", "v1.0.0 · 2026-10-29")
         self.assertIn('<span class="dettaglio">v1.0.0 · 2026-10-29 · PDF</span>', riga)
         self.assertIn('<span class="puntini" aria-hidden="true"></span>', riga)
-        self.assertIn("(si apre in una nuova scheda)", riga)
+        # il titolo apre la pagina di lettura del PDF, nella stessa scheda
+        self.assertIn('<a href="a.html">Doc</a>', riga)
+        self.assertNotIn("nuova scheda", riga)
         self.assertIn('<span class="dettaglio">PDF</span>', sito.voce("a.pdf", "Doc"))
         self.assertNotIn('<span class="sr-only"> del', sito.voce("a.pdf", "Doc"))
         con_data = sito.voce("v.pdf", "Verbale interno", "2026-10-14", nascosto=" del 2026-10-14")
-        self.assertIn('>Verbale interno<span class="sr-only"> del 2026-10-14</span><span class="sr-only"> (si apre', con_data)
+        self.assertIn('<a href="v.html">Verbale interno<span class="sr-only"> del 2026-10-14</span></a>', con_data)
         self.assertIn('<p class="vuoto">vuoto &amp; basta</p>', sito.elenco([], "vuoto & basta"))
         self.assertIn('<ol class="voci"><li class="voce">riga</li></ol>', sito.elenco(["riga"], "vuoto"))
+
+    def test_pagina_pdf(self):
+        html = sito.pagina_pdf(GRUPPO, "logo.png", "#123456", "Verbale_esterno_2026-10-20-c7.pdf")
+        self.assertIn("<title>Verbale esterno 2026-10-20-c7 - Gruppo 42</title>", html)
+        self.assertIn('data-pdf="Verbale_esterno_2026-10-20-c7.pdf"', html)
+        self.assertIn('<a class="scarica" href="Verbale_esterno_2026-10-20-c7.pdf" download>', html)
+        self.assertIn('<a href="Verbale_esterno_2026-10-20-c7.pdf">scaricalo</a>', html)
+        # pdf.js con versione e impronte fissate: CSS e due moduli dai tag, il worker dal fetch
+        self.assertEqual(html.count('integrity="sha384-'), 3)
+        self.assertIn(f'data-worker="{sito.SRI_PDFJS["build/pdf.worker.min.mjs"]}"', html)
+        # il CSS di pdf.js prima dello stile del sito, che decide il tema
+        self.assertLess(html.index("pdf_viewer.css"), html.index("@font-face"))
 
     def test_verbali_con_titolo_e_approvazione(self):
         esterno = {"tipo": "esterno", "esterni": [{"azienda": "Ergon"}, {"azienda": "Ergon"}], "ordine_del_giorno": ["Dati"],
