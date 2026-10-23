@@ -86,7 +86,7 @@ Procedura:
 + Entro 48 ore il redattore scrive il verbale esterno, secondo la procedura dei verbali.
 + Il Responsabile manda il verbale al proponente dalla casella del gruppo e chiede l'approvazione.
 + Alla risposta il redattore registra l'approvazione nel campo dedicato del verbale. Finché manca, il verbale riporta "in attesa".
-+ Se il proponente rimanda il verbale firmato, il redattore salva il PDF accanto al file del verbale, con lo stesso nome e l'estensione `.firmato.pdf`. Il sito pubblica la copia firmata al posto di quella compilata. Da quel momento il verbale non cambia: una correzione richiede una nuova firma.
++ Se il proponente rimanda il verbale firmato, il redattore salva il PDF accanto al file del verbale, con lo stesso nome e l'estensione `.firmato.pdf`. Il sito pubblica la copia firmata al posto di quella compilata. Da quel momento il verbale non cambia: una correzione richiede una nuova versione e una nuova firma.
 
 Strumenti: casella email del gruppo, piattaforma video scelta dal proponente, repository della documentazione. Metriche: MPC-01.
 
@@ -123,16 +123,19 @@ Ogni documento con registro passa per quattro stati.
 
 Le versioni hanno la forma X.Y.Z. Z cresce per una modifica minore verificata. Y cresce per una modifica sostanziale verificata. X cresce solo con l'approvazione del Responsabile. La versione non cambia mai senza una verifica.
 
+La copertina riporta la versione e la data dell'ultimo aggiornamento, cioè la versione e la data della prima riga del registro. Il piè di pagina le ripete su ogni pagina e il sito le mostra accanto al documento.
+
 Il registro delle modifiche precede l'indice ed è in ordine dalla riga più recente. Ogni riga indica versione, data, autore, verificatore e descrizione. Autore e verificatore sono persone diverse. La riga di approvazione ha il verificatore vuoto e una descrizione che inizia con "Approvazione".
 
 === Tipi di documento
 - Documenti con registro: documenti gestionali e tecnici esterni, documenti interni. Hanno copertina, registro, indice e introduzione.
-- Lettere di Presentazione: una per consegna, con la data e senza registro. Stanno in cima al sito.
-- Verbali interni ed esterni: hanno la stessa struttura, cartelle diverse e nessun registro.
+- Lettere di Presentazione: una per consegna, con la data e senza versione né registro. La data è quella dell'ultimo aggiornamento: la lettera inviata sostituisce le bozze. Stanno in cima al sito.
+- Verbali interni ed esterni: hanno la stessa struttura, cartelle diverse e nessun registro. Hanno la versione e la data dell'ultimo aggiornamento.
 - Diari di bordo: presentazioni per i docenti, non pubblicate sul sito.
 
 === Convenzioni
 - I documenti si scrivono in Typst con il modello del gruppo. Il modello fornisce copertina, registro, intestazioni, tabelle e stile.
+- Ogni documento riporta la versione e la data dell'ultimo aggiornamento, nel PDF e sul sito. La Lettera di Presentazione riporta solo la data.
 - Le date sono sempre nella forma AAAA-MM-GG, nel testo e nei nomi dei file. Gli orari sono nella forma HH:MM.
 - Nei titoli solo la prima parola ha l'iniziale maiuscola, salvo acronimi e nomi propri.
 - Tabelle e figure sono numerate e hanno una didascalia: sopra per le tabelle, sotto per le figure.
@@ -153,10 +156,11 @@ Il registro delle modifiche precede l'indice ed è in ordine dalla riga più rec
 === Verbali
 Quando: dopo ogni riunione interna e ogni incontro con un proponente. Ingressi: gli appunti del redattore. Uscite: il verbale pubblicato e le issue delle azioni.
 
-Un verbale è un file TOML con data, orari, luogo, redattore, verificatore, partecipanti, ordine del giorno, sintesi per punto, decisioni e azioni. Il modello del gruppo lo impagina.
+Un verbale è un file TOML con data, versione, data dell'ultimo aggiornamento, orari, luogo, redattore, verificatore, partecipanti, ordine del giorno, sintesi per punto, decisioni e azioni. Il modello del gruppo lo impagina.
 
 Regole:
 - il redattore e il verificatore sono persone diverse;
+- il verbale nasce alla versione 1.0.0. Ogni modifica verificata ne aggiorna la data e fa crescere Y se cambia decisioni o azioni, Z negli altri casi;
 - l'ordine del giorno viene sempre per primo;
 - la sintesi di ogni punto è breve: il verbale registra decisioni motivate, non la discussione;
 - ogni decisione ha un identificativo, il testo e la motivazione. Gli identificativi hanno la forma VI-AAAA-MM-GG.n per i verbali interni e VE-AAAA-MM-GG.n per gli esterni;
@@ -226,7 +230,7 @@ Lo script `strumenti/verifica.py` controlla il repository. Ogni problema è una 
 - dati del gruppo, ruoli, ore e preventivo;
 - registro delle modifiche: intestazione, ordine, versioni, persone diverse, approvazioni;
 - titoli, date, lessico, riferimenti, figure e termini del glossario;
-- verbali: schema, date, orari, decisioni, azioni, issue, approvazione esterna, nome della copia firmata;
+- verbali: schema, date, versione e ultimo aggiornamento, orari, decisioni, azioni, issue, approvazione esterna, nome della copia firmata;
 - leggibilità dei documenti.
 
 I test degli strumenti si eseguono con `python -m unittest discover -s strumenti`. Il workflow `Verifica` esegue controlli e test a ogni pull request e a ogni integrazione.
@@ -248,6 +252,7 @@ Il verificatore scrive l'esito nella pull request, punto per punto, con le corre
 + Ogni azione ha assegnatario, scadenza futura e issue.
 + Il verbale non contiene contenuti estranei a un documento ufficiale.
 + Il verbale esterno riporta gli esterni e lo stato dell'approvazione.
++ Versione e data dell'ultimo aggiornamento sono aggiornate con la modifica, secondo le regole dei verbali.
 
 == Accertamento della qualità
 Il gruppo norma entro il 2026-11-02 la raccolta delle metriche, il cruscotto e il modo in cui le misure guidano le correzioni. Le definizioni delle metriche già in uso stanno nell'ultima sezione.
@@ -314,6 +319,8 @@ Dal 2026-11-03 ogni membro registra ogni settimana le ore produttive per ruolo e
 La Definition of Done dice quando il lavoro è fatto. Il lavoro che non la soddisfa non è fatto: non esiste uno stato "quasi fatto" e il lavoro non fatto non entra nel valore conseguito del periodo. Fatto non vuol dire approvato: l'approvazione del Responsabile autorizza il rilascio di un documento e viene dopo.
 
 Una issue è fatta quando la sua pull request è integrata su `main`. La protezione di `main` permette l'integrazione solo con il controllo `verifica` verde, l'approvazione di un membro diverso dall'autore e tutte le conversazioni risolte. Una issue che non modifica il repository, per esempio un'email o un incontro, è fatta quando riporta l'evidenza del risultato e un altro membro la conferma con un commento.
+
+Una issue che modifica un documento è fatta solo se la versione e la data dell'ultimo aggiornamento del documento sono aggiornate con la modifica, secondo le regole del suo tipo. Il PDF le riporta e il sito le mostra quando il documento è pubblicato. La Lettera di Presentazione ha solo la data.
 
 Uno sprint è fatto quando ogni sua issue è fatta oppure torna da fare con la stima residua. Una consegna è fatta quando ogni documento consegnato ha la riga di approvazione del Responsabile.
 
