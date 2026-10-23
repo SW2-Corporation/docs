@@ -3,8 +3,8 @@
 Uso: python strumenti/sito.py --out site [--typst percorso]
 
 Vanno sul sito i documenti rilasciati (prima riga del registro = approvazione),
-tutte le lettere, tutti i verbali e tutti i diari di bordo, più le pagine della pianificazione,
-dei ruoli e del glossario.
+tutte le lettere, tutti i verbali e tutti i diari di bordo, più le pagine del cruscotto,
+della pianificazione, del gruppo e del glossario.
 Ogni PDF ha la sua pagina di lettura (pdf.js), con lo stesso nome e l'estensione .html.
 """
 
@@ -13,6 +13,7 @@ import csv
 import datetime
 import html
 import json
+import math
 import re
 import shutil
 import subprocess
@@ -21,7 +22,7 @@ import tomllib
 import unicodedata
 from pathlib import Path
 
-from verifica import RADICE, RUOLI, data_iso, nome_verbale, rilascio, slug
+from verifica import RADICE, RUOLI, data_iso, nome_verbale, numero, rilascio, slug
 
 ACCENTO_PREDEFINITO = "#d7262f"
 SOTTOTITOLO = "Progetto didattico di Ingegneria del Software, Università degli Studi di Padova"
@@ -29,25 +30,30 @@ MESI = ("gen", "feb", "mar", "apr", "mag", "giu", "lug", "ago", "set", "ott", "n
 
 # Tema scuro: usato sia quando il dispositivo lo preferisce sia quando l'utente lo sceglie.
 TEMA_SCURO = """--carta: #0f0f0f; --inchiostro: #ece9e2; --tenue: #aaa69f; --filetto: #2e2e2e; --superficie: #1b1b1b;
-  --piano: #262624; --piano-bordo: #3d3c39; --fatto: #4ade80; --corso: #82a8ff; --ritardo: var(--accento-chiaro);
+  --piano: #262624; --piano-bordo: #3d3c39; --fatto: #4ade80; --corso: #82a8ff; --previsto: #8a867f; --ritardo: var(--accento-chiaro);
   --accento-testo: var(--accento-chiaro); --sole: block; --luna: none; color-scheme: dark;"""
 
 # {accento} e {scuro} vengono sostituiti dal colore del gruppo e dal blocco del tema scuro.
 # Carta e inchiostro; serif per i titoli, monospazio per date ed etichette.
 # --accento-testo è la variante dell'accento usata per il testo: sugli sfondi scuri è schiarita
 # per tenere il contrasto sopra 4,5:1. I colori dei ruoli reggono il testo bianco in entrambi i temi.
+# Nel grafico delle ore --corso (consumate) e --previsto (previste) restano distinguibili anche con
+# le discromatopsie; le previste sono anche tratteggiate.
 STILE = """
 @font-face { font-family: "Atkinson Hyperlegible Next"; src: url("font/atkinson-hyperlegible-next.woff2") format("woff2"); font-weight: 200 800; font-display: swap; }
 @font-face { font-family: "Atkinson Hyperlegible Mono"; src: url("font/atkinson-hyperlegible-mono.woff2") format("woff2"); font-weight: 200 800; font-display: swap; }
 :root { --accento: {accento}; --accento-chiaro: #f0545b; --accento-chiaro: color-mix(in srgb, var(--accento) 72%, white);
         --accento-testo: var(--accento); --carta: #faf9f6; --inchiostro: #141414; --tenue: #57564f; --filetto: #dcd9d2;
-        --superficie: #f0eee8; --piano: #e9e6de; --piano-bordo: #cdc9be; --fatto: #15803d; --corso: #1d4ed8; --ritardo: var(--accento);
+        --superficie: #f0eee8; --piano: #e9e6de; --piano-bordo: #cdc9be; --fatto: #15803d; --corso: #1d4ed8; --previsto: #8a877f;
+        --ritardo: var(--accento);
         --sole: none; --luna: block; color-scheme: light;
         --sans: "Atkinson Hyperlegible Next", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         --mono: "Atkinson Hyperlegible Mono", ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { {scuro} } }
 :root[data-theme="dark"] { {scuro} }
 * { box-sizing: border-box; }
+/* gli script nascondono elementi che nel CSS hanno un display proprio */
+[hidden] { display: none !important; }
 html { font-size: 106.25%; scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 body { margin: 0; font-family: var(--sans); font-size: 1.0625rem; line-height: 1.65; background: var(--carta); color: var(--inchiostro);
@@ -61,7 +67,7 @@ a { color: inherit; }
 /* maiuscoletto monospazio solo per le etichette brevi; il testo da leggere resta a corpo pieno */
 .kicker, .indice .titoletto { font-family: var(--mono); font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; }
 /* date, versioni e numeri in monospazio, con cifre allineate */
-.mono, .dettaglio, .utente, .asse, .data, .conta, .numeri { font-family: var(--mono); font-size: .85rem; font-variant-numeric: tabular-nums; }
+.mono, .utente, .asse, .data, .conta, .numeri { font-family: var(--mono); font-size: .85rem; font-variant-numeric: tabular-nums; }
 .pagina { max-width: 74rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem); }
 
 .testa { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem 1rem; padding: .85rem 0; border-bottom: 1px solid var(--filetto); }
@@ -138,20 +144,25 @@ a { color: inherit; }
 .sezione > p { margin: 1rem 0 0; max-width: 42rem; }
 .vuoto, .nota { margin: 1rem 0 0; max-width: 42rem; color: var(--tenue); font-size: .95rem; }
 .vuoto::before { content: "— "; }
-ol.voci { list-style: none; margin: .75rem 0 0; padding: 0; }
-.voce { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .8rem; padding: .7rem 0; }
-.voce .titolo a { font-size: 1.2rem; font-weight: 600; text-decoration: none; }
-.voce .titolo a:hover { color: var(--accento-testo); text-decoration: underline; text-underline-offset: .18em; }
-.voce .puntini { flex: 1 1 2rem; min-width: 2rem; border-bottom: 1px dotted var(--tenue); transform: translateY(-.35em); }
-.voce .dettaglio { flex: none; color: var(--tenue); text-align: right; }
-.voce .sotto-voce { flex-basis: 100%; font-size: .95rem; }
+.sezione .intro { margin: .5rem 0 0; max-width: 42rem; color: var(--tenue); }
+/* voce di un elenco: titolo e dettagli a sinistra, PDF a destra */
+ol.voci { list-style: none; margin: .5rem 0 0; padding: 0; }
+.voce { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .25rem 1rem; padding: .85rem 0;
+        border-top: 1px dotted var(--filetto); }
+.voce:first-child { border-top: 0; }
+.voce .titolo { font-size: 1.15rem; font-weight: 600; line-height: 1.35; text-decoration: none; }
+.voce .titolo:hover { color: var(--accento-testo); text-decoration: underline; text-underline-offset: .18em; }
+.voce .dettaglio { grid-column: 1; color: var(--tenue); font-size: .95rem; }
+.voce .pdf { grid-column: 2; grid-row: 1 / span 2; display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 .9rem;
+             border: 1px solid var(--piano-bordo); border-radius: 8px; color: var(--inchiostro); font-size: .9rem; font-weight: 600;
+             text-decoration: none; white-space: nowrap; }
+.voce .pdf::after { content: " ↓"; white-space: pre; color: var(--accento-testo); }
+.voce .pdf:hover { border-color: var(--accento-testo); color: var(--accento-testo); }
+/* la lettera più recente è la prima cosa da aprire */
+.in-evidenza .voce:first-child { padding: 1rem 1.1rem; border: 1px solid var(--piano-bordo); border-radius: 8px; background: var(--superficie); }
 .approvazione { font-weight: 600; }
 .a-approvato .icona { color: var(--fatto); }
 .a-attesa { color: var(--accento-testo); }
-.freccia { display: inline-block; margin-top: 1.5rem; color: var(--inchiostro); font-size: .95rem; font-weight: 600; text-decoration: none;
-           border-bottom: 1px solid var(--inchiostro); padding-bottom: .15rem; }
-.freccia::after { content: " →"; color: var(--accento-testo); }
-.freccia:hover { color: var(--accento-testo); border-color: var(--accento-testo); }
 
 ul.persone { list-style: none; margin: .75rem 0 0; padding: 0; }
 .persona { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem 1rem; padding: .8rem 0; border-top: 1px dotted var(--filetto); }
@@ -257,11 +268,43 @@ table.tempi tbody th { padding: 1.6rem 0 .4rem; text-align: left; font-size: 1.1
 table.tempi tfoot td { border-top: 1px solid var(--inchiostro); font-weight: 600; }
 .nota-fase { display: block; margin-top: .15rem; color: var(--tenue); font-family: var(--sans); font-size: .875rem; }
 .stato { white-space: nowrap; font-size: .95rem; }
-.s-in-corso, .s-raggiunta, .s-conclusa { font-weight: 600; }
-.s-in-ritardo { color: var(--accento-testo); font-weight: 700; }
-.s-conclusa .icona, .s-raggiunta .icona { color: var(--fatto); }
+.s-in-corso, .s-raggiunta, .s-conclusa, .s-concluso, .s-sotto-controllo { font-weight: 600; }
+.s-in-ritardo, .s-fuori-soglia { color: var(--accento-testo); font-weight: 700; }
+.s-conclusa .icona, .s-concluso .icona, .s-raggiunta .icona, .s-sotto-controllo .icona { color: var(--fatto); }
 .s-in-corso .icona { color: var(--corso); }
-.s-da-iniziare, .s-prevista { color: var(--tenue); }
+.s-da-iniziare, .s-prevista, .s-da-misurare { color: var(--tenue); }
+
+/* cruscotto: esito, indicatori con la loro soglia, grafico delle ore */
+p.esito { margin: 1rem 0 0; max-width: 46rem; font-size: 1.3rem; line-height: 1.35; }
+.esito .stato { font-size: inherit; }
+.riquadro .valore .stato { font-size: 1.15rem; white-space: normal; }
+.riquadro .soglia { display: block; margin-top: .5rem; color: var(--tenue); font-size: .85rem; line-height: 1.4; }
+.avanzamento i.oltre { background: var(--ritardo); }
+td .avanzamento { width: 6rem; margin-top: .35rem; }
+.grafico { --colonna: 3rem; margin: 1.5rem 0 0; }
+.piano-g { position: relative; height: 15rem; margin: 0 .75rem 0 var(--colonna); border-bottom: 1px solid var(--inchiostro); touch-action: pan-y; }
+.piano-g:focus-visible { outline-offset: 6px; }
+.piano-g svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.piano-g polyline { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.piano-g .l-consumate { stroke: var(--corso); }
+.piano-g .l-previste { stroke: var(--previsto); stroke-dasharray: 6 5; }
+.tacca-y { position: absolute; left: 0; right: 0; border-top: 1px solid var(--filetto); }
+.tacca-y b { position: absolute; right: calc(100% + .5rem); top: 0; transform: translateY(-50%); color: var(--tenue);
+             font-family: var(--mono); font-size: .78rem; font-weight: 400; white-space: nowrap; }
+.rif-g { position: absolute; left: 0; right: 0; border-top: 1px solid var(--tenue); }
+.rif-g span { position: absolute; right: 0; bottom: .15rem; color: var(--tenue); font-size: .8rem; }
+.oggi-g, .mirino { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--inchiostro); }
+.mirino { border-left-color: var(--tenue); }
+.punto-g { position: absolute; width: 10px; height: 10px; border-radius: 50%; transform: translate(-50%, 50%); background: var(--corso);
+           box-shadow: 0 0 0 2px var(--carta); }
+.fumetto { position: absolute; top: .5rem; z-index: 4; min-width: 9rem; padding: .5rem .7rem; border: 1px solid var(--filetto); border-radius: 8px;
+           background: var(--carta); box-shadow: 0 4px 16px rgb(0 0 0 / .12); font-size: .875rem; line-height: 1.45; pointer-events: none; }
+.fumetto b { font-variant-numeric: tabular-nums; }
+.grafico .asse { height: 2.2rem; margin: 0 .75rem 0 var(--colonna); }
+.legenda i.l-consumate, .legenda i.l-previste, .legenda i.l-preventivo { width: 1.4rem; height: 0; border-radius: 0; vertical-align: middle; }
+.legenda i.l-consumate { border-top: 2px solid var(--corso); }
+.legenda i.l-previste { border-top: 2px dashed var(--previsto); }
+.legenda i.l-preventivo { border-top: 1px solid var(--tenue); }
 
 .alfabeto { display: flex; flex-wrap: wrap; gap: .3rem; margin: 0; padding: .5rem 0; list-style: none; }
 .alfabeto a { display: inline-grid; place-items: center; min-width: 2.2rem; height: 2.2rem; font-family: var(--mono); font-size: 1rem; text-decoration: none; color: var(--tenue); }
@@ -331,6 +374,42 @@ document.querySelectorAll('.lettera').forEach(function(s){var v=0;
 s.querySelectorAll('dt').forEach(function(dt){var dd=dt.nextElementSibling;var ok=!t||norm(dt.textContent+' '+(dd?dd.textContent:'')).indexOf(t)>=0;
 dt.hidden=!ok;if(dd){dd.hidden=!ok;}if(ok){v++;}});s.hidden=v===0;n+=v;});
 esito.textContent=t?(n===0?'Nessun termine trovato.':(n===1?'1 termine trovato.':n+' termini trovati.')):'';});
+})();"""
+
+# Ricerca nella pagina Documenti: ogni parola cercata deve comparire nella voce o nel titolo della sua sezione.
+# Le parole perdono la vocale finale, così "verbale esterno" trova anche "Verbali" ed "Esterni".
+# Senza script il campo resta nascosto e si vede tutto l'elenco.
+SCRIPT_DOCUMENTI = """(function(){
+var q=document.getElementById('cerca');if(!q)return;var esito=document.getElementById('esito-ricerca');q.closest('.cerca').hidden=false;
+function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'');}
+var voci=[].map.call(document.querySelectorAll('.sezione .voce'),function(li){var h=li.parentNode.previousElementSibling;
+return {li:li,testo:norm(li.closest('.sezione').querySelector('h2').textContent+' '+(h&&h.tagName==='H3'?h.textContent:'')+' '+li.textContent)};});
+q.addEventListener('input',function(){var parole=norm(q.value).split(/\\s+/).filter(Boolean).map(function(p){return p.length>3?p.replace(/[aeiou]$/,''):p;}),n=0;
+voci.forEach(function(v){var ok=parole.every(function(p){return v.testo.indexOf(p)>=0;});v.li.hidden=!ok;if(ok){n++;}});
+document.querySelectorAll('.sezione ol.voci').forEach(function(l){var vuoto=!l.querySelector('.voce:not([hidden])'),h=l.previousElementSibling;
+l.hidden=vuoto;if(h&&h.tagName==='H3'){h.hidden=vuoto;}});
+document.querySelectorAll('.sezione').forEach(function(s){s.hidden=!s.querySelector('.voce:not([hidden])');});
+esito.textContent=parole.length?(n===0?'Nessun documento trovato.':(n===1?'1 documento trovato.':n+' documenti trovati.')):'';});
+})();"""
+
+# Grafico delle ore: il mirino segue il puntatore o le frecce e il fumetto riporta i valori del punto più vicino.
+# I valori sono anche nella tabella sotto il grafico.
+SCRIPT_GRAFICO = """(function(){
+document.querySelectorAll('.grafico').forEach(function(g){
+var piano=g.querySelector('.piano-g'),punti=JSON.parse(g.getAttribute('data-punti')),mirino=g.querySelector('.mirino'),fumetto=g.querySelector('.fumetto'),i=-1;
+function riga(valore,nome){var r=document.createElement('div'),b=document.createElement('b');b.textContent=valore;r.appendChild(b);r.appendChild(document.createTextNode(' '+nome));return r;}
+function mostra(n){i=Math.max(0,Math.min(punti.length-1,n));var p=punti[i],destra=p.x>60;mirino.style.left=p.x+'%';mirino.hidden=false;
+fumetto.textContent='';var t=document.createElement('div');t.textContent=p.al;fumetto.appendChild(t);
+if(p.c!==null){fumetto.appendChild(riga(p.c,'consumate'));}if(p.p!==null){fumetto.appendChild(riga(p.p,'previste'));}
+fumetto.style.left=destra?'auto':'calc('+p.x+'% + .75rem)';fumetto.style.right=destra?'calc('+(100-p.x)+'% + .75rem)':'auto';fumetto.hidden=false;}
+function nascondi(){mirino.hidden=true;fumetto.hidden=true;}
+function vicino(ev){var r=piano.getBoundingClientRect(),x=(ev.clientX-r.left)/r.width*100,m=0;
+punti.forEach(function(p,k){if(Math.abs(p.x-x)<Math.abs(punti[m].x-x)){m=k;}});mostra(m);}
+piano.addEventListener('pointermove',vicino);piano.addEventListener('pointerdown',vicino);
+piano.addEventListener('pointerleave',nascondi);piano.addEventListener('blur',nascondi);
+piano.addEventListener('keydown',function(ev){if(ev.key==='ArrowRight'||ev.key==='ArrowLeft'){ev.preventDefault();
+mostra(i<0?punti.length-1:i+(ev.key==='ArrowRight'?1:-1));}else if(ev.key==='Escape'){nascondi();}});
+});
 })();"""
 
 # Pagina di lettura dei PDF: pdf.js da jsDelivr, con versione e impronte SRI fissate.
@@ -424,8 +503,10 @@ ICONE = {
 NUOVA_SCHEDA = '<span class="sr-only"> (si apre in una nuova scheda)</span>'
 
 # pagine del sito, nell'ordine del menu in alto
-PAGINE = (("index.html", "Documenti"), ("pianificazione.html", "Pianificazione"), ("ruoli.html", "Ruoli"), ("glossario.html", "Glossario"))
-ICONE_STATO = {"Conclusa": "✓", "Raggiunta": "◆", "In corso": "●", "In ritardo": "!", "Da iniziare": "○", "Prevista": "◇"}
+PAGINE = (("index.html", "Documenti"), ("cruscotto.html", "Cruscotto"), ("pianificazione.html", "Pianificazione"),
+          ("ruoli.html", "Gruppo"), ("glossario.html", "Glossario"))
+ICONE_STATO = {"Conclusa": "✓", "Concluso": "✓", "Raggiunta": "◆", "In corso": "●", "In ritardo": "!", "Da iniziare": "○", "Prevista": "◇",
+               "Sotto controllo": "✓", "Fuori soglia": "!", "Da misurare": "○"}
 UN_GIORNO = datetime.timedelta(days=1)
 
 
@@ -443,19 +524,19 @@ def evidenzia_cifre(nome):
 
 
 def voce(pdf, testo, meta="", nascosto="", sotto=""):
-    """Riga di un sommario: titolo, puntini guida e dettaglio (versione, data, PDF).
+    """Voce di un elenco di documenti: titolo, riga dei dettagli e link per scaricare il PDF.
 
     Il titolo porta alla pagina di lettura del PDF, con lo stesso nome e l'estensione .html.
-    `nascosto` completa il nome del link per chi usa uno screen reader quando più voci
-    hanno lo stesso titolo visibile, per esempio " del 2026-10-14". `sotto` è una seconda
-    riga già in HTML, per esempio lo stato di approvazione di un verbale.
+    `meta` (data, versione) è testo in monospazio; `sotto` è già in HTML e lo segue nella stessa
+    riga, per esempio lo stato di approvazione di un verbale. `nascosto` completa il nome dei link
+    per chi usa uno screen reader quando più voci hanno lo stesso titolo visibile, per esempio " del 2026-10-14".
     """
-    dettaglio = " · ".join(p for p in (meta, "PDF") if p)
     extra = f'<span class="sr-only">{e(nascosto)}</span>' if nascosto else ""
-    collegamento = f'<a href="{e(pdf.removesuffix(".pdf"))}.html">{e(testo)}{extra}</a>'
-    seconda = f'<span class="sotto-voce">{sotto}</span>' if sotto else ""
-    return (f'<span class="titolo">{collegamento}</span><span class="puntini" aria-hidden="true"></span>'
-            f'<span class="dettaglio">{e(dettaglio)}</span>{seconda}')
+    parti = [f'<span class="mono">{e(meta)}</span>' if meta else "", sotto]
+    dettaglio = " · ".join(p for p in parti if p)
+    return (f'<a class="titolo" href="{e(pdf.removesuffix(".pdf"))}.html">{e(testo)}{extra}</a>'
+            + (f'<span class="dettaglio">{dettaglio}</span>' if dettaglio else "")
+            + f'<a class="pdf" href="{e(pdf)}" download>PDF<span class="sr-only"> di {e(testo)}{e(nascosto)}</span></a>')
 
 
 def elenco(voci, vuoto):
@@ -580,7 +661,7 @@ def documenti(typst, out, cartella):
         titolo = titolo[1] if titolo else sorgente.stem
         pdf = f"{titolo.replace(' ', '_')}_v{versione}.pdf"
         compila(typst, sorgente, out / pdf)
-        rilasciati.append((data, titolo, voce(pdf, titolo, f"v{versione}", sotto=f"Aggiornato il {e(data)}")))
+        rilasciati.append((data, titolo, voce(pdf, titolo, f"v{versione}", sotto=f"aggiornato\u00a0il\u00a0{e(data)}")))
     # le ultime approvazioni in cima
     rilasciati.sort(key=lambda d: d[1])
     rilasciati.sort(key=lambda d: d[0], reverse=True)
@@ -624,7 +705,7 @@ def diari(typst, out):
         pdf = nome.replace(" ", "_") + ".pdf"
         compila(typst, sorgente, out / pdf)
         meta = f"{sorgente.stem} · v{versione}" if versione else sorgente.stem
-        sotto = f"Aggiornato il {e(aggiornato)}" if aggiornato else ""
+        sotto = f"aggiornato\u00a0il\u00a0{e(aggiornato)}" if aggiornato else ""
         voci.append(voce(pdf, titolo or "Diario di bordo", meta, nascosto=f", diario di bordo del {sorgente.stem}", sotto=sotto))
     return voci
 
@@ -749,7 +830,7 @@ def tabella_periodi(periodi):
             f'<th scope="col">Dal</th><th scope="col">Al</th></tr></thead><tbody>{righe}</tbody></table></div>')
 
 
-def pagina_indice(gruppo, typst, out, logo, accento, periodi, fasi=(), oggi=None):
+def pagina_indice(gruppo, typst, out, logo, accento, fasi=(), oggi=None):
     info, progetto = gruppo.get("gruppo", {}), gruppo.get("progetto", {})
     nome = info.get("nome") or "Documentazione di progetto"
     oggi = oggi or datetime.date.today()
@@ -765,7 +846,8 @@ def pagina_indice(gruppo, typst, out, logo, accento, periodi, fasi=(), oggi=None
     if info.get("repo"):
         meta.append(link(info["repo"], "Repository"))
     meta.append(f"Aggiornato il {oggi.isoformat()}")
-    testata = apertura(evidenzia_cifre(nome), "Documentazione di progetto", SOTTOTITOLO, meta, dopo=stato_progetto(fasi, oggi))
+    testata = apertura(evidenzia_cifre(nome), "Documentazione di progetto", SOTTOTITOLO, meta, compatta=True,
+                       dopo=stato_progetto(fasi, oggi))
 
     voci_lettere = lettere(typst, out)
     gestionali = documenti(typst, out, "documenti/esterni/gestionali")
@@ -774,31 +856,47 @@ def pagina_indice(gruppo, typst, out, logo, accento, periodi, fasi=(), oggi=None
     verbali_esterni = verbali(typst, out, "esterni")
     verbali_interni = verbali(typst, out, "interni")
     voci_diari = diari(typst, out)
-    membri = [persona(m, con_ruolo=True) for m in gruppo.get("membro", [])]
+    return pagina_documenti(gruppo, logo, accento, testata, voci_lettere, (gestionali, tecnici, interni),
+                            (verbali_esterni, verbali_interni), voci_diari)
 
-    gruppo_html = (f'<p class="nota" id="nota-attuali">Ruoli in carica alla data di oggi.</p><ul class="persone">{"".join(membri)}</ul>'
-                   '<a class="freccia" href="ruoli.html">Ruoli e rotazione nel tempo</a>'
-                   if membri else '<p class="vuoto">Membri non ancora indicati</p>')
-    corpo = [
-        sezione("lettere", "Lettere di presentazione",
-                elenco(voci_lettere, "Nessuna lettera ancora pubblicata: la prima accompagna la candidatura."), len(voci_lettere)),
-        sezione("documenti", "Documenti esterni",
-                sottogruppi([("Gestionali", gestionali), ("Tecnici", tecnici)],
-                            "Nessun documento esterno ancora approvato: ogni documento compare qui quando il Responsabile lo approva."),
-                len(gestionali) + len(tecnici)),
-        sezione("interni", "Documenti interni", elenco(interni, "Nessun documento interno ancora approvato."), len(interni)),
-        sezione("verbali", "Verbali",
-                sottogruppi([("Esterni", verbali_esterni), ("Interni", verbali_interni)], "Nessun verbale ancora pubblicato."),
-                len(verbali_esterni) + len(verbali_interni)),
-        sezione("diari", "Diari di bordo",
-                elenco(voci_diari, "Nessun diario di bordo ancora pubblicato: il Responsabile ne aggiunge uno ogni settimana."),
-                len(voci_diari)),
-        sezione("gruppo", "Il gruppo", gruppo_html, len(membri)),
+
+def pagina_documenti(gruppo, logo, accento, testata, voci_lettere, voci_documenti, voci_verbali, voci_diari):
+    """Pagina Documenti: la lettera più recente in cima, poi documenti, verbali e diari, dal più recente.
+
+    Compaiono solo le sezioni con almeno una voce; una riga elenca quelle ancora vuote.
+    """
+    nome = gruppo.get("gruppo", {}).get("nome") or "Documentazione di progetto"
+    gestionali, tecnici, interni = voci_documenti
+    verbali_esterni, verbali_interni = voci_verbali
+    # (id, titolo, voce dell'indice, introduzione, contenuto, numero di voci)
+    parti = [
+        ("lettere", "Lettere di presentazione", "Lettere", "Una per consegna, con i link ai prodotti consegnati.",
+         elenco(voci_lettere, ""), len(voci_lettere)),
+        ("documenti", "Documenti", "Documenti",
+         "Documenti esterni, gestionali e tecnici, e documenti interni, nell'ultima versione approvata dal Responsabile.",
+         sottogruppi([("Gestionali", gestionali), ("Tecnici", tecnici), ("Interni", interni)], ""),
+         len(gestionali) + len(tecnici) + len(interni)),
+        ("verbali", "Verbali", "Verbali", "Dal più recente. I verbali esterni riportano l'approvazione del proponente.",
+         sottogruppi([("Esterni", verbali_esterni), ("Interni", verbali_interni)], ""), len(verbali_esterni) + len(verbali_interni)),
+        ("diari", "Diari di bordo", "Diari di bordo", "La presentazione settimanale ai docenti, dalla più recente.",
+         elenco(voci_diari, ""), len(voci_diari)),
     ]
-    laterale = indice([("#lettere", "Lettere"), ("#documenti", "Documenti esterni"), ("#interni", "Documenti interni"),
-                       ("#verbali", "Verbali"), ("#diari", "Diari di bordo"), ("#gruppo", "Il gruppo")])
-    return pagina(nome, testata, "\n".join(corpo), gruppo, logo, accento, dati={"periodi": periodi}, laterale=laterale,
-                  corrente="index.html")
+    piene = [p for p in parti if p[5]]
+    vuote = [p[1].lower() for p in parti if not p[5]]
+    corpo = []
+    if piene:
+        corpo.append('<div class="cerca" hidden><label for="cerca">Cerca tra i documenti</label>'
+                     '<input id="cerca" type="search" autocomplete="off" spellcheck="false" placeholder="Titolo, data o tipo">'
+                     '<p class="nota" id="esito-ricerca" aria-live="polite"></p></div>')
+    if vuote:
+        elenco_vuote = vuote[0] if len(vuote) == 1 else ", ".join(vuote[:-1]) + " e " + vuote[-1]
+        corpo.append(f'<p class="nota">Ancora da pubblicare: {e(elenco_vuote)}.</p>')
+    for identificatore, titolo, _, intro, contenuto, conta in piene:
+        blocco = sezione(identificatore, titolo, f'<p class="intro">{e(intro)}</p>{contenuto}', conta)
+        corpo.append(blocco.replace('class="sezione"', 'class="sezione in-evidenza"', 1) if identificatore == "lettere" else blocco)
+    laterale = indice([(f"#{p[0]}", p[2]) for p in piene]) if piene else ""
+    return pagina(nome, testata, "\n".join(corpo), gruppo, logo, accento, laterale=laterale, corrente="index.html",
+                  script=SCRIPT_DOCUMENTI)
 
 
 def pagina_ruoli(gruppo, logo, accento, periodi):
@@ -807,16 +905,19 @@ def pagina_ruoli(gruppo, logo, accento, periodi):
     membri = gruppo.get("membro", [])
     nomi = [nome_membro(m) for m in membri]
     nomi += sorted({p["membro"] for p in periodi} - set(nomi))
-    meta = [link(info["repo"].rstrip("/") + "/blob/main/documenti/interni/ruoli.md", "Regole di rotazione")] if info.get("repo") else []
-    testata = apertura(e("Ruoli"), nome, "Chi ricopre quale ruolo, oggi e nel tempo.", meta, compatta=True)
+    meta = [f'<a href="mailto:{e(info["email"])}">{e(info["email"])}</a>'] if info.get("email") else []
+    if info.get("repo"):
+        meta.append(link(info["repo"].rstrip("/") + "/blob/main/documenti/interni/ruoli.md", "Regole di rotazione"))
+    testata = apertura(e("Gruppo"), nome, "Chi siamo e chi ricopre quale ruolo, oggi e nel tempo.", meta, compatta=True)
 
     attuali = [persona(m, con_ruolo=True) for m in membri]
     presenti = [r for r in RUOLI if any(p["ruolo"] == r for p in periodi)]
     legenda = '<ul class="legenda">' + "".join(f'<li><i class="r-{e(slug(r))}" aria-hidden="true"></i>{e(r)}</li>' for r in presenti) + "</ul>"
-    corpo = [sezione("attuali", "Ruoli attuali",
+    corpo = [sezione("attuali", "Membri e ruoli attuali",
                      '<p class="nota" id="nota-attuali">Ruoli in carica alla data di oggi.</p>'
-                     + (f'<ul class="persone">{"".join(attuali)}</ul>' if attuali else '<p class="vuoto">Membri non ancora indicati</p>'))]
-    voci_indice = [("#attuali", "Ruoli attuali")]
+                     + (f'<ul class="persone">{"".join(attuali)}</ul>' if attuali else '<p class="vuoto">Membri non ancora indicati</p>'),
+                     len(attuali))]
+    voci_indice = [("#attuali", "Membri e ruoli")]
     if periodi:
         corpo += [sezione("linea", "Linea del tempo", legenda + linea_del_tempo(periodi, nomi)),
                   sezione("periodi", "Periodi", tabella_periodi(periodi)
@@ -825,7 +926,7 @@ def pagina_ruoli(gruppo, logo, accento, periodi):
     else:
         corpo.append(sezione("periodi", "Periodi", '<p class="vuoto">Nessun periodo ancora registrato in dati/ruoli.csv</p>'))
         voci_indice.append(("#periodi", "Periodi"))
-    return pagina(f"Ruoli - {nome}", testata, "\n".join(corpo), gruppo, logo, accento, dati={"periodi": periodi},
+    return pagina(f"Gruppo - {nome}", testata, "\n".join(corpo), gruppo, logo, accento, dati={"periodi": periodi},
                   laterale=indice(voci_indice), corrente="ruoli.html")
 
 
@@ -838,7 +939,7 @@ def leggi_pianificazione():
 
 
 def leggi_ore():
-    """(giorno, ore) delle righe di dati/ore.csv; le righe malformate si saltano."""
+    """(giorno, ore, membro, ruolo) delle righe di dati/ore.csv; le righe malformate si saltano."""
     percorso = RADICE / "dati/ore.csv"
     if not percorso.exists():
         return []
@@ -846,10 +947,19 @@ def leggi_ore():
     with percorso.open(encoding="utf-8-sig", newline="") as f:
         for riga in csv.DictReader(f):
             try:
-                ore.append((datetime.date.fromisoformat(riga["data"].strip()), float(riga["ore"])))
+                ore.append((datetime.date.fromisoformat(riga["data"].strip()), float(riga["ore"]),
+                            riga["membro"].strip(), riga["ruolo"].strip()))
             except (KeyError, ValueError, AttributeError, TypeError):
                 continue
     return ore
+
+
+def leggi_preventivo():
+    """Tariffe e ripartizione di dati/preventivo.toml, già validate da verifica.py."""
+    percorso = RADICE / "dati/preventivo.toml"
+    if not percorso.exists():
+        return {}
+    return tomllib.loads(percorso.read_text(encoding="utf-8-sig"))
 
 
 def tempo(voce, oggi):
@@ -902,7 +1012,7 @@ def ore_fase(fase, ore):
     """Ore di dati/ore.csv nel periodo effettivo della fase; una fase non iniziata non ne ha."""
     inizio = fase.get("inizio_effettivo")
     fine = fase.get("fine_effettiva") or datetime.date.max
-    return sum(h for giorno, h in ore if inizio and inizio <= giorno <= fine)
+    return sum(h for giorno, h, *_ in ore if inizio and inizio <= giorno <= fine)
 
 
 def giorni(n):
@@ -1044,7 +1154,7 @@ def tabella_fasi(fasi, ore, oggi):
     usati = ((fine or oggi) - inizio).days + 1 if inizio else 0
     totale = (f'<tfoot><tr><td>Totale</td><td class="data">{intervallo(primo["inizio"], ultimo["fine"])}</td>'
               f'<td class="data">{intervallo(inizio, fine)}</td><td class="numeri">{usati} di {previsti}</td>'
-              f'<td class="numeri">{numero_it(sum(h for _, h in ore))} di {numero_it(ore_previste(fasi))}</td>'
+              f'<td class="numeri">{numero_it(sum(h for _, h, *_ in ore))} di {numero_it(ore_previste(fasi))}</td>'
               '<td></td></tr></tfoot>')
     return ('<div class="scorri" role="region" aria-label="Tempo per fase" tabindex="0"><table class="periodi tempi">'
             '<thead><tr><th scope="col">Fase</th><th scope="col">Previsto</th><th scope="col">Effettivo</th>'
@@ -1098,14 +1208,29 @@ def quanto_manca(data, oggi):
 
 
 def stato_progetto(fasi, oggi):
-    """Riga della home: fase in corso e prossima milestone, con il link alla pianificazione."""
+    """Riga della home: fase in corso e prossima milestone, con il link al cruscotto."""
     if not fasi:
         return ""
     corrente, prossima = fase_corrente(fasi), prossima_milestone(fasi)
     parti = [f"<span>Fase in corso: <b>{e(corrente['nome'])}</b></span>" if corrente else "<span>Nessuna fase in corso</span>"]
     if prossima:
         parti.append(f"<span>Prossima milestone: <b>{e(prossima[1])}</b>, {prossima[0]} ({quanto_manca(prossima[0], oggi)})</span>")
-    return f'<p class="stato-progetto">{"".join(parti)}<a href="pianificazione.html">Pianificazione</a></p>'
+    return f'<p class="stato-progetto">{"".join(parti)}<a href="cruscotto.html">Cruscotto</a></p>'
+
+
+def ritardi(fasi, oggi):
+    """(voce, fase, scostamento) delle attività e delle milestone in ritardo, fase per fase."""
+    trovati = []
+    for fase in fasi:
+        for milestone, voce in voci_fase(fase):
+            if milestone:
+                stato, dettaglio = tempo_milestone(voce, oggi)
+            else:
+                t = tempo(voce, oggi)
+                stato, dettaglio = t["stato"], t["dettaglio"]
+            if stato == "In ritardo":
+                trovati.append((voce["nome"], fase["nome"], dettaglio))
+    return trovati
 
 
 def situazione(fasi, ore, oggi):
@@ -1133,20 +1258,11 @@ def situazione(fasi, ore, oggi):
         riquadri.append(riquadro("Attività della fase", f'{conta["Conclusa"]} di {len(stati)} concluse', resto))
 
     previste = ore_previste(fasi)
-    riquadri.append(riquadro("Ore usate", f"{numero_it(sum(h for _, h in ore))} h",
+    riquadri.append(riquadro("Ore usate", f"{numero_it(sum(h for _, h, *_ in ore))} h",
                              f"di {numero_it(previste)} previste" if previste is not None else "Ore previste da definire"))
 
-    ritardi = []
-    for fase in fasi:
-        for milestone, voce in voci_fase(fase):
-            if milestone:
-                stato, dettaglio = tempo_milestone(voce, oggi)
-            else:
-                t = tempo(voce, oggi)
-                stato, dettaglio = t["stato"], t["dettaglio"]
-            if stato == "In ritardo":
-                ritardi.append(f'<li><b>{e(voce["nome"])}</b> ({e(fase["nome"])}): {e(dettaglio)}</li>')
-    allarmi = (f'<h3 class="attenzione">Da recuperare</h3><ul class="allarmi">{"".join(ritardi)}</ul>' if ritardi
+    voci = [f'<li><b>{e(nome)}</b> ({e(fase)}): {e(dettaglio)}</li>' for nome, fase, dettaglio in ritardi(fasi, oggi)]
+    allarmi = (f'<h3 class="attenzione">Da recuperare</h3><ul class="allarmi">{"".join(voci)}</ul>' if voci
                else '<p class="nota">Nessuna attività né milestone in ritardo.</p>')
     return f'<div class="riquadri">{"".join(riquadri)}</div>{allarmi}'
 
@@ -1181,6 +1297,351 @@ def pagina_pianificazione(gruppo, logo, accento, fasi, ore, oggi):
         voci_indice.append((f"#fase-{numero}", fase["nome"]))
     return pagina(f"Pianificazione - {nome}", testata, "\n".join(corpo), gruppo, logo, accento,
                   laterale=indice(voci_indice), corrente="pianificazione.html")
+
+
+def euro(x):
+    """12600.5 -> "12.600,50 €", come euro() di modello/comuni.typ."""
+    return f"{x:,.2f}".translate(str.maketrans(",.", ".,")) + "\u00a0€"
+
+
+def ore_h(x):
+    return f"{numero_it(round(x, 1))}\u00a0h"
+
+
+def percento(x, segno=False):
+    testo = f"{x:+.1f}".replace("-", "\u2212") if segno else f"{x:.0f}"
+    return testo.replace(".", ",") + "%"
+
+
+def ore_previste_al(fasi, giorno):
+    """Ore previste fino al giorno incluso: le ore_previste di ogni fase, distribuite in modo uniforme sui suoi giorni previsti.
+
+    None se una fase già iniziata, secondo il previsto, non indica le sue ore.
+    """
+    totale = 0
+    for fase in fasi:
+        if giorno < fase["inizio"]:
+            continue
+        if "ore_previste" not in fase:
+            return None
+        durata = (fase["fine"] - fase["inizio"]).days + 1
+        totale += fase["ore_previste"] * min((giorno - fase["inizio"]).days + 1, durata) / durata
+    return totale
+
+
+def conti(ore, preventivo):
+    """Ore e costi del preventivo (ripartizione di dati/preventivo.toml) e del consuntivo (dati/ore.csv), alle tariffe del preventivo."""
+    tariffe, ripartizione = preventivo.get("tariffe", {}), preventivo.get("ripartizione", [])
+    c = {"tariffe": {r: tariffe.get(r, 0) for r in RUOLI},
+         "preventivo_ruolo": {r: sum(p.get(r, 0) for p in ripartizione) for r in RUOLI},
+         "preventivo_membro": {p.get("membro", ""): sum(p.get(r, 0) for r in RUOLI) for p in ripartizione},
+         "consuntivo_ruolo": dict.fromkeys(RUOLI, 0.0), "consuntivo_membro": {}}
+    for _, h, membro, ruolo in ore:
+        c["consuntivo_ruolo"][ruolo] = c["consuntivo_ruolo"].get(ruolo, 0) + h
+        c["consuntivo_membro"][membro] = c["consuntivo_membro"].get(membro, 0) + h
+    c["ore_preventivo"] = sum(c["preventivo_ruolo"].values())
+    c["ore_consuntivo"] = sum(c["consuntivo_ruolo"].values())
+    c["costo_preventivo"] = sum(x * c["tariffe"][r] for r, x in c["preventivo_ruolo"].items())
+    c["costo_consuntivo"] = sum(h * tariffe.get(r, 0) for r, h in c["consuntivo_ruolo"].items())
+    return c
+
+
+def costo_aggiudicato(gruppo):
+    costo = gruppo.get("progetto", {}).get("costo_aggiudicato", 0)
+    return costo if numero(costo) and costo > 0 else 0
+
+
+def controlli(gruppo, fasi, ore, c, oggi):
+    """Indicatori del cruscotto come (nome, stato, valore in HTML, soglia).
+
+    Lo stato è "Sotto controllo", "Fuori soglia" oppure "Da misurare" quando mancano i dati.
+    """
+    risultati = []
+
+    aggiudicato = costo_aggiudicato(gruppo)
+    limite, quale = (aggiudicato, "aggiudicato") if aggiudicato else (c["costo_preventivo"], "preventivato")
+    if limite:
+        speso = c["costo_consuntivo"]
+        stato = "Sotto controllo" if speso <= limite else "Fuori soglia"
+        valore = f"{euro(speso)} di {euro(limite)}, il {percento(speso / limite * 100)}."
+    else:
+        stato, valore = "Da misurare", "Manca il preventivo: la ripartizione di dati/preventivo.toml è vuota."
+    risultati.append(("Costo", stato, valore, f"il costo consuntivo non supera il costo {quale}."))
+
+    soglia = gruppo.get("soglie", {}).get("scostamento_ore", 10)
+    soglia = soglia if numero(soglia) and soglia > 0 else 10
+    previste = ore_previste_al(fasi, oggi)
+    consumate = sum(h for giorno, h, *_ in ore if giorno <= oggi)
+    if not fasi:
+        stato, valore = "Da misurare", "Manca la pianificazione in dati/pianificazione.toml."
+    elif previste is None:
+        stato, valore = "Da misurare", "Una fase già iniziata non ha ore_previste in dati/pianificazione.toml."
+    elif not previste:
+        stato, valore = (("Fuori soglia", f"{ore_h(consumate)} consumate e nessuna ora prevista fino a oggi.") if consumate
+                         else ("Da misurare", "Nessuna ora prevista né consumata fino a oggi."))
+    else:
+        scarto = (consumate - previste) / previste * 100
+        stato = "Sotto controllo" if abs(scarto) <= soglia else "Fuori soglia"
+        valore = f"{ore_h(consumate)} consumate e {ore_h(previste)} previste a oggi: {percento(scarto, segno=True)}."
+    risultati.append(("Ore rispetto al previsto", stato, valore, f"scostamento entro ±{numero_it(soglia)}% dalle ore previste a oggi."))
+
+    in_ritardo = ritardi(fasi, oggi)
+    if not fasi:
+        stato, valore = "Da misurare", "Manca la pianificazione in dati/pianificazione.toml."
+    elif in_ritardo:
+        nomi = [nome for nome, _, _ in in_ritardo]
+        quante = "1 voce" if len(nomi) == 1 else f"{len(nomi)} voci"
+        elenco_nomi = ", ".join(nomi[:3]) + (f" e altre {len(nomi) - 3}" if len(nomi) > 3 else "")
+        stato = "Fuori soglia"
+        valore = f'{quante} in ritardo: {e(elenco_nomi)}. <a href="pianificazione.html#situazione">Dettagli</a>'
+    else:
+        stato, valore = "Sotto controllo", "Nessuna attività né milestone in ritardo."
+    risultati.append(("Tempi", stato, valore, "nessuna attività né milestone oltre la data prevista."))
+
+    if not ore:
+        stato, valore = "Da misurare", "Nessuna ora ancora registrata in dati/ore.csv."
+    else:
+        per_membro = c["consuntivo_membro"]
+        oltre = [m for m, h in sorted(per_membro.items()) if h > min(95, c["preventivo_membro"].get(m, 95))]
+        stato = "Fuori soglia" if oltre else "Sotto controllo"
+        valore = f"Oltre il limite: {e(', '.join(oltre))}." if oltre else f"Al massimo {ore_h(max(per_membro.values()))} per membro."
+    risultati.append(("Ore per membro", stato, valore, "nessuno oltre le ore della sua ripartizione né oltre 95 ore."))
+    return risultati
+
+
+def esito(risultati):
+    """Frase in apertura del cruscotto: il progetto è sotto controllo, e su quanti indicatori."""
+    n = len(risultati)
+    fuori = [nome.lower() for nome, stato, *_ in risultati if stato == "Fuori soglia"]
+    misurati = sum(1 for _, stato, *_ in risultati if stato != "Da misurare")
+    if fuori:
+        stato, testo = "Fuori soglia", f"{len(fuori)} {'indicatore' if len(fuori) == 1 else 'indicatori'} su {n} ({', '.join(fuori)})."
+    elif not misurati:
+        stato, testo = "Da misurare", "nessun indicatore ha ancora i dati che servono."
+    elif misurati == n:
+        stato, testo = "Sotto controllo", f"tutti e {n} gli indicatori sono nella soglia."
+    else:
+        stato, testo = "Sotto controllo", f"{misurati} {'indicatore' if misurati == 1 else 'indicatori'} su {n} nella soglia, {n - misurati} ancora da misurare."
+    return f'<p class="esito">{stato_html(stato)}: {e(testo)}</p>'
+
+
+def ore_e_costi(gruppo, membri, fasi, c):
+    """Riquadri dei totali, poi preventivo e consuntivo per ruolo e per membro."""
+    def quota(parte, totale):
+        return round(min(parte / totale, 1) * 100, 2) if totale else None
+
+    aggiudicato = costo_aggiudicato(gruppo)
+    preventivo_h, preventivo = c["ore_preventivo"], c["costo_preventivo"]
+    riquadri = [
+        riquadro("Ore consumate", ore_h(c["ore_consuntivo"]),
+                 f"di {ore_h(preventivo_h)} preventivate" if preventivo_h else "Preventivo da definire",
+                 quota(c["ore_consuntivo"], preventivo_h)),
+        riquadro("Costo consuntivo", euro(c["costo_consuntivo"]),
+                 f"di {euro(preventivo)} preventivati" if preventivo else "Preventivo da definire",
+                 quota(c["costo_consuntivo"], preventivo)),
+        riquadro("Residuo del preventivo", euro(preventivo - c["costo_consuntivo"]) if preventivo else "—",
+                 f"{ore_h(preventivo_h - c['ore_consuntivo'])} ancora da usare" if preventivo_h else "Preventivo da definire"),
+        riquadro("Costo aggiudicato", euro(aggiudicato) if aggiudicato else "Da definire",
+                 f"Residuo: {euro(aggiudicato - c['costo_consuntivo'])}" if aggiudicato
+                 else "In dati/gruppo.toml dopo l'aggiudicazione"),
+    ]
+
+    righe = []
+    for r in RUOLI:
+        tariffa, previste, consumate = c["tariffe"][r], c["preventivo_ruolo"][r], c["consuntivo_ruolo"][r]
+        righe.append(f'<tr><td><span class="ruolo r-{e(slug(r))}">{e(r)}</span></td><td class="numeri">{numero_it(tariffa)} €/h</td>'
+                     f'<td class="numeri">{ore_h(previste)}</td><td class="numeri">{ore_h(consumate)}</td>'
+                     f'<td class="numeri">{euro(previste * tariffa)}</td><td class="numeri">{euro(consumate * tariffa)}</td></tr>')
+    totale = (f'<tfoot><tr><td>Totale</td><td></td><td class="numeri">{ore_h(preventivo_h)}</td><td class="numeri">{ore_h(c["ore_consuntivo"])}</td>'
+              f'<td class="numeri">{euro(preventivo)}</td><td class="numeri">{euro(c["costo_consuntivo"])}</td></tr></tfoot>')
+    per_ruolo = ('<h3>Per ruolo</h3><div class="scorri" role="region" aria-label="Ore e costi per ruolo" tabindex="0"><table class="periodi">'
+                 '<thead><tr><th scope="col">Ruolo</th><th scope="col">Tariffa</th><th scope="col">Ore preventivate</th>'
+                 '<th scope="col">Ore consumate</th><th scope="col">Costo preventivato</th><th scope="col">Costo consuntivo</th></tr></thead>'
+                 f'<tbody>{"".join(righe)}</tbody>{totale}</table></div>')
+
+    righe = []
+    for m in membri + sorted(set(c["consuntivo_membro"]) - set(membri)):
+        previste, consumate = c["preventivo_membro"].get(m), c["consuntivo_membro"].get(m, 0)
+        usate = "—"
+        if previste:
+            uso = consumate / previste * 100
+            classe = ' class="oltre"' if consumate > previste else ""
+            usate = (f'{percento(uso)}<div class="avanzamento" aria-hidden="true"><i{classe} style="width:{pct(round(min(uso, 100), 2))}%"></i></div>')
+        righe.append(f'<tr><td>{e(m)}</td><td class="numeri">{ore_h(previste) if previste is not None else "—"}</td>'
+                     f'<td class="numeri">{ore_h(consumate)}</td>'
+                     f'<td class="numeri">{ore_h(previste - consumate) if previste is not None else "—"}</td><td class="numeri">{usate}</td></tr>')
+    per_membro = ('<h3>Per membro</h3><div class="scorri" role="region" aria-label="Ore per membro" tabindex="0"><table class="periodi">'
+                  '<thead><tr><th scope="col">Membro</th><th scope="col">Ore preventivate</th><th scope="col">Ore consumate</th>'
+                  f'<th scope="col">Ore residue</th><th scope="col">Usate</th></tr></thead><tbody>{"".join(righe)}</tbody></table></div>')
+
+    note = []
+    if not preventivo_h:
+        note.append("La ripartizione delle ore di dati/preventivo.toml è ancora vuota: le colonne del preventivo si riempiono "
+                    "con la Dichiarazione degli impegni.")
+    fasi_h = ore_previste(fasi) if fasi else None
+    if preventivo_h and fasi_h is not None and abs(fasi_h - preventivo_h) > 0.05:
+        note.append(f"Le ore previste delle fasi di dati/pianificazione.toml ({ore_h(fasi_h)}) non coincidono con quelle del preventivo "
+                    f"({ore_h(preventivo_h)}).")
+    note.append("Le ore consumate sono quelle di dati/ore.csv; i costi sono calcolati alle tariffe di dati/preventivo.toml.")
+    # senza preventivo né ore le tabelle sarebbero solo zeri
+    tabelle = per_ruolo + per_membro if preventivo_h or c["ore_consuntivo"] else ""
+    return f'<div class="riquadri">{"".join(riquadri)}</div>{tabelle}' + "".join(f'<p class="nota">{e(n)}</p>' for n in note)
+
+
+def tacche(massimo):
+    """Valori tondi dell'asse verticale, con passo 1, 2 o 5 per una potenza di 10, da 0 fino a coprire `massimo`."""
+    passo = 10 ** math.floor(math.log10(massimo / 4))
+    passo *= next(m for m in (1, 2, 5, 10) if massimo / (passo * m) <= 5)
+    return [round(i * passo, 6) for i in range(math.ceil(massimo / passo) + 1)]
+
+
+def grafico_ore(fasi, ore, preventivo_h, oggi):
+    """Ore consumate e previste cumulate, un punto ogni 7 giorni più oggi e l'ultimo giorno; "" senza dati.
+
+    Le previste vengono da ore_previste_al(), le consumate da dati/ore.csv e si fermano a oggi.
+    Il punto t è la fine del t-esimo giorno dall'inizio; t = 0 è l'inizio del primo.
+    """
+    con_ore = [f for f in fasi if f.get("ore_previste", 0) > 0]
+    giorni_ore = [giorno for giorno, *_ in ore]
+    if not con_ore and not giorni_ore:
+        return ""
+    inizio = min([f["inizio"] for f in con_ore] + giorni_ore)
+    fine = max([f["fine"] for f in con_ore] + giorni_ore)
+    durata = (fine - inizio).days + 1
+    t_oggi = (oggi - inizio).days + 1
+    passi = sorted(set(range(0, durata, 7)) | {durata} | ({t_oggi} if 0 < t_oggi < durata else set()))
+    punti = []
+    for t in passi:
+        giorno = inizio + datetime.timedelta(days=t - 1)
+        consumate = sum(h for g, h, *_ in ore if g <= giorno) if giorno <= oggi else None
+        punti.append((t, giorno, ore_previste_al(fasi, giorno), consumate))
+    valori = [v for _, _, p, c in punti for v in (p, c) if v is not None] + [preventivo_h]
+    if max(valori) <= 0:
+        return ""
+    scala_y = tacche(max(valori))
+    alto = scala_y[-1]
+
+    def x(t):
+        return round(t / durata * 100, 2)
+
+    def y(v):
+        return round(v / alto * 100, 2)
+
+    previste = []
+    for t, _, p, _ in punti:
+        if p is None:
+            break
+        previste.append(f"{pct(x(t))},{pct(round(100 - y(p), 2))}")
+    consumate = [(t, c) for t, _, _, c in punti if c is not None]
+    linee = "".join(f'<polyline class="{classe}" points="{" ".join(p)}" vector-effect="non-scaling-stroke"/>'
+                    for classe, p in (("l-previste", previste), ("l-consumate", [f"{pct(x(t))},{pct(round(100 - y(c), 2))}" for t, c in consumate]))
+                    if len(p) > 1)
+    griglia = "".join(f'<span class="tacca-y" style="bottom:{pct(y(v))}%"><b>{numero_it(v)}</b></span>' for v in scala_y)
+    riferimento = (f'<span class="rif-g" style="bottom:{pct(y(preventivo_h))}%"><span>Preventivo {ore_h(preventivo_h)}</span></span>'
+                   if preventivo_h else "")
+    segni = f'<span class="oggi-g" style="left:{pct(x(t_oggi))}%"></span>' if 0 < t_oggi <= durata else ""
+    if consumate:
+        t, c = consumate[-1]
+        segni += f'<span class="punto-g" style="left:{pct(x(t))}%;bottom:{pct(y(c))}%"></span>'
+    dati = [{"x": x(t), "al": f"Al {g.isoformat()}", "p": None if p is None else ore_h(p), "c": None if c is None else ore_h(c)}
+            for t, g, p, c in punti]
+    _, asse = scala(inizio, fine + UN_GIORNO)
+    voci_legenda = [("l-consumate", "Ore consumate"), ("l-previste", "Ore previste")]
+    voci_legenda += [("l-preventivo", "Ore del preventivo")] if preventivo_h else []
+    legenda = '<ul class="legenda">' + "".join(f'<li><i class="{k}" aria-hidden="true"></i>{t}</li>'
+                                               for k, t in voci_legenda + [("l-oggi", "Oggi")]) + "</ul>"
+    figura = (f'<figure class="grafico" data-punti="{e(json.dumps(dati, ensure_ascii=False))}">'
+              '<div class="piano-g" tabindex="0" role="group" aria-label="Ore consumate e previste: frecce sinistra e destra per leggere i valori">'
+              f'{griglia}{riferimento}<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">{linee}</svg>'
+              f'{segni}<span class="mirino" hidden></span><div class="fumetto" hidden aria-live="polite"></div></div>'
+              f'{asse}<figcaption>{legenda}</figcaption></figure>')
+
+    if t_oggi > 0:
+        previste_oggi = ore_previste_al(fasi, oggi)
+        sintesi = (f"Al {oggi.isoformat()}: {ore_h(sum(h for g, h, *_ in ore if g <= oggi))} consumate"
+                   + (f" e {ore_h(previste_oggi)} previste" if previste_oggi is not None else "")
+                   + (f", su {ore_h(preventivo_h)} del preventivo." if preventivo_h else "."))
+    else:
+        sintesi = f"Il conteggio delle ore parte il {inizio.isoformat()}."
+    righe = "".join(f'<tr><td class="data">{g.isoformat()}</td><td class="numeri">{"—" if p is None else ore_h(p)}</td>'
+                    f'<td class="numeri">{"—" if c is None else ore_h(c)}</td></tr>' for t, g, p, c in punti if t)
+    tabella = ('<details class="dettagli"><summary>Valori del grafico</summary>'
+               '<div class="scorri" role="region" aria-label="Valori del grafico" tabindex="0"><table class="periodi">'
+               '<thead><tr><th scope="col">Al giorno</th><th scope="col">Ore previste</th><th scope="col">Ore consumate</th></tr></thead>'
+               f'<tbody>{righe}</tbody></table></div></details>')
+    return f'{figura}<p class="nota">{e(sintesi)}</p>{tabella}'
+
+
+def avanzamento(fasi, oggi):
+    """Attività concluse e milestone raggiunte, in totale e per fase."""
+    righe, totali = [], [0, 0, 0, 0]
+    for fase in fasi:
+        attivita, milestone = fase.get("attivita", []), fase.get("milestone", [])
+        conte = [sum(1 for a in attivita if a.get("fine_effettiva")), len(attivita),
+                 sum(1 for m in milestone if m.get("data_effettiva")), len(milestone)]
+        totali = [a + b for a, b in zip(totali, conte)]
+        t = tempo(fase, oggi)
+        righe.append(f'<tr><td>{e(fase["nome"])}</td><td class="numeri">{conte[0]} di {conte[1]}</td>'
+                     f'<td class="numeri">{conte[2]} di {conte[3]}</td><td>{stato_html(t["stato"], t["dettaglio"])}</td></tr>')
+    concluse, attivita, raggiunte, milestone = totali
+    riquadri = (riquadro("Attività concluse", f"{concluse} di {attivita}", "In tutte le fasi",
+                         round(concluse / attivita * 100, 2) if attivita else None)
+                + riquadro("Milestone raggiunte", f"{raggiunte} di {milestone}", "In tutte le fasi",
+                           round(raggiunte / milestone * 100, 2) if milestone else None))
+    tabella = ('<div class="scorri" role="region" aria-label="Avanzamento per fase" tabindex="0"><table class="periodi">'
+               '<thead><tr><th scope="col">Fase</th><th scope="col">Attività concluse</th><th scope="col">Milestone raggiunte</th>'
+               f'<th scope="col">Stato</th></tr></thead><tbody>{"".join(righe)}</tbody></table></div>')
+    return (f'<div class="riquadri">{riquadri}</div>{tabella}'
+            '<p class="nota">Un\'attività conta quando ha la fine effettiva, una milestone quando ha la data effettiva. '
+            'Il diagramma di Gantt di ogni fase è nella <a href="pianificazione.html">Pianificazione</a>.</p>')
+
+
+def consuntivo_periodi(periodi, ore, tariffe, oggi):
+    """Ore e costo di ogni periodo di dati/ruoli.csv; ogni ora conta nel periodo del suo membro."""
+    giorno = datetime.date.fromisoformat
+    somme = {k: [0.0, 0.0] for k in sorted({(p["inizio"], p["fine"]) for p in periodi})}
+    for g, h, membro, ruolo in ore:
+        periodo = next((p for p in periodi if p["membro"] == membro and giorno(p["inizio"]) <= g <= giorno(p["fine"])), None)
+        if periodo:
+            somma = somme[periodo["inizio"], periodo["fine"]]
+            somma[0] += h
+            somma[1] += h * tariffe.get(ruolo, 0)
+    righe = []
+    for (inizio, fine), (h, costo) in somme.items():
+        stato = "Da iniziare" if giorno(inizio) > oggi else "Concluso" if giorno(fine) < oggi else "In corso"
+        righe.append(f'<tr><td class="data">{intervallo(giorno(inizio), giorno(fine))}</td><td>{stato_html(stato)}</td>'
+                     f'<td class="numeri">{ore_h(h)}</td><td class="numeri">{euro(costo)}</td></tr>')
+    return ('<div class="scorri" role="region" aria-label="Consuntivo per periodo" tabindex="0"><table class="periodi">'
+            '<thead><tr><th scope="col">Periodo</th><th scope="col">Stato</th><th scope="col">Ore consumate</th>'
+            f'<th scope="col">Costo consuntivo</th></tr></thead><tbody>{"".join(righe)}</tbody></table></div>'
+            '<p class="nota">I periodi sono quelli di dati/ruoli.csv, uno per sprint; il preventivo di ogni periodo sta nel Piano di Progetto.</p>')
+
+
+def pagina_cruscotto(gruppo, logo, accento, fasi, ore, preventivo, periodi, oggi):
+    """Il progetto è sotto controllo? Indicatori con le soglie, ore e costi, andamento, avanzamento e consuntivo per periodo."""
+    nome = gruppo.get("gruppo", {}).get("nome") or "Documentazione di progetto"
+    testata = apertura(e("Cruscotto"), nome, "Il progetto è sotto controllo? Ore, costi e tempi, previsti e consuntivi, "
+                       "a confronto con le soglie del gruppo.", [f"Situazione al {oggi.isoformat()}"], compatta=True)
+    c = conti(ore, preventivo)
+    risultati = controlli(gruppo, fasi, ore, c, oggi)
+    indicatori = "".join(riquadro(nome_, stato_html(stato), f'{valore}<span class="soglia">Soglia: {e(soglia)}</span>')
+                         for nome_, stato, valore, soglia in risultati)
+    grafico = grafico_ore(fasi, ore, c["ore_preventivo"], oggi)
+    membri = [nome_membro(m) for m in gruppo.get("membro", [])]
+    corpo = [
+        sezione("controllo", "Sotto controllo?", esito(risultati) + f'<div class="riquadri">{indicatori}</div>'),
+        sezione("ore-e-costi", "Ore e costi", ore_e_costi(gruppo, membri, fasi, c)),
+        sezione("andamento", "Andamento delle ore", grafico or '<p class="vuoto">Il grafico compare quando una fase di '
+                'dati/pianificazione.toml ha ore_previste o dati/ore.csv ha la prima ora.</p>'),
+        sezione("avanzamento", "Avanzamento", avanzamento(fasi, oggi) if fasi
+                else '<p class="vuoto">Nessuna fase ancora pianificata in dati/pianificazione.toml</p>'),
+        sezione("periodi", "Consuntivo per periodo", consuntivo_periodi(periodi, ore, c["tariffe"], oggi) if periodi
+                else '<p class="vuoto">Nessun periodo ancora registrato in dati/ruoli.csv</p>'),
+    ]
+    laterale = indice([("#controllo", "Sotto controllo?"), ("#ore-e-costi", "Ore e costi"), ("#andamento", "Andamento delle ore"),
+                       ("#avanzamento", "Avanzamento"), ("#periodi", "Consuntivo per periodo")])
+    return pagina(f"Cruscotto - {nome}", testata, "\n".join(corpo), gruppo, logo, accento, laterale=laterale,
+                  corrente="cruscotto.html", script=SCRIPT_GRAFICO if grafico else "")
 
 
 def senza_accenti(testo):
@@ -1283,11 +1744,13 @@ def main():
     # caratteri del sito con le loro licenze OFL; senza la cartella restano i caratteri di sistema
     if (RADICE / "assets/font").is_dir():
         shutil.copytree(RADICE / "assets/font", out / "font")
-    fasi, oggi = leggi_pianificazione(), datetime.date.today()
-    (out / "index.html").write_text(pagina_indice(gruppo, typst, out, logo, accento, periodi, fasi, oggi), encoding="utf-8")
+    fasi, ore, oggi = leggi_pianificazione(), leggi_ore(), datetime.date.today()
+    (out / "index.html").write_text(pagina_indice(gruppo, typst, out, logo, accento, fasi, oggi), encoding="utf-8")
+    (out / "cruscotto.html").write_text(pagina_cruscotto(gruppo, logo, accento, fasi, ore, leggi_preventivo(), periodi, oggi),
+                                        encoding="utf-8")
     (out / "glossario.html").write_text(pagina_glossario(gruppo, voci, logo, accento), encoding="utf-8")
     (out / "ruoli.html").write_text(pagina_ruoli(gruppo, logo, accento, periodi), encoding="utf-8")
-    (out / "pianificazione.html").write_text(pagina_pianificazione(gruppo, logo, accento, fasi, leggi_ore(), oggi), encoding="utf-8")
+    (out / "pianificazione.html").write_text(pagina_pianificazione(gruppo, logo, accento, fasi, ore, oggi), encoding="utf-8")
     for pdf in out.glob("*.pdf"):
         (out / f"{pdf.stem}.html").write_text(pagina_pdf(gruppo, logo, accento, pdf.name), encoding="utf-8")
     print(f"sito generato in {out}: {len(list(out.glob('*.pdf')))} PDF")

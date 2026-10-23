@@ -14,6 +14,7 @@ consegna_prevista = ""    # AAAA-MM-GG
 
 [soglie]
 gulpease = 40
+scostamento_ore = 10      # cruscotto: scarto massimo, in percentuale, tra ore consumate e ore previste a oggi
 
 # Un blocco per membro. Altrove il membro si scrive sempre "Nome Cognome".
 [[membro]]

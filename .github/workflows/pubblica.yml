@@ -3,7 +3,7 @@ name: Pubblicazione
 on:
   push:
     branches: [main]
-  # ogni notte: stato e giorni usati della pianificazione dipendono dalla data
+  # ogni notte: stati, giorni usati e ore previste di pianificazione e cruscotto dipendono dalla data
   schedule:
     - cron: "17 3 * * *"
 
