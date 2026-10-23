@@ -8,3 +8,28 @@
 termine = "Definition of Done"
 definizione = "Elenco delle condizioni verificabili che un prodotto di lavoro soddisfa perché il gruppo lo consideri fatto. Vale per issue, sprint e consegne ed è fissata nelle Norme di Progetto."
 sinonimi = ["DoD"]
+
+[[voce]]
+termine = "Proof of Concept"
+definizione = "Prototipo sperimentale realizzato per dimostrare e validare la fattibilità tecnica delle tecnologie scelte."
+sinonimi = ["PoC"]
+
+[[voce]]
+termine = "Minimum Viable Product"
+definizione = "Versione iniziale funzionante del prodotto software con le funzionalità essenziali per soddisfare i requisiti e raccogliere riscontri."
+sinonimi = ["MVP"]
+
+[[voce]]
+termine = "Requirements and Technology Baseline"
+definizione = "Prima revisione formale di avanzamento del progetto didattico in cui vengono consolidati i requisiti e validato il Proof of Concept."
+sinonimi = ["RTB"]
+
+[[voce]]
+termine = "Product Baseline"
+definizione = "Seconda revisione formale di avanzamento del progetto didattico in cui viene presentato il Minimum Viable Product completo."
+sinonimi = ["PB"]
+
+[[voce]]
+termine = "Architecture Decision Record"
+definizione = "Documento sintetico che descrive una decisione architetturale rilevante, motivando il contesto, le opzioni scartate e le conseguenze."
+sinonimi = ["ADR"]
