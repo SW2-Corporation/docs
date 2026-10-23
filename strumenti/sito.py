@@ -3,7 +3,8 @@
 Uso: python strumenti/sito.py --out site [--typst percorso]
 
 Vanno sul sito i documenti rilasciati (prima riga del registro = approvazione),
-tutte le lettere e tutti i verbali, più le pagine della pianificazione, dei ruoli e del glossario.
+tutte le lettere, tutti i verbali e tutti i diari di bordo, più le pagine della pianificazione,
+dei ruoli e del glossario.
 Ogni PDF ha la sua pagina di lettura (pdf.js), con lo stesso nome e l'estensione .html.
 """
 
@@ -609,6 +610,25 @@ def verbali(typst, out, cartella):
     return voci
 
 
+def diari(typst, out):
+    """Diari di bordo, dal più recente: data e versione nel nome del PDF, ultimo aggiornamento sotto."""
+    voci = []
+    for sorgente in sorted((RADICE / "presentazioni/diari").glob("*.typ"), reverse=True):
+        if not data_iso(sorgente.stem):
+            continue
+        testo = sorgente.read_text(encoding="utf-8-sig")
+        # il primo valore di ogni campo è quello di presentazione.with(...), che precede le slide
+        titolo, versione, aggiornato = (m[1] if (m := re.search(rf'\b{campo}:\s*"([^"]*)"', testo)) else ""
+                                        for campo in ("titolo", "versione", "aggiornato"))
+        nome = f"Diario di bordo {sorgente.stem}" + (f" v{versione}" if versione else "")
+        pdf = nome.replace(" ", "_") + ".pdf"
+        compila(typst, sorgente, out / pdf)
+        meta = f"{sorgente.stem} · v{versione}" if versione else sorgente.stem
+        sotto = f"Aggiornato il {e(aggiornato)}" if aggiornato else ""
+        voci.append(voce(pdf, titolo or "Diario di bordo", meta, nascosto=f", diario di bordo del {sorgente.stem}", sotto=sotto))
+    return voci
+
+
 def titolo_verbale(v):
     """Il campo titolo; senza, l'azienda incontrata (esterni) o il primo punto dell'ordine del giorno."""
     if v.get("titolo"):
@@ -753,6 +773,7 @@ def pagina_indice(gruppo, typst, out, logo, accento, periodi, fasi=(), oggi=None
     interni = documenti(typst, out, "documenti/interni")
     verbali_esterni = verbali(typst, out, "esterni")
     verbali_interni = verbali(typst, out, "interni")
+    voci_diari = diari(typst, out)
     membri = [persona(m, con_ruolo=True) for m in gruppo.get("membro", [])]
 
     gruppo_html = (f'<p class="nota" id="nota-attuali">Ruoli in carica alla data di oggi.</p><ul class="persone">{"".join(membri)}</ul>'
@@ -769,10 +790,13 @@ def pagina_indice(gruppo, typst, out, logo, accento, periodi, fasi=(), oggi=None
         sezione("verbali", "Verbali",
                 sottogruppi([("Esterni", verbali_esterni), ("Interni", verbali_interni)], "Nessun verbale ancora pubblicato."),
                 len(verbali_esterni) + len(verbali_interni)),
+        sezione("diari", "Diari di bordo",
+                elenco(voci_diari, "Nessun diario di bordo ancora pubblicato: il Responsabile ne aggiunge uno ogni settimana."),
+                len(voci_diari)),
         sezione("gruppo", "Il gruppo", gruppo_html, len(membri)),
     ]
     laterale = indice([("#lettere", "Lettere"), ("#documenti", "Documenti esterni"), ("#interni", "Documenti interni"),
-                       ("#verbali", "Verbali"), ("#gruppo", "Il gruppo")])
+                       ("#verbali", "Verbali"), ("#diari", "Diari di bordo"), ("#gruppo", "Il gruppo")])
     return pagina(nome, testata, "\n".join(corpo), gruppo, logo, accento, dati={"periodi": periodi}, laterale=laterale,
                   corrente="index.html")
 

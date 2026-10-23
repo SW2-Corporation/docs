@@ -9,7 +9,7 @@
 
 ## Il sito
 
-I documenti approvati, le Lettere di Presentazione e i verbali sono pubblicati su **[sw2-corporation.github.io/docs](https://sw2-corporation.github.io/docs/)**. Il sito si rigenera da questo repository a ogni push su `main`: sul sito vanno solo le versioni rilasciate, mai le bozze. Il menu in alto porta alle quattro pagine: Documenti (lettere, documenti, verbali e gruppo, con lo stato del progetto in apertura), Pianificazione, Ruoli e Glossario, con la ricerca dei termini. La pagina [Ruoli](https://sw2-corporation.github.io/docs/ruoli.html) mostra chi ricopre quale ruolo oggi e la linea del tempo dei periodi di `dati/ruoli.csv`. La pagina [Pianificazione](https://sw2-corporation.github.io/docs/pianificazione.html) mostra il diagramma di Gantt di fasi, attività e milestone di `dati/pianificazione.toml`, con il tempo previsto e quello usato.
+I documenti approvati, le Lettere di Presentazione, i verbali e i diari di bordo sono pubblicati su **[sw2-corporation.github.io/docs](https://sw2-corporation.github.io/docs/)**. Il sito si rigenera da questo repository a ogni push su `main`: sul sito vanno solo le versioni rilasciate, mai le bozze. Il menu in alto porta alle quattro pagine: Documenti (lettere, documenti, verbali, diari di bordo e gruppo, con lo stato del progetto in apertura), Pianificazione, Ruoli e Glossario, con la ricerca dei termini. La pagina [Ruoli](https://sw2-corporation.github.io/docs/ruoli.html) mostra chi ricopre quale ruolo oggi e la linea del tempo dei periodi di `dati/ruoli.csv`. La pagina [Pianificazione](https://sw2-corporation.github.io/docs/pianificazione.html) mostra il diagramma di Gantt di fasi, attività e milestone di `dati/pianificazione.toml`, con il tempo previsto e quello usato.
 
 Ogni PDF si apre in una pagina di lettura del sito, con lo stesso nome e l'estensione `.html`. La pagina funziona anche su telefono e offre testo selezionabile, link attivi, zoom e il pulsante per scaricare il PDF. Usa pdf.js da jsDelivr, con versione e impronte SRI fissate in `strumenti/sito.py` (`PDFJS`, `SRI_PDFJS`). Se pdf.js non si carica, la pagina offre il PDF da scaricare.
 
@@ -118,7 +118,8 @@ Il percorso del verbale si può scrivere con o senza `/` iniziale; su Git Bash p
   Il verbale non ha copertina né registro: intestazione con orari e durata, versione e ultimo aggiornamento, partecipanti, poi ordine del giorno, sintesi, decisioni e azioni; il piè di pagina ripete versione e data. Gli esterni riportano l'approvazione del proponente, "in attesa" finché manca.
 
   **Verbale firmato dal proponente**: il PDF firmato va accanto al TOML, con lo stesso nome e l'estensione `.firmato.pdf` (es. `documenti/verbali/esterni/2026-10-20-c7.firmato.pdf`), e `approvazione_esterna` lo riporta (es. "Approvato con firma il 2026-10-23"). Il sito pubblica la copia firmata così com'è, al posto di quella compilata, con versione e data del TOML. Dopo la firma il contenuto del verbale non cambia più: una correzione richiede una nuova versione e una nuova firma.
-- **Presentazione**: `presentazioni/diari/AAAA-MM-GG.typ` per il diario di bordo, con `#show: presentazione.with(evento: "Diario di bordo", data: "AAAA-MM-GG", titolo: "...")` e una `#slide(titolo: "...")[...]` per ogni slide. La prima slide è il titolo; ogni slide riporta evento, data, logo e numero "n/N". Poco testo: il resto si dice a voce.
+- **Diario di bordo**: `presentazioni/diari/AAAA-MM-GG.typ`, copiato da `modello/diario.typ`, con `#show: presentazione.with(evento: "Diario di bordo", data: "AAAA-MM-GG", versione: "1.0.0", aggiornato: "AAAA-MM-GG", titolo: "...")` e una `#slide(titolo: "...")[...]` per ogni slide. La prima slide è il titolo; ogni slide riporta evento, data, logo e numero "n/N", e nel piè di pagina la versione. Poco testo: il resto si dice a voce. Il diario nasce alla 1.0.0; ogni modifica verificata aggiorna `aggiornato` e fa crescere Y se cambia il contenuto, Z negli altri casi. Il sito lo pubblica come `Diario_di_bordo_AAAA-MM-GG_vX.Y.Z.pdf`, con versione e ultimo aggiornamento.
+- **Altre presentazioni**, per esempio dei colloqui: `presentazioni/X.typ` con lo stesso modello; `versione` e `aggiornato` sono facoltativi e il sito non le pubblica.
 
 ## Pianificazione
 
@@ -170,7 +171,7 @@ Senza argomenti `verifica.py` controlla tutto il repo (`dati/`, `documenti/`, `m
 
 ## Pubblicazione
 
-A ogni push su `main`, e ogni notte, il workflow `pubblica.yml` ripete i controlli, compila i documenti e pubblica il sito su GitHub Pages (in Settings > Pages la sorgente deve essere "GitHub Actions"). Sul sito vanno i documenti rilasciati, tutte le lettere e tutti i verbali, in ordine LIFO; le presentazioni no. Anteprima locale:
+A ogni push su `main`, e ogni notte, il workflow `pubblica.yml` ripete i controlli, compila i documenti e pubblica il sito su GitHub Pages (in Settings > Pages la sorgente deve essere "GitHub Actions"). Sul sito vanno i documenti rilasciati, tutte le lettere, tutti i verbali e tutti i diari di bordo, in ordine LIFO; le altre presentazioni no. Anteprima locale:
 
 ```sh
 make sito            # oppure: python strumenti/sito.py --out build/site
@@ -181,7 +182,7 @@ Il sito segue il tema chiaro o scuro del dispositivo; il bottone in alto a destr
 ## Convenzioni
 
 - Date sempre AAAA-MM-GG, nel testo e nei nomi dei file; orari HH:MM.
-- Ogni documento riporta, nel PDF e sul sito, la versione e la data dell'ultimo aggiornamento: i documenti con registro le prendono dalla prima riga del registro, i verbali dai campi `versione` e `aggiornato`. La Lettera di Presentazione ha solo la data.
+- Ogni documento riporta, nel PDF e sul sito, la versione e la data dell'ultimo aggiornamento: i documenti con registro le prendono dalla prima riga del registro, i verbali e i diari di bordo dai campi `versione` e `aggiornato`. La Lettera di Presentazione ha solo la data; le slide del diario di bordo mostrano solo la versione.
 - Verbali e lettere non hanno registro delle modifiche.
 - Il registro delle modifiche è in ordine LIFO: la prima riga è la più recente.
 - Ogni riga del registro è una modifica già verificata: prima si verifica, poi si incrementa la versione (Z per le modifiche minori, Y per quelle sostanziali). Autore e verificatore sono persone diverse.

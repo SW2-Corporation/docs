@@ -25,7 +25,7 @@ jobs:
       - name: Test
         run: python -m unittest discover -s strumenti
 
-      # anche bozze e presentazioni devono compilare, pur non andando sul sito
+      # anche bozze e presentazioni dei colloqui devono compilare, pur non andando sul sito
       - name: Compilazione
         run: make all
 

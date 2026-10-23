@@ -1,10 +1,11 @@
 // Presentazioni 16:9: diario di bordo e colloqui di revisione.
-// Ogni slide riporta evento, data, logo e numero "n/N". Uso:
-//   #show: presentazione.with(evento: "Diario di bordo", data: "AAAA-MM-GG", titolo: "...")
+// Ogni slide riporta evento, data, logo e numero "n/N", più la versione se c'è. Uso:
+//   #show: presentazione.with(evento: "Diario di bordo", data: "AAAA-MM-GG", versione: "1.0.0", aggiornato: "AAAA-MM-GG", titolo: "...")
 //   #slide(titolo: "...")[...]
 #import "stile.typ": base, info, logo, occhiello, palette
 
-#let presentazione(evento: "", data: "", titolo: "", corpo) = {
+// `aggiornato` non va sulle slide, che mostrano solo la versione: lo legge il sito
+#let presentazione(evento: "", data: "", versione: none, aggiornato: none, titolo: "", corpo) = {
   let filetto = line(length: 100%, stroke: 0.5pt + palette.filetto)
   set document(title: evento + " " + data)
   set page(
@@ -25,7 +26,8 @@
         dir: ttb,
         spacing: 6pt,
         filetto,
-        grid(columns: (1fr, auto), info.nome, [#counter(page).display()/#counter(page).final().first()]),
+        grid(columns: (1fr, auto), if versione != none [#info.nome · v#versione] else { info.nome },
+          [#counter(page).display()/#counter(page).final().first()]),
       )
     },
   )
