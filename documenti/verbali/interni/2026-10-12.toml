@@ -1,0 +1,83 @@
+tipo = "interno"
+data = 2026-10-12
+inizio = "21:00"
+fine = "22:00"
+luogo = "Telegram"
+redattore = "Davide Baraldo"
+verificatore = "Patrizio Eleuteri"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu"
+]
+assenti = []
+ordine_del_giorno = [
+  "Proposte e sondaggio per la scelta del nome del gruppo",
+  "Valutazione e votazione delle proposte di logo generate con intelligenza artificiale",
+  "Configurazione dei canali di comunicazione ufficiali e dell'organizzazione GitHub"
+]
+
+[[punto]]
+titolo = "Proposte e sondaggio per la scelta del nome del gruppo"
+sintesi = """I componenti del gruppo si sono riuniti telematicamente per definire la denominazione ufficiale del team. Ciascun membro ha avanzato diverse proposte di denominazione; al termine del confronto, è stato aperto un sondaggio a scelta multipla nel canale Telegram di gruppo. Con la maggioranza assoluta dei voti è stato deliberato il nome "SW2 Corporation"."""
+
+[[punto]]
+titolo = "Valutazione e votazione delle proposte di logo generate con intelligenza artificiale"
+sintesi = """Davide Baraldo ha mostrato al gruppo molteplici varianti di logo generate tramite strumenti di intelligenza artificiale, declinate su uno stile geometrico e una palette cromatica basata sul rosso (#D7262F), bianco e nero. Dopo aver analizzato leggibilità, scalabilità e resa su sfondi chiari e scuri, il gruppo ha votato a maggioranza la proposta raffigurante il monogramma stilizzato "SW2", approvandone l'adozione per tutti i documenti e per il sito web."""
+
+[[punto]]
+titolo = "Configurazione dei canali di comunicazione ufficiali e dell'organizzazione GitHub"
+sintesi = """In seguito alla scelta di nome e logo, sono state concordate le attività operative per strutturare l'identità del team: rinominare il gruppo Telegram, creare la casella di posta elettronica istituzionale (sw2corporation@gmail.com) configurando l'inoltro automatico verso gli indirizzi personali dei membri, rinominare l'organizzazione GitHub in SW2-Corporation e inserire l'asset grafico del logo all'interno dei template di documentazione Typst."""
+
+[[decisione]]
+id = "VI-2026-10-12.1"
+testo = "Adozione ufficiale del nome 'SW2 Corporation' come denominazione del gruppo di lavoro e dell'organizzazione di progetto."
+motivazione = "Esito del sondaggio democratico interno tra tutte le proposte presentate dai componenti del team."
+
+[[decisione]]
+id = "VI-2026-10-12.2"
+testo = "Approvazione del logo ufficiale con monogramma stilizzato SW2 generato da Davide Baraldo e del colore d'accento rosso (#D7262F)."
+motivazione = "Esito della votazione interna tra le varianti grafiche proposte, giudicata la soluzione con migliore impatto visivo e leggibilità."
+
+[[decisione]]
+id = "VI-2026-10-12.3"
+testo = "Attivazione e uniformazione di tutti i canali di comunicazione (Telegram, Gmail, GitHub) con la nuova identità di gruppo."
+motivazione = "Garantire riconoscibilità, continuità operativa e canali di contatto chiari sia tra i membri sia verso l'esterno."
+
+[[azione]]
+decisione = "VI-2026-10-12.1"
+descrizione = "Aggiungere tutti i membri all'organizzazione GitHub del gruppo."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-16
+issue = "#38"
+
+[[azione]]
+decisione = "VI-2026-10-12.1"
+descrizione = "Rinominare l'organizzazione GitHub in SW2-Corporation."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-16
+issue = "#39"
+
+[[azione]]
+decisione = "VI-2026-10-12.2"
+descrizione = "Rinominare il gruppo Telegram con il nome scelto."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-13
+issue = "#40"
+
+[[azione]]
+decisione = "VI-2026-10-12.2"
+descrizione = "Creare la casella email del gruppo sw2corporation@gmail.com con inoltro ai membri."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-14
+issue = "#41"
+
+[[azione]]
+decisione = "VI-2026-10-12.2"
+descrizione = "Inserire il logo nel template dei documenti del gruppo."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-14
+issue = "#42"
