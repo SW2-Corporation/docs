@@ -50,4 +50,13 @@ Sonar
 Zucchetti
 Row Level Security
 Definition of Done
+Gianluca Carlesso
+Microsoft Teams
+OpenAI
+Anthropic
+DuckDB
+SmartDashboard
+Supabase
+NEXUM
+Valentino Baraldo
 GitHub
