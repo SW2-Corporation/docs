@@ -9,7 +9,13 @@
 
 ## Il sito
 
-I documenti approvati, le Lettere di Presentazione, i verbali e i diari di bordo sono pubblicati su **[sw2-corporation.github.io/docs](https://sw2-corporation.github.io/docs/)**. Il sito si rigenera da questo repository a ogni push su `main`: sul sito vanno solo le versioni rilasciate, mai le bozze. Il menu in alto porta alle quattro pagine: Documenti (lettere, documenti, verbali, diari di bordo e gruppo, con lo stato del progetto in apertura), Pianificazione, Ruoli e Glossario, con la ricerca dei termini. La pagina [Ruoli](https://sw2-corporation.github.io/docs/ruoli.html) mostra chi ricopre quale ruolo oggi e la linea del tempo dei periodi di `dati/ruoli.csv`. La pagina [Pianificazione](https://sw2-corporation.github.io/docs/pianificazione.html) mostra il diagramma di Gantt di fasi, attività e milestone di `dati/pianificazione.toml`, con il tempo previsto e quello usato.
+I documenti approvati, le Lettere di Presentazione, i verbali e i diari di bordo sono pubblicati su **[sw2-corporation.github.io/docs](https://sw2-corporation.github.io/docs/)**. Il sito si rigenera da questo repository a ogni push su `main` e ogni notte: sul sito vanno solo le versioni rilasciate, mai le bozze. Il menu in alto porta alle cinque pagine:
+
+- **[Documenti](https://sw2-corporation.github.io/docs/)**: la Lettera di Presentazione più recente in cima, poi documenti, verbali e diari di bordo, dal più recente. Ogni voce ha titolo, data o versione, stato e il link per scaricare il PDF; la ricerca filtra per titolo, data e tipo. Le sezioni ancora vuote non compaiono e una riga le elenca. In apertura ci sono la fase in corso e la prossima milestone.
+- **[Cruscotto](https://sw2-corporation.github.io/docs/cruscotto.html)**: dice se il progetto è sotto controllo e riporta ore e costi previsti e consuntivi, tempi e avanzamento (vedi [Cruscotto](#cruscotto)).
+- **[Pianificazione](https://sw2-corporation.github.io/docs/pianificazione.html)**: il diagramma di Gantt di fasi, attività e milestone di `dati/pianificazione.toml`, con il tempo previsto e quello usato.
+- **[Gruppo](https://sw2-corporation.github.io/docs/ruoli.html)**: i membri, chi ricopre quale ruolo oggi e la linea del tempo dei periodi di `dati/ruoli.csv`.
+- **[Glossario](https://sw2-corporation.github.io/docs/glossario.html)**, con la ricerca dei termini.
 
 Ogni PDF si apre in una pagina di lettura del sito, con lo stesso nome e l'estensione `.html`. La pagina funziona anche su telefono e offre testo selezionabile, link attivi, zoom e il pulsante per scaricare il PDF. Usa pdf.js da jsDelivr, con versione e impronte SRI fissate in `strumenti/sito.py` (`PDFJS`, `SRI_PDFJS`). Se pdf.js non si carica, la pagina offre il PDF da scaricare.
 
@@ -151,6 +157,20 @@ ore_previste = 0                 # facoltativo
 - Le fasi non si sovrappongono. Le ore usate di una fase sono le righe di `dati/ore.csv` che cadono nel suo periodo effettivo.
 - La pagina si apre con la situazione di oggi: fase in corso, prossima milestone, attività concluse, ore usate e voci in ritardo. Nel Gantt la fascia grigia è il previsto e la barra colorata l'effettivo, fino a oggi se la voce è in corso; il colore dice lo stato (verde conclusa, blu in corso, rosso a righe in ritardo). Ogni riga riporta stato e giorni usati su previsti; le date esatte sono nella tabella sotto ogni fase.
 - Il sito si rigenera anche ogni notte, perché stato e giorni usati dipendono dalla data.
+
+## Cruscotto
+
+La pagina `cruscotto.html` risponde a una domanda: il progetto è sotto controllo? Legge solo i file di `dati/` e si aggiorna con il sito, anche ogni notte. Finché un dato manca, il cruscotto dice quale, senza numeri di riempimento.
+
+- **Sotto controllo?** Quattro indicatori, ognuno con l'esito (sotto controllo, fuori soglia, da misurare) e la sua soglia:
+  - costo: il costo consuntivo non supera il costo aggiudicato (`costo_aggiudicato` di `dati/gruppo.toml`) o, prima dell'aggiudicazione, il costo preventivato;
+  - ore rispetto al previsto: le ore consumate fino a oggi restano entro ±`scostamento_ore` per cento dalle ore previste a oggi (`[soglie]` di `dati/gruppo.toml`). Le ore previste a una data sono le `ore_previste` delle fasi di `dati/pianificazione.toml`, distribuite in modo uniforme sui giorni previsti di ogni fase;
+  - tempi: nessuna attività né milestone in ritardo;
+  - ore per membro: nessuno oltre le ore della sua ripartizione in `dati/preventivo.toml` né oltre 95 ore.
+- **Ore e costi**: ore e costo preventivati, dalla ripartizione di `dati/preventivo.toml`, e consuntivi, dalle righe di `dati/ore.csv` alle tariffe del preventivo. Sono riportati in totale, per ruolo e per membro, con il residuo e il costo aggiudicato.
+- **Andamento delle ore**: ore consumate e previste cumulate, un punto a settimana, con il totale del preventivo e la linea di oggi. Il puntatore o le frecce mostrano i valori di ogni punto, che stanno anche nella tabella sotto il grafico.
+- **Avanzamento**: attività concluse e milestone raggiunte, per fase e in totale.
+- **Consuntivo per periodo**: ore e costo di ogni periodo di `dati/ruoli.csv`, cioè di ogni sprint. Ogni ora conta nel periodo del suo membro. Il preventivo di ogni periodo sta nel Piano di Progetto.
 
 ## Personalizzare lo stile
 

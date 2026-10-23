@@ -218,7 +218,7 @@ Procedura:
 Strumenti: GitHub, GitHub Actions. Metriche: MPC-02, MPC-05.
 
 === Rilascio e pubblicazione
-Il sito della documentazione si rigenera a ogni integrazione su `main`. Il sito mostra i documenti con una riga di approvazione nel registro, tutte le Lettere di Presentazione, tutti i verbali e tutti i diari di bordo. Le bozze e le altre presentazioni non compaiono. L'ordine è dal più recente al più vecchio, con la Lettera di Presentazione in cima.
+Il sito della documentazione si rigenera a ogni integrazione su `main`. Il sito mostra i documenti con una riga di approvazione nel registro, tutte le Lettere di Presentazione, tutti i verbali e tutti i diari di bordo. Le bozze e le altre presentazioni non compaiono. L'ordine è dal più recente al più vecchio, con la Lettera di Presentazione in cima. Il sito pubblica anche il cruscotto: ore e costi preventivati e consuntivi, tempi e avanzamento, letti dai file di `dati/` e confrontati con le soglie di `dati/gruppo.toml`.
 
 == Verifica
 
@@ -340,7 +340,7 @@ Strumenti: protezione di `main` su GitHub, configurata dall'Amministratore; mode
     table.header([Strumento], [Uso], [Versione]),
     [GitHub], [Organizzazione SW2-Corporation: repository, issue, board, pull request], [--],
     [GitHub Actions], [Workflow `Verifica` e `Pubblicazione`: controlli, test, compilazione e sito], [--],
-    [GitHub Pages], [Sito della documentazione], [--],
+    [GitHub Pages], [Sito della documentazione, con il cruscotto], [--],
     [Typst], [Compilazione dei documenti con il modello del gruppo], [0.15.1],
     [Python], [Controlli automatici, test e generazione del sito, senza librerie esterne], [3.11 o successiva],
     [Git], [Controllo di versione, con l'identità del membro], [--],
