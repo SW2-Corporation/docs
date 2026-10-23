@@ -14,6 +14,7 @@
   let righe = righe-registro(registro)
   let ultima = righe.at(0, default: none)
   let versione = if ultima != none { ultima.at(0) }
+  let aggiornato = if ultima != none { ultima.at(1) }
   let approvato = ultima != none and approvazione(ultima)
   // chi ha scritto e chi ha verificato, in ordine di prima comparsa
   let modifiche = righe.filter(r => not approvazione(r)).rev()
@@ -25,7 +26,7 @@
   )
   show: stile.with(
     titolo: titolo,
-    etichetta: info.nome + " · " + if versione != none { "v" + versione } else { "bozza" },
+    etichetta: info.nome + " · " + if versione != none { "v" + versione + " · aggiornato il " + aggiornato } else { "bozza" },
   )
 
   copertina(
@@ -33,7 +34,8 @@
     titolo: titolo,
     sottotitolo: sottotitolo,
     voci: (
-      ("Versione", if versione != none { versione + " del " + ultima.at(1) }),
+      ("Versione", versione),
+      ("Ultimo aggiornamento", aggiornato),
       ("Stato", if ultima == none { "Bozza" } else if approvato { "Approvato" } else { "In verifica" }),
       ("Uso", (esterno: "Esterno", interno: "Interno").at(uso, default: uso)),
       ("Destinatari", destinatari.join(linebreak())),

@@ -1,5 +1,7 @@
 tipo = "interno"
 data = 2026-10-12
+versione = "1.0.0"
+aggiornato = 2026-10-23
 inizio = "21:00"
 fine = "22:00"
 luogo = "Telegram"
