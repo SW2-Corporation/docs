@@ -1,0 +1,62 @@
+tipo = "interno"
+data = 2026-10-14
+inizio = "17:00"
+fine = "19:00"
+luogo = "Discord"
+redattore = "Patrizio Eleuteri"
+verificatore = "Alessandro Paduret"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu"
+]
+assenti = []
+ordine_del_giorno = [
+  "Definizione dei criteri per la valutazione comparativa dei capitolati",
+  "Selezione della rosa iniziale delle tre preferenze del gruppo",
+  "Stesura delle domande di chiarimento e richiesta di incontro con i proponenti"
+]
+
+[[punto]]
+titolo = "Definizione dei criteri per la valutazione comparativa dei capitolati"
+sintesi = """Il gruppo ha discusso ed espanso la bozza creata da Matteo Bellato, e stabilito collegialmente i cinque criteri su cui basare la valutazione oggettiva di ciascun capitolato: interesse e motivazione, tecnologie e stack, supporto del proponente, complessità e fattibilità, formazione e apprendimento. A ciascun criterio verrà assegnata una scala di punteggio da 1 a 5."""
+
+[[punto]]
+titolo = "Selezione della rosa iniziale delle tre preferenze del gruppo"
+sintesi = """Sulla base dell'analisi condotta e dell'applicazione preliminare dei criteri concordati, il gruppo ha individuato come preferenze principali i capitolati C8 (Sonar - Halue), C7 (SmartDashboard - Ergon Informatica) e C4 (GVSPV - M31). I tre progetti si distinguono per solidità tecnologica, chiarezza di visione e forte potenziale formativo."""
+
+[[punto]]
+titolo = "Stesura delle domande di chiarimento e richiesta di incontro con i proponenti"
+sintesi = """Per ciascuno dei tre capitolati selezionati, il gruppo ha redatto l'elenco dei quesiti esplorativi volti a chiarire perimetro dell'MVP, vincoli architetturali, tecnologie suggerite o imposte e canali di supporto. Il Responsabile è stato incaricato di inviare le richieste di incontro telematico ai rispettivi proponenti."""
+
+[[decisione]]
+id = "VI-2026-10-14.1"
+testo = "Adozione formale dei cinque criteri di valutazione: interesse e motivazione, tecnologie e stack, supporto del proponente, complessità e fattibilità, formazione e apprendimento."
+motivazione = "Garantire un metodo di selezione oggettivo, trasparente e conforme alle indicazioni del corso."
+
+[[decisione]]
+id = "VI-2026-10-14.2"
+testo = "Individuazione dei capitolati C8 (Sonar), C7 (SmartDashboard) e C4 (GVSPV) come rosa delle preferenze da approfondire con i proponenti."
+motivazione = "Massima corrispondenza con le competenze del gruppo e alto valore formativo dei progetti selezionati."
+
+[[decisione]]
+id = "VI-2026-10-14.3"
+testo = "Invio delle richieste di colloquio esplorativo e dei quesiti preliminari ai proponenti di C8, C7 e C4."
+motivazione = "Chiarire i requisiti architetturali e operativi prima della formalizzazione della candidatura."
+
+[[azione]]
+decisione = "VI-2026-10-14.3"
+descrizione = "Invio delle email di contatto e richiesta di incontro ai referenti aziendali di C8, C7 e C4."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-15
+issue = "#1"
+
+[[azione]]
+decisione = "VI-2026-10-14.1"
+descrizione = "Avvio della stesura della matrice di valutazione e delle schede dei capitolati."
+assegnatario = "Oussama Mahdi"
+scadenza = 2026-10-16
+issue = "#5"
