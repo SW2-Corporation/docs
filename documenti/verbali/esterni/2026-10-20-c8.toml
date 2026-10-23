@@ -63,7 +63,7 @@ sintesi = """Davide Baraldo ha chiesto se fosse previsto lo sviluppo di assisten
 
 [[punto]]
 titolo = "Ambiente di test su Shopify Partners e differenze con Shopify Plus"
-sintesi = """Il proponente ha confermato che un development store gratuito creato tramite account Shopify Partners è pienamente adeguato per coprire le Admin API (GraphQL) e testare l'idea del prodotto. Qualora servissero funzionalità esclusive di Shopify Plus, Halue metterà a disposizione uno store di supporto. I workflow di Shopify Flow potranno essere acquisiti da file di export qualora non direttamente interrogabili via API."""
+sintesi = """Il proponente ha confermato che un development store gratuito, aperto dal gruppo tramite un account Shopify Partners, è adeguato per coprire le Admin API (GraphQL) e testare l'idea del prodotto. Se necessario, Halue potrà creare a sua volta uno store di sviluppo tramite la propria Partner Dashboard. I workflow di Shopify Flow potranno essere acquisiti da file di export qualora non direttamente interrogabili via API."""
 
 [[punto]]
 titolo = "Controllo degli accessi ai dati tramite Row Level Security (RQS-02)"
