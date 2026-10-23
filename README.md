@@ -118,7 +118,7 @@ Il percorso del verbale si può scrivere con o senza `/` iniziale; su Git Bash p
   descrizione = "..."
   assegnatario = "Nome Cognome"    # un membro, mai "tutti"
   scadenza = 2026-10-20
-  issue = "https://github.com/..." # URL della issue
+  issue = "#12"                    # issue di questo repo; di un altro repo, l'URL completo
   ```
 
   Il verbale non ha copertina né registro: intestazione con orari e durata, versione e ultimo aggiornamento, partecipanti, poi ordine del giorno, sintesi, decisioni e azioni; il piè di pagina ripete versione e data. Gli esterni riportano l'approvazione del proponente, "in attesa" finché manca.

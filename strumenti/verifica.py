@@ -729,7 +729,9 @@ class Verifica:
             if a["scadenza"] < data:
                 errore("E-VERBALE-AZIONE", f"scadenza {a['scadenza']} precedente alla riunione", riga)
             if not a.get("issue"):
-                errore("W-VERBALE-ISSUE", "azione senza URL della issue", riga)
+                errore("W-VERBALE-ISSUE", "azione senza issue", riga)
+            elif not re.fullmatch(r"#\d+|https://github\.com/[^/\s]+/[^/\s]+/issues/\d+", a["issue"]):
+                errore("E-VERBALE-AZIONE", f'issue "{a["issue"]}" non nel formato #N né URL di una issue GitHub', riga)
 
         if v["redattore"] == v["verificatore"]:
             errore("E-VERBALE-REDATTORE", "redattore e verificatore devono essere persone diverse",
