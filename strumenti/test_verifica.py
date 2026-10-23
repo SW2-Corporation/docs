@@ -416,6 +416,15 @@ class TestOre(Base):
         self.assertTrue(any("oltre il costo aggiudicato" in m for m in problemi))
 
 
+class TestGruppo(Base):
+    def test_soglia_dello_scostamento(self):
+        self.scrivi("dati/gruppo.toml", GRUPPO.replace("gulpease = 40", "gulpease = 40\nscostamento_ore = 7.5"))
+        self.assertEqual(self.codici(), [])
+        for valore in ('"10%"', "0", "150"):
+            self.scrivi("dati/gruppo.toml", GRUPPO.replace("gulpease = 40", f"gulpease = 40\nscostamento_ore = {valore}"))
+            self.assertEqual(self.codici(), ["E-DATI"])
+
+
 class TestRuoli(Base):
     def test_periodi_sovrapposti(self):
         self.scrivi("dati/ruoli.csv", RUOLI
