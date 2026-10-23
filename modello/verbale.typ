@@ -45,9 +45,13 @@
   ).filter(x => x != none).join(" ")
 }
 
-#let issue(url) = if url == "" [--] else {
-  let numero = url.split("/").last()
-  link(url, if numero.match(regex("^\d+$")) != none { "#" + numero } else { url })
+// "#12" è una issue di questo repo: il link parte da repo in dati/gruppo.toml; di un altro repo serve l'URL completo
+#let issue(valore) = if valore == "" [--] else if valore.starts-with("#") {
+  let repo = info.at("repo", default: "")
+  if repo == "" { valore } else { link(repo + "/issues/" + valore.slice(1), valore) }
+} else {
+  let numero = valore.split("/").last()
+  link(valore, if numero.match(regex("^\d+$")) != none { "#" + numero } else { valore })
 }
 
 #fascia(destra: align(right)[
