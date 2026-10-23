@@ -77,14 +77,16 @@ Il percorso del verbale si può scrivere con o senza `/` iniziale; su Git Bash p
 
 ## Nuovi documenti
 
-- **Documento con registro**: un file `X.typ` con `#show: documento.with(titolo: ..., uso: "esterno", destinatari: (...), registro: csv("X.registro.csv"))` (vedi `documenti/esterni/gestionali/`) e accanto `X.registro.csv` con la sola intestazione `versione,data,autore,verificatore,descrizione`. `sottotitolo:` è facoltativo. La copertina ricava versione, stato (Bozza, In verifica, Approvato), redattori, verificatori e approvatore dal registro.
-- **Lettera di Presentazione**: `documenti/lettere/AAAA-MM-GG.typ` con `#show: lettera.with(data: "AAAA-MM-GG", oggetto: "...")`, poi il testo.
+- **Documento con registro**: un file `X.typ` con `#show: documento.with(titolo: ..., uso: "esterno", destinatari: (...), registro: csv("X.registro.csv"))` (vedi `documenti/esterni/gestionali/`) e accanto `X.registro.csv` con la sola intestazione `versione,data,autore,verificatore,descrizione`. `sottotitolo:` è facoltativo. La copertina ricava dal registro versione, data dell'ultimo aggiornamento, stato (Bozza, In verifica, Approvato), redattori, verificatori e approvatore; il piè di pagina ripete versione e data.
+- **Lettera di Presentazione**: `documenti/lettere/AAAA-MM-GG.typ` con `#show: lettera.with(data: "AAAA-MM-GG", oggetto: "...")`, poi il testo. Ha la data e non la versione: la data è quella dell'ultimo aggiornamento.
 - **Verbale**: `documenti/verbali/interni/AAAA-MM-GG.toml` (o `esterni/`). Più verbali dello stesso tipo nello stesso giorno aggiungono al nome un suffisso in minuscolo, per gli esterni il codice del capitolato: `2026-10-20-c7.toml`, con decisioni `VE-2026-10-20-C7.n`. Campi:
 
   ```toml
   tipo = "interno"                 # "interno" | "esterno", come la cartella
   titolo = "..."                   # facoltativo: oggetto, sul sito e nel PDF; senza, l'azienda o il primo punto
   data = 2026-10-14                # uguale alla data del nome del file
+  versione = "1.0.0"               # nasce alla 1.0.0; ogni modifica verificata: Y se cambia decisioni o azioni, altrimenti Z
+  aggiornato = 2026-10-15          # data dell'ultima modifica, mai prima della riunione né nel futuro
   inizio = "18:00"
   fine = "19:00"
   luogo = "Discord"
@@ -113,9 +115,9 @@ Il percorso del verbale si può scrivere con o senza `/` iniziale; su Git Bash p
   issue = "https://github.com/..." # URL della issue
   ```
 
-  Il verbale non ha copertina, versione né registro: intestazione con orari e durata, partecipanti, poi ordine del giorno, sintesi, decisioni e azioni. Gli esterni riportano l'approvazione del proponente, "in attesa" finché manca.
+  Il verbale non ha copertina né registro: intestazione con orari e durata, versione e ultimo aggiornamento, partecipanti, poi ordine del giorno, sintesi, decisioni e azioni; il piè di pagina ripete versione e data. Gli esterni riportano l'approvazione del proponente, "in attesa" finché manca.
 
-  **Verbale firmato dal proponente**: il PDF firmato va accanto al TOML, con lo stesso nome e l'estensione `.firmato.pdf` (es. `documenti/verbali/esterni/2026-10-20-c7.firmato.pdf`), e `approvazione_esterna` lo riporta (es. "Approvato con firma il 2026-10-23"). Il sito pubblica la copia firmata così com'è, al posto di quella compilata. Dopo la firma il TOML non cambia più: una correzione richiede una nuova firma.
+  **Verbale firmato dal proponente**: il PDF firmato va accanto al TOML, con lo stesso nome e l'estensione `.firmato.pdf` (es. `documenti/verbali/esterni/2026-10-20-c7.firmato.pdf`), e `approvazione_esterna` lo riporta (es. "Approvato con firma il 2026-10-23"). Il sito pubblica la copia firmata così com'è, al posto di quella compilata, con versione e data del TOML. Dopo la firma il contenuto del verbale non cambia più: una correzione richiede una nuova versione e una nuova firma.
 - **Presentazione**: `presentazioni/diari/AAAA-MM-GG.typ` per il diario di bordo, con `#show: presentazione.with(evento: "Diario di bordo", data: "AAAA-MM-GG", titolo: "...")` e una `#slide(titolo: "...")[...]` per ogni slide. La prima slide è il titolo; ogni slide riporta evento, data, logo e numero "n/N". Poco testo: il resto si dice a voce.
 
 ## Pianificazione
@@ -179,6 +181,7 @@ Il sito segue il tema chiaro o scuro del dispositivo; il bottone in alto a destr
 ## Convenzioni
 
 - Date sempre AAAA-MM-GG, nel testo e nei nomi dei file; orari HH:MM.
+- Ogni documento riporta, nel PDF e sul sito, la versione e la data dell'ultimo aggiornamento: i documenti con registro le prendono dalla prima riga del registro, i verbali dai campi `versione` e `aggiornato`. La Lettera di Presentazione ha solo la data.
 - Verbali e lettere non hanno registro delle modifiche.
 - Il registro delle modifiche è in ordine LIFO: la prima riga è la più recente.
 - Ogni riga del registro è una modifica già verificata: prima si verifica, poi si incrementa la versione (Z per le modifiche minori, Y per quelle sostanziali). Autore e verificatore sono persone diverse.
