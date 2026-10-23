@@ -366,6 +366,12 @@ class TestVerbale(Base):
         senza_decisioni = VERBALE.split("[[decisione]]")[0]
         self.assertEqual(self.verbale(senza_decisioni), ["E-VERBALE-DECISIONE"])
 
+    def test_formato_issue(self):
+        url = 'issue = "https://github.com/gruppo/docs/issues/1"'
+        self.assertEqual(self.verbale(VERBALE.replace(url, 'issue = "#1"')), [])
+        for errato in ("1", "issue 1", "https://github.com/gruppo/docs"):
+            self.assertEqual(self.verbale(VERBALE.replace(url, f'issue = "{errato}"')), ["E-VERBALE-AZIONE"])
+
     def test_persone(self):
         testo = (VERBALE.replace('verificatore = "Marco Rossi"', 'verificatore = "Anna Bianchi"')
                  .replace('"Luca Verdi"]', '"Giulia Gialli"]'))
