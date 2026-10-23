@@ -1,0 +1,112 @@
+tipo = "interno"
+data = 2026-10-23
+versione = "1.0.0"
+aggiornato = 2026-10-23
+inizio = "15:30"
+fine = "16:30"
+luogo = "Discord"
+redattore = "Matteo Bellato"
+verificatore = "David Sirbu"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = []
+ordine_del_giorno = [
+  "Gestione del tracciamento e della creazione dei diari di bordo",
+  "Introduzione del versionamento nei documenti",
+  "Miglioramento della visualizzazione del sito della documentazione",
+  "Procedura di gestione dei verbali firmati",
+]
+
+[[punto]]
+titolo = "Gestione del tracciamento e della creazione dei diari di bordo"
+sintesi = """
+È necessario definire una strategia per la creazione e la tracciatura dell'evoluzione dei diari di bordo.
+Davide Baraldo propone di seguire lo stesso iter e le stesse regole dei verbali, con nome dei branch che riflette la natura del documento.
+Il gruppo concorda.
+"""
+
+[[punto]]
+titolo = "Introduzione del versionamento nei documenti"
+sintesi = """
+Durante la correzione di un dettaglio riguardo il primo incontro con l'azienda Halue, è emersa la necessità di introdurre un versionamento interno ai verbali per consentire anche ai destinatari di identificare che è stata apportata una modifica.
+Il gruppo concorda.
+"""
+
+[[punto]]
+titolo = "Miglioramento della visualizzazione del sito della documentazione"
+sintesi = """
+L'attuale visualizzazione del sito della documentazione risulta dispersiva.
+Il gruppo concorda di riorganizzarne la struttura per renderla più ordinata e facile da consultare.
+"""
+
+[[punto]]
+titolo = "Procedura di gestione dei verbali firmati"
+sintesi = """Il gruppo definisce la procedura per i verbali firmati: l'Amministratore acquisisce il verbale firmato e apre una pull request, che un altro membro verifica. Dopo la verifica, la pull request viene integrata su main."""
+
+[[decisione]]
+id = "VI-2026-10-23.1"
+testo = "I diari di bordo seguono lo stesso iter dei verbali: ogni diario nasce in un branch dedicato diario/AAAA-MM-GG, passa da una pull request verificata da un membro diverso dall'autore e viene pubblicato sul sito con versione e data dell'ultimo aggiornamento."
+motivazione = "In questo modo il gruppo ha un unico iter per la revisione dei documenti."
+
+[[decisione]]
+id = "VI-2026-10-23.2"
+testo = "Ogni verbale riporta la versione e la data dell'ultimo aggiornamento, nel PDF e sul sito. Il verbale nasce alla versione 1.0.0; ogni modifica verificata fa crescere Y se cambia decisioni o azioni, Z negli altri casi."
+motivazione = "I destinatari, compresi i proponenti, riconoscono subito se un verbale è stato corretto dopo la prima pubblicazione."
+
+[[decisione]]
+id = "VI-2026-10-23.3"
+testo = "L'Amministratore provvede a riorganizzare la pagina Documenti del sito della documentazione per renderla meno dispersiva."
+motivazione = "Una struttura più ordinata consente di recuperare più velocemente ciò che si desidera."
+
+[[decisione]]
+id = "VI-2026-10-23.4"
+testo = "Quando il proponente rimanda un verbale firmato, l'Amministratore salva la copia firmata accanto al verbale e apre una pull request; un membro diverso la verifica e la integra su main."
+motivazione = "L'Amministratore cura il repository e il sito; la verifica di un altro membro garantisce che su main arrivi solo lavoro verificato."
+
+[[azione]]
+decisione = "VI-2026-10-23.1"
+descrizione = "Aggiungere alle Norme di Progetto il branch diario/AAAA-MM-GG e l'iter dei diari di bordo."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-26
+issue = "#69"
+
+[[azione]]
+decisione = "VI-2026-10-23.1"
+descrizione = "Pubblicare i diari di bordo sul sito, con versione e data dell'ultimo aggiornamento."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-26
+issue = "#67"
+
+[[azione]]
+decisione = "VI-2026-10-23.1"
+descrizione = "Redigere il primo diario di bordo seguendo l'iter dei verbali."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-26
+issue = "#26"
+
+[[azione]]
+decisione = "VI-2026-10-23.2"
+descrizione = "Mostrare versione e data dell'ultimo aggiornamento di ogni documento, nel PDF e sul sito."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-27
+issue = "#65"
+
+[[azione]]
+decisione = "VI-2026-10-23.3"
+descrizione = "Riorganizzare la pagina Documenti del sito della documentazione per renderla meno dispersiva."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-29
+issue = "#71"
+
+[[azione]]
+decisione = "VI-2026-10-23.4"
+descrizione = "Aggiornare le Norme di Progetto con la procedura dei verbali firmati gestita dall'Amministratore."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-27
+issue = "#73"
