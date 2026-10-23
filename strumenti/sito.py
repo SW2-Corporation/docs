@@ -579,7 +579,7 @@ def documenti(typst, out, cartella):
         titolo = titolo[1] if titolo else sorgente.stem
         pdf = f"{titolo.replace(' ', '_')}_v{versione}.pdf"
         compila(typst, sorgente, out / pdf)
-        rilasciati.append((data, titolo, voce(pdf, titolo, f"v{versione} · {data}")))
+        rilasciati.append((data, titolo, voce(pdf, titolo, f"v{versione}", sotto=f"Aggiornato il {e(data)}")))
     # le ultime approvazioni in cima
     rilasciati.sort(key=lambda d: d[1])
     rilasciati.sort(key=lambda d: d[0], reverse=True)
@@ -601,8 +601,11 @@ def verbali(typst, out, cartella):
             # due verbali dello stesso giorno si distinguono per il suffisso: "2026-10-20 C7"
             quando = f"{parti[0]} {parti[1].upper()}".strip()
             dati = tomllib.loads(sorgente.read_text(encoding="utf-8-sig"))
-            voci.append(voce(nome.replace(" ", "_") + ".pdf", titolo_verbale(dati), quando, nascosto=f", verbale del {quando}",
-                             sotto=stato_verbale(dati)))
+            meta = f"{quando} · v{dati['versione']}" if dati.get("versione") else quando
+            # spazi non separabili: su mobile "aggiornato il" non va a capo lontano dalla data
+            sotto = stato_verbale(dati) + (f" · aggiornato\u00a0il\u00a0{e(dati['aggiornato'])}" if dati.get("aggiornato") else "")
+            voci.append(voce(nome.replace(" ", "_") + ".pdf", titolo_verbale(dati), meta, nascosto=f", verbale del {quando}",
+                             sotto=sotto))
     return voci
 
 
