@@ -1,0 +1,64 @@
+tipo = "interno"
+data = 2026-10-13
+inizio = "17:00"
+fine = "18:00"
+luogo = "Discord"
+redattore = "Matteo Bellato"
+verificatore = "David Sirbu"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = []
+ordine_del_giorno = [
+  "Presentazione e prima ricognizione dei dieci capitolati d'appalto",
+  "Confronto preliminare su interessi, competenze e aspettative individuali",
+  "Pianificazione delle attività di analisi di dettaglio",
+]
+
+[[punto]]
+titolo = "Presentazione e prima ricognizione dei dieci capitolati d'appalto"
+sintesi = """Il gruppo si è riunito telematicamente per passare in rassegna i dieci capitolati d'appalto proposti per l'anno accademico 2026/2027. Ciascun membro ha esposto una prima impressione sui singoli progetti (C0-C9), evidenziando le caratteristiche salienti di ciascun capitolato in termini di dominio applicativo, tipologia di prodotto e tecnologie coinvolte."""
+
+[[punto]]
+titolo = "Confronto preliminare su interessi, competenze e aspettative individuali"
+sintesi = """È emerso un forte interesse comune per progetti basati su architetture cloud e integrazione di intelligenza artificiale. Al contempo, il gruppo ha espresso riserve su progetti che includono elementi di progettazione hardware in quanto per i membri sarebbe difficile (ove necessario) incontrarsi fisicamente a causa di distanza geografica e disponibilità oraria generalmente diversa."""
+
+[[punto]]
+titolo = "Pianificazione delle attività di analisi di dettaglio"
+sintesi = """Si è concordato di effettuare una lettura approfondita dei testi dei capitolati in vista della successiva riunione, nella quale verranno definiti i criteri formali di valutazione e selezionate le preferenze primarie per avviare i contatti con i proponenti."""
+
+[[decisione]]
+id = "VI-2026-10-13.1"
+testo = "Avvio dell'analisi approfondita individuale dei dieci capitolati d'appalto."
+motivazione = "Raccogliere elementi conoscitivi puntuali per impostare una valutazione oggettiva e comparativa."
+
+[[decisione]]
+id = "VI-2026-10-13.2"
+testo = "Convocazione di una nuova riunione interna per il giorno seguente per definire i parametri di valutazione e individuare le prime preferenze."
+motivazione = "Rispettare le tempistiche di candidatura e procedere tempestivamente con le richieste di colloquio ai proponenti."
+
+[[azione]]
+decisione = "VI-2026-10-13.1"
+descrizione = "Studio individuale dei testi dei capitolati da C0 a C4 con annotazione di pro e contro."
+assegnatario = "Patrizio Eleuteri"
+scadenza = 2026-10-14
+issue = "#5"
+
+[[azione]]
+decisione = "VI-2026-10-13.1"
+descrizione = "Studio individuale dei testi dei capitolati da C5 a C9 con annotazione di pro e contro."
+assegnatario = "Oussama Mahdi"
+scadenza = 2026-10-14
+issue = "#5"
+
+[[azione]]
+decisione = "VI-2026-10-13.2"
+descrizione = "Predisposizione della bozza dei criteri di valutazione."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-14
+issue = "#5"
