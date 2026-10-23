@@ -1,0 +1,62 @@
+tipo = "interno"
+data = 2026-10-20
+inizio = "18:30"
+fine = "19:30"
+luogo = "Discord"
+redattore = "Oussama Mahdi"
+verificatore = "Davide Baraldo"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu"
+]
+assenti = []
+ordine_del_giorno = [
+  "Resoconto e debriefing degli incontri esplorativi con Ergon Informatica e Halue",
+  "Valutazione sullo stato di contatto con il proponente del capitolato C4",
+  "Rimodulazione della graduatoria finale delle preferenze per la candidatura",
+  "Pianificazione degli aggiornamenti documentali per la consegna della candidatura"
+]
+
+[[punto]]
+titolo = "Resoconto e debriefing degli incontri esplorativi con Ergon Informatica e Halue"
+sintesi = """I membri del gruppo hanno condiviso le risultanze degli incontri svolti nel pomeriggio con Gianluca Carlesso (Ergon Informatica - C7, ore 14:00-14:30) e Valentino Baraldo (Halue - C8, ore 16:00-16:30). Entrambi i colloqui hanno confermato l'estrema disponibilità dei proponenti e la chiarezza degli obiettivi di Minimum Viable Product."""
+
+[[punto]]
+titolo = "Valutazione sullo stato di contatto con il proponente del capitolato C4"
+sintesi = """È stato constatato che, a differenza delle altre aziende contattate, la proponente M31 per il capitolato C4 non ha fornito alcun riscontro alle comunicazioni e alla richiesta di colloquio esplorativo inviate dal gruppo nei giorni precedenti."""
+
+[[punto]]
+titolo = "Rimodulazione della graduatoria finale delle preferenze per la candidatura"
+sintesi = """Alla luce dell'eccellente esito del colloquio con Halue, della pronta risposta e chiarezza di Ergon Informatica e dell'assenza di riscontro da parte di M31, il gruppo ha deliberato all'unanimità di rimodulare l'ordine di preferenza: C8 (Sonar) confermato saldamente al 1° posto (24 punti); C7 (SmartDashboard) promosso al 2° posto (21 punti); C4 (GVSPV) posizionato al 3° posto (19 punti, con punteggio sul criterio di supporto ridotto a 2 per mancata interazione)."""
+
+[[punto]]
+titolo = "Pianificazione degli aggiornamenti documentali per la consegna della candidatura"
+sintesi = """Sono state concordate le scadenze e le assegnazioni per l'aggiornamento del documento di Valutazione dei capitolati, la redazione dei verbali esterni e interni e l'impostazione della Dichiarazione degli impegni."""
+
+[[decisione]]
+id = "VI-2026-10-20.1"
+testo = "Approvazione della graduatoria definitiva delle preferenze di candidatura: prima scelta C8 (Sonar), seconda scelta C7 (SmartDashboard), terza scelta C4 (GVSPV)."
+motivazione = "Esiti ampiamente positivi e rassicuranti emersi nei colloqui con Halue ed Ergon Informatica, a fronte della mancata risposta di M31 che ha determinato un declassamento prudenziale di C4."
+
+[[decisione]]
+id = "VI-2026-10-20.2"
+testo = "Aggiornamento del documento di Valutazione dei capitolati e formalizzazione dei relativi verbali esterni e interni."
+motivazione = "Rendere pienamente coerenti e trasparenti le motivazioni di scelta prima della consegna ufficiale della candidatura."
+
+[[azione]]
+decisione = "VI-2026-10-20.1"
+descrizione = "Revisione della graduatoria e delle motivazioni nel documento di Valutazione dei capitolati."
+assegnatario = "Oussama Mahdi"
+scadenza = 2026-10-21
+issue = "#28"
+
+[[azione]]
+decisione = "VI-2026-10-20.2"
+descrizione = "Verifica e controllo di qualità delle modifiche apportate alla documentazione di candidatura."
+assegnatario = "Alessandro Paduret"
+scadenza = 2026-10-21
+issue = "#30"
