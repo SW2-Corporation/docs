@@ -55,12 +55,12 @@ SPRINT = re.compile(r"\b(la|una|della|nella|alla|dalla)\s+sprint\b", re.IGNORECA
 SPRINT_MASCHILE = {"la": "lo", "una": "uno", "della": "dello", "nella": "nello", "alla": "allo", "dalla": "dallo"}
 
 CAMPI_VERBALE = {
-    "tipo": str, "data": dt.date, "inizio": str, "fine": str, "luogo": str,
+    "tipo": str, "data": dt.date, "versione": str, "aggiornato": dt.date, "inizio": str, "fine": str, "luogo": str,
     "redattore": str, "verificatore": str, "partecipanti": list, "assenti": list,
     "esterni": list, "approvazione_esterna": str, "ordine_del_giorno": list, "titolo": str,
     "punto": list, "decisione": list, "azione": list,
 }
-OBBLIGATORI_VERBALE = ("tipo", "data", "inizio", "fine", "luogo", "redattore", "verificatore",
+OBBLIGATORI_VERBALE = ("tipo", "data", "versione", "aggiornato", "inizio", "fine", "luogo", "redattore", "verificatore",
                        "partecipanti", "ordine_del_giorno")
 TABELLE_VERBALE = {
     "esterni": {"nome": str, "ruolo": str, "azienda": str},
@@ -659,6 +659,15 @@ class Verifica:
         nome = nome_verbale(Path(rel).stem)
         if not nome or nome[0] != data:
             errore("E-VERBALE-DATA", f"data {data} diversa dal nome del file", riga_valore(testo, data.isoformat()))
+        # nessun registro: il verbale nasce alla 1.0.0 e ogni modifica verificata fa crescere Y o Z
+        if not re.fullmatch(r"1\.\d+\.\d+", v["versione"]):
+            errore("E-VERBALE-VERSIONE", f'versione "{v["versione"]}" non valida: un verbale nasce alla 1.0.0 e cresce in Y o Z',
+                   riga_valore(testo, "versione"))
+        aggiornato = v["aggiornato"]
+        if aggiornato < data:
+            errore("E-VERBALE-DATA", f"aggiornato {aggiornato} precede la riunione", riga_valore(testo, "aggiornato"))
+        elif aggiornato > dt.date.today():
+            errore("E-VERBALE-DATA", f"aggiornato {aggiornato} nel futuro", riga_valore(testo, "aggiornato"))
 
         orari = {}
         for campo in ("inizio", "fine"):
