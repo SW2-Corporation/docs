@@ -131,11 +131,11 @@ Il registro delle modifiche precede l'indice ed è in ordine dalla riga più rec
 - Documenti con registro: documenti gestionali e tecnici esterni, documenti interni. Hanno copertina, registro, indice e introduzione.
 - Lettere di Presentazione: una per consegna, con la data e senza versione né registro. La data è quella dell'ultimo aggiornamento: la lettera inviata sostituisce le bozze. Stanno in cima al sito.
 - Verbali interni ed esterni: hanno la stessa struttura, cartelle diverse e nessun registro. Hanno la versione e la data dell'ultimo aggiornamento.
-- Diari di bordo: presentazioni per i docenti, non pubblicate sul sito.
+- Diari di bordo: presentazioni per i docenti, una per settimana, senza registro. Hanno la versione e la data dell'ultimo aggiornamento. Il diario nasce alla versione 1.0.0. Ogni modifica verificata ne aggiorna la data e fa crescere Y se cambia il contenuto, Z negli altri casi. Le slide riportano solo la versione.
 
 === Convenzioni
 - I documenti si scrivono in Typst con il modello del gruppo. Il modello fornisce copertina, registro, intestazioni, tabelle e stile.
-- Ogni documento riporta la versione e la data dell'ultimo aggiornamento, nel PDF e sul sito. La Lettera di Presentazione riporta solo la data.
+- Ogni documento riporta la versione e la data dell'ultimo aggiornamento, nel PDF e sul sito. La Lettera di Presentazione riporta solo la data e le slide del diario di bordo solo la versione.
 - Le date sono sempre nella forma AAAA-MM-GG, nel testo e nei nomi dei file. Gli orari sono nella forma HH:MM.
 - Nei titoli solo la prima parola ha l'iniziale maiuscola, salvo acronimi e nomi propri.
 - Tabelle e figure sono numerate e hanno una didascalia: sopra per le tabelle, sotto per le figure.
@@ -218,7 +218,7 @@ Procedura:
 Strumenti: GitHub, GitHub Actions. Metriche: MPC-02, MPC-05.
 
 === Rilascio e pubblicazione
-Il sito della documentazione si rigenera a ogni integrazione su `main`. Il sito mostra i documenti con una riga di approvazione nel registro, tutte le Lettere di Presentazione e tutti i verbali. Le bozze e le presentazioni non compaiono. L'ordine è dal più recente al più vecchio, con la Lettera di Presentazione in cima.
+Il sito della documentazione si rigenera a ogni integrazione su `main`. Il sito mostra i documenti con una riga di approvazione nel registro, tutte le Lettere di Presentazione, tutti i verbali e tutti i diari di bordo. Le bozze e le altre presentazioni non compaiono. L'ordine è dal più recente al più vecchio, con la Lettera di Presentazione in cima.
 
 == Verifica
 
@@ -231,6 +231,7 @@ Lo script `strumenti/verifica.py` controlla il repository. Ogni problema è una 
 - registro delle modifiche: intestazione, ordine, versioni, persone diverse, approvazioni;
 - titoli, date, lessico, riferimenti, figure e termini del glossario;
 - verbali: schema, date, versione e ultimo aggiornamento, orari, decisioni, azioni, issue, approvazione esterna, nome della copia firmata;
+- diari di bordo: data, versione e ultimo aggiornamento;
 - leggibilità dei documenti.
 
 I test degli strumenti si eseguono con `python -m unittest discover -s strumenti`. Il workflow `Verifica` esegue controlli e test a ogni pull request e a ogni integrazione.
@@ -320,7 +321,7 @@ La Definition of Done dice quando il lavoro è fatto. Il lavoro che non la soddi
 
 Una issue è fatta quando la sua pull request è integrata su `main`. La protezione di `main` permette l'integrazione solo con il controllo `verifica` verde, l'approvazione di un membro diverso dall'autore e tutte le conversazioni risolte. Una issue che non modifica il repository, per esempio un'email o un incontro, è fatta quando riporta l'evidenza del risultato e un altro membro la conferma con un commento.
 
-Una issue che modifica un documento è fatta solo se la versione e la data dell'ultimo aggiornamento del documento sono aggiornate con la modifica, secondo le regole del suo tipo. Il PDF le riporta e il sito le mostra quando il documento è pubblicato. La Lettera di Presentazione ha solo la data.
+Una issue che modifica un documento è fatta solo se la versione e la data dell'ultimo aggiornamento del documento sono aggiornate con la modifica, secondo le regole del suo tipo. Il PDF le riporta e il sito le mostra quando il documento è pubblicato. La Lettera di Presentazione ha solo la data; le slide del diario di bordo solo la versione.
 
 Uno sprint è fatto quando ogni sua issue è fatta oppure torna da fare con la stima residua. Una consegna è fatta quando ogni documento consegnato ha la riga di approvazione del Responsabile.
 
