@@ -505,8 +505,12 @@ def verbali(typst, out, cartella):
     for sorgente in sorted((RADICE / "documenti/verbali" / cartella).glob("*.toml"), reverse=True):
         if parti := nome_verbale(sorgente.stem):
             nome = f"Verbale {tipo} {sorgente.stem}"
-            compila(typst, RADICE / "modello/verbale.typ", out / (nome.replace(" ", "_") + ".pdf"),
-                    dati=f"/documenti/verbali/{cartella}/{sorgente.name}")
+            pdf = out / (nome.replace(" ", "_") + ".pdf")
+            # la copia firmata dal proponente è quella ufficiale: va sul sito così com'è
+            if (firmato := sorgente.with_name(sorgente.stem + ".firmato.pdf")).is_file():
+                shutil.copyfile(firmato, pdf)
+            else:
+                compila(typst, RADICE / "modello/verbale.typ", pdf, dati=f"/documenti/verbali/{cartella}/{sorgente.name}")
             # due verbali dello stesso giorno si distinguono per il suffisso: "2026-10-20 C7"
             quando = f"{parti[0]} {parti[1].upper()}".strip()
             dati = tomllib.loads(sorgente.read_text(encoding="utf-8-sig"))

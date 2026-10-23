@@ -1,5 +1,8 @@
 import datetime
+import tempfile
 import unittest
+from pathlib import Path
+from unittest import mock
 
 import sito
 
@@ -111,6 +114,23 @@ class TestSito(unittest.TestCase):
         riga = sito.voce("v.pdf", "Incontro con Ergon", "2026-10-20 C7", sotto="<b>stato</b>")
         self.assertTrue(riga.endswith('<span class="sotto-voce"><b>stato</b></span>'))
         self.assertNotIn("sotto-voce", sito.voce("v.pdf", "Doc"))
+
+    def test_verbale_firmato_pubblicato_com_e(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            radice, out = Path(tmp), Path(tmp) / "site"
+            cartella = radice / "documenti/verbali/esterni"
+            cartella.mkdir(parents=True)
+            out.mkdir()
+            for nome in ("2026-10-20-c7", "2026-10-21"):
+                (cartella / f"{nome}.toml").write_text('tipo = "esterno"\n', encoding="utf-8")
+            (cartella / "2026-10-20-c7.firmato.pdf").write_bytes(b"%PDF firmato")
+            compilati = []
+            with mock.patch.object(sito, "RADICE", radice), \
+                    mock.patch.object(sito, "compila", lambda typst, sorgente, pdf, dati=None: compilati.append(pdf.name)):
+                voci = sito.verbali("typst", out, "esterni")
+            self.assertEqual((out / "Verbale_esterno_2026-10-20-c7.pdf").read_bytes(), b"%PDF firmato")
+            self.assertEqual(compilati, ["Verbale_esterno_2026-10-21.pdf"])
+            self.assertEqual(len(voci), 2)
 
     def test_sezione_e_indice(self):
         html = sito.sezione("id", "A & B", "<p>c</p>", 3)

@@ -14,7 +14,7 @@ partecipanti = [
   "David Sirbu",
 ]
 assenti = []
-approvazione_esterna = ""
+approvazione_esterna = "Approvato con firma il 2026-10-23"
 ordine_del_giorno = [
   "Disponibilità, formato e riservatezza dei dati di studio reali",
   "Perimetro del Minimum Viable Product e priorità dei widget",

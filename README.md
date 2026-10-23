@@ -112,6 +112,8 @@ Il percorso del verbale si può scrivere con o senza `/` iniziale; su Git Bash p
   ```
 
   Il verbale non ha copertina, versione né registro: intestazione con orari e durata, partecipanti, poi ordine del giorno, sintesi, decisioni e azioni. Gli esterni riportano l'approvazione del proponente, "in attesa" finché manca.
+
+  **Verbale firmato dal proponente**: il PDF firmato va accanto al TOML, con lo stesso nome e l'estensione `.firmato.pdf` (es. `documenti/verbali/esterni/2026-10-20-c7.firmato.pdf`), e `approvazione_esterna` lo riporta (es. "Approvato con firma il 2026-10-23"). Il sito pubblica la copia firmata così com'è, al posto di quella compilata. Dopo la firma il TOML non cambia più: una correzione richiede una nuova firma.
 - **Presentazione**: `presentazioni/diari/AAAA-MM-GG.typ` per il diario di bordo, con `#show: presentazione.with(evento: "Diario di bordo", data: "AAAA-MM-GG", titolo: "...")` e una `#slide(titolo: "...")[...]` per ogni slide. La prima slide è il titolo; ogni slide riporta evento, data, logo e numero "n/N". Poco testo: il resto si dice a voce.
 
 ## Pianificazione
