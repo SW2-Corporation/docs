@@ -86,6 +86,7 @@ Procedura:
 + Entro 48 ore il redattore scrive il verbale esterno, secondo la procedura dei verbali.
 + Il Responsabile manda il verbale al proponente dalla casella del gruppo e chiede l'approvazione.
 + Alla risposta il redattore registra l'approvazione nel campo dedicato del verbale. Finché manca, il verbale riporta "in attesa".
++ Se il proponente rimanda il verbale firmato, il redattore salva il PDF accanto al file del verbale, con lo stesso nome e l'estensione `.firmato.pdf`. Il sito pubblica la copia firmata al posto di quella compilata. Da quel momento il verbale non cambia: una correzione richiede una nuova firma.
 
 Strumenti: casella email del gruppo, piattaforma video scelta dal proponente, repository della documentazione. Metriche: MPC-01.
 
@@ -225,7 +226,7 @@ Lo script `strumenti/verifica.py` controlla il repository. Ogni problema è una 
 - dati del gruppo, ruoli, ore e preventivo;
 - registro delle modifiche: intestazione, ordine, versioni, persone diverse, approvazioni;
 - titoli, date, lessico, riferimenti, figure e termini del glossario;
-- verbali: schema, date, orari, decisioni, azioni, issue, approvazione esterna;
+- verbali: schema, date, orari, decisioni, azioni, issue, approvazione esterna, nome della copia firmata;
 - leggibilità dei documenti.
 
 I test degli strumenti si eseguono con `python -m unittest discover -s strumenti`. Il workflow `Verifica` esegue controlli e test a ogni pull request e a ogni integrazione.
