@@ -1,0 +1,108 @@
+tipo = "interno"
+data = 2026-10-15
+inizio = "15:30"
+fine = "19:00"
+luogo = "Discord"
+redattore = "Matteo Bellato"
+verificatore = "Alessandro Paduret"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = []
+ordine_del_giorno = [
+  "Prima rotazione dei ruoli",
+  "Definition of Done del gruppo",
+  "Diagramma di Gantt, milestone e linea del tempo",
+  "Calendario delle disponibilità",
+  "Tracciamento di costi e obiettivi: preventivo, consuntivo e cruscotto",
+]
+
+[[punto]]
+titolo = "Prima rotazione dei ruoli"
+sintesi = """Il gruppo deve stabilire quando avviare la prima rotazione dei ruoli.
+Matteo Bellato propone di mantenere i ruoli attuali fino all'assegnazione del capitolato. Il gruppo approva."""
+
+
+[[punto]]
+titolo = "Definition of Done del gruppo"
+sintesi = """Il gruppo deve stabilire una Definition of Done appropriata.
+Viene proposto di delegarne la prima stesura a Davide Baraldo, attualmente Amministratore e membro con più esperienza nello sviluppo software. Il gruppo approva."""
+
+[[punto]]
+titolo = "Diagramma di Gantt, milestone e linea del tempo"
+sintesi = """Davide Baraldo propone di usare un diagramma di Gantt integrato nelle pagine docs di GitHub, in modo da renderlo disponibile a tutti e condivisibile.
+In esso saranno inserite le milestone con tempo previsto e tempo usato. Il gruppo approva."""
+
+[[punto]]
+titolo = "Calendario delle disponibilità"
+sintesi = """Il gruppo deve stabilire come indicare in modo pubblico le proprie disponibilità orarie.
+Matteo Bellato propone di utilizzare Google Calendar, condividendo un calendario personale per individuo e condiviso con l'account Google di SW2 Corporation.
+Il gruppo concorda con questa idea."""
+
+[[punto]]
+titolo = "Tracciamento di costi e obiettivi: preventivo, consuntivo e cruscotto"
+sintesi = """Il gruppo deve stabilire che strumenti usare per formulare preventivi e consuntivi.
+Davide Baraldo propone di utilizzare una sezione dedicata su GitHub Pages in modo da creare un cruscotto pubblico, disponibile a tutti.
+Il gruppo concorda."""
+
+
+
+
+
+[[decisione]]
+id = "VI-2026-10-15.1"
+testo = "I ruoli attuali restano invariati fino all'assegnazione del capitolato."
+motivazione = "Con la consegna della candidatura il 2026-10-30, ogni membro resta nello stesso ruolo per oltre due settimane: un tempo adatto a impararne le basi."
+
+[[decisione]]
+id = "VI-2026-10-15.2"
+testo = "Davide Baraldo definisce una prima versione della Definition of Done. Il gruppo la valuta ed eventualmente propone modifiche."
+motivazione = "Davide Baraldo ha anni di esperienza nell'ambito dello sviluppo software, per cui è dotato di insight maggiore degli altri componenti del gruppo."
+
+[[decisione]]
+id = "VI-2026-10-15.3"
+testo = "L'Amministratore provvede a integrare un diagramma di Gantt su GitHub Pages."
+motivazione = "Le GitHub Pages sono visibili e disponibili a tutti, facilitando la condivisione dei dati."
+
+[[decisione]]
+id = "VI-2026-10-15.4"
+testo = "Ogni membro provvede a creare un Google Calendar personale, condividerlo con l'account SW2 Corporation e a popolarlo in modo veritiero."
+motivazione = "Un calendario singolo accessibile dall'account condiviso consente un buon compromesso fra facilità di consultazione e compilazione."
+
+[[decisione]]
+id = "VI-2026-10-15.5"
+testo = "L'Amministratore provvede a creare su GitHub Pages un cruscotto pubblico con preventivo, consuntivo e avanzamento degli obiettivi."
+motivazione = "Le GitHub Pages rendono preventivo e consuntivo visibili e disponibili a tutti, facilitando la condivisione dei dati."
+
+[[azione]]
+decisione = "VI-2026-10-15.2"
+descrizione = "Definire una prima versione della Definition of Done del gruppo nelle Norme di Progetto."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-22
+issue = "#56"
+
+[[azione]]
+decisione = "VI-2026-10-15.3"
+descrizione = "Integrare su GitHub Pages il diagramma di Gantt con fasi, attività e milestone."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-22
+issue = "#57"
+
+[[azione]]
+decisione = "VI-2026-10-15.4"
+descrizione = "Raccogliere i calendari delle disponibilità di tutti i membri sull'account Google del gruppo."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-20
+issue = "#58"
+
+[[azione]]
+decisione = "VI-2026-10-15.5"
+descrizione = "Creare su GitHub Pages un cruscotto pubblico con preventivo, consuntivo e avanzamento degli obiettivi."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-11-02
+issue = "#59"
