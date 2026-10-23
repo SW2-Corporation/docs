@@ -1,0 +1,91 @@
+tipo = "interno"
+data = 2026-10-16
+inizio = "17:00"
+fine = "18:00"
+luogo = "Discord"
+redattore = "Davide Baraldo"
+verificatore = "Alessandro Paduret"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu"
+]
+assenti = []
+ordine_del_giorno = [
+  "Assegnazione dei ruoli di progetto per il periodo di candidatura",
+  "Definizione delle regole di rotazione e principi di indipendenza delle verifiche",
+  "Proposta di pianificazione per sprint bisettimanali post-aggiudicazione",
+  "Organizzazione delle attività di redazione e verifica della valutazione dei capitolati"
+]
+
+[[punto]]
+titolo = "Assegnazione dei ruoli di progetto per il periodo di candidatura"
+sintesi = """Il gruppo si è riunito per formalizzare la ripartizione dei ruoli per l'intero periodo della candidatura (dal 2026-10-16 al 2026-11-02). All'unanimità sono stati designati: Matteo Bellato come Responsabile, Davide Baraldo come Amministratore, Patrizio Eleuteri e Oussama Mahdi come Analisti, Alessandro Paduret e David Sirbu come Verificatori. I ruoli di Progettista e Programmatore non vengono assegnati in quanto non sono previste attività tecniche di progettazione né di codifica prima dell'aggiudicazione."""
+
+[[punto]]
+titolo = "Definizione delle regole di rotazione e principi di indipendenza delle verifiche"
+sintesi = """Sono stati stabiliti i criteri cardine per la rotazione e la conformità alle norme di progetto: ciascun membro ricopre un solo ruolo per ciascun periodo di lavoro; chi redige un documento non può effettuarne la verifica; nessun membro può ricoprire la carica di Responsabile per due sprint consecutivi; le consegne formali tra ruoli uscenti ed entranti avverranno all'apertura di ciascuno sprint."""
+
+[[punto]]
+titolo = "Proposta di pianificazione per sprint bisettimanali post-aggiudicazione"
+sintesi = """A partire dal 2026-11-03, data prevista per l'aggiudicazione dell'appalto, il team adotterà inizialmente cicli di lavoro articolati in sprint di due settimane. È stata elaborata una proposta di rotazione per i primi cinque sprint (a partire dall'assegnazione) che assicura a ciascun componente la copertura di tutti i sei ruoli previsti dal regolamento didattico. Successivamente, si passerà a un cambio ruolo settimanale per consentire una migliore distribuzione oraria dei ruoli fra i componenti. La tabella definitiva verrà recepita nella Dichiarazione degli impegni."""
+
+[[punto]]
+titolo = "Organizzazione delle attività di redazione e verifica della valutazione dei capitolati"
+sintesi = """È stato affidato agli analisti il compito di redigere la prima versione strutturata del documento di Valutazione dei capitolati, integrando le risultanze delle analisi individuali e dei criteri approvati. Ai verificatori spetterà il controllo di qualità e la conformità formale prima di rilasciare la prima versione di lavoro del documento."""
+
+[[decisione]]
+id = "VI-2026-10-16.1"
+testo = "Assegnazione formale dei ruoli per il periodo di candidatura (2026-10-16 – 2026-11-02): Matteo Bellato Responsabile, Davide Baraldo Amministratore, Patrizio Eleuteri e Oussama Mahdi Analisti, Alessandro Paduret e David Sirbu Verificatori."
+motivazione = "Garantire un'organizzazione chiara, responsabilità definite e conformità al regolamento didattico fin dalla fase preliminare."
+
+[[decisione]]
+id = "VI-2026-10-16.2"
+testo = "Adozione del principio di indipendenza della verifica (chi scrive non verifica) e del vincolo di un solo ruolo per membro in ciascun periodo."
+motivazione = "Rispettare le norme di garanzia della qualità e prevenire conflitti di interesse nell'approvazione dei prodotti."
+
+[[decisione]]
+id = "VI-2026-10-16.3"
+testo = "Adozione dell'organizzazione del lavoro per sprint bisettimanali a partire dal 2026-11-03, con rotazione dei ruoli a ogni sprint, successivamente con rotazione settimanale."
+motivazione = "Consentire a ogni membro di acquisire competenze in tutte le figure professionali e garantire una ripartizione equilibrata delle ore per ruolo."
+
+[[decisione]]
+id = "VI-2026-10-16.4"
+testo = "Approvazione delle regole generali di rotazione: divieto di doppio mandato consecutivo come Responsabile, copertura obbligatoria di tutti i ruoli per ciascun membro e passaggio delle consegne all'apertura dello sprint."
+motivazione = "Favorire la crescita interdisciplinare di tutti i componenti del gruppo e mantenere la continuità operativa."
+
+[[decisione]]
+id = "VI-2026-10-16.5"
+testo = "Approvazione della proposta di calendario e matrice di rotazione per i primi cinque sprint (da confermare nella Dichiarazione degli impegni)."
+motivazione = "Pianificare tempestivamente la distribuzione del carico di lavoro e garantire equità nei ruoli ricoperti fin dall'avvio delle attività."
+
+[[azione]]
+decisione = "VI-2026-10-16.1"
+descrizione = "Aggiornare il file ruoli.csv con le assegnazioni ufficiali del periodo di candidatura."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-16
+issue = "#51"
+
+[[azione]]
+decisione = "VI-2026-10-16.4"
+descrizione = "Redigere e pubblicare il documento interno ruoli.md con il riepilogo delle regole e la tabella di rotazione."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-18
+issue = "#52"
+
+[[azione]]
+decisione = "VI-2026-10-16.1"
+descrizione = "Stesura della versione preliminare (v0.1.0) della Valutazione dei capitolati."
+assegnatario = "Oussama Mahdi"
+scadenza = 2026-10-17
+issue = "#5"
+
+[[azione]]
+decisione = "VI-2026-10-16.2"
+descrizione = "Verifica formale e controllo di qualità della versione v0.1.0 della Valutazione dei capitolati."
+assegnatario = "Alessandro Paduret"
+scadenza = 2026-10-17
+issue = "#30"
