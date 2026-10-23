@@ -11,6 +11,8 @@
 
 I documenti approvati, le Lettere di Presentazione e i verbali sono pubblicati su **[sw2-corporation.github.io/docs](https://sw2-corporation.github.io/docs/)**. Il sito si rigenera da questo repository a ogni push su `main`: sul sito vanno solo le versioni rilasciate, mai le bozze. Il menu in alto porta alle quattro pagine: Documenti (lettere, documenti, verbali e gruppo, con lo stato del progetto in apertura), Pianificazione, Ruoli e Glossario, con la ricerca dei termini. La pagina [Ruoli](https://sw2-corporation.github.io/docs/ruoli.html) mostra chi ricopre quale ruolo oggi e la linea del tempo dei periodi di `dati/ruoli.csv`. La pagina [Pianificazione](https://sw2-corporation.github.io/docs/pianificazione.html) mostra il diagramma di Gantt di fasi, attività e milestone di `dati/pianificazione.toml`, con il tempo previsto e quello usato.
 
+Ogni PDF si apre in una pagina di lettura del sito, con lo stesso nome e l'estensione `.html`. La pagina funziona anche su telefono e offre testo selezionabile, link attivi, zoom e il pulsante per scaricare il PDF. Usa pdf.js da jsDelivr, con versione e impronte SRI fissate in `strumenti/sito.py` (`PDFJS`, `SRI_PDFJS`). Se pdf.js non si carica, la pagina offre il PDF da scaricare.
+
 ## Il gruppo
 
 | Membro | GitHub |

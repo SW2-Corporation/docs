@@ -4,6 +4,7 @@ Uso: python strumenti/sito.py --out site [--typst percorso]
 
 Vanno sul sito i documenti rilasciati (prima riga del registro = approvazione),
 tutte le lettere e tutti i verbali, più le pagine della pianificazione, dei ruoli e del glossario.
+Ogni PDF ha la sua pagina di lettura (pdf.js), con lo stesso nome e l'estensione .html.
 """
 
 import argparse
@@ -331,6 +332,89 @@ dt.hidden=!ok;if(dd){dd.hidden=!ok;}if(ok){v++;}});s.hidden=v===0;n+=v;});
 esito.textContent=t?(n===0?'Nessun termine trovato.':(n===1?'1 termine trovato.':n+' termini trovati.')):'';});
 })();"""
 
+# Pagina di lettura dei PDF: pdf.js da jsDelivr, con versione e impronte SRI fissate.
+# shortcut: pdf.js arriva dal CDN; se il sito deve funzionare senza rete, copiarlo in assets/.
+PDFJS = "https://cdn.jsdelivr.net/npm/pdfjs-dist@6.4.299/"
+SRI_PDFJS = {
+    "web/pdf_viewer.css": "sha384-3UXS7i1WpE5V91TL4VCyVEM/qnLn6NYnXegUpsQEooST19Vnke3To/VrUZAEqrtw",
+    "build/pdf.min.mjs": "sha384-QCvhu/UPp22U/TNLVbQNONL82ES2yY717GAiqP9VVu37Y7+m9VPKvadGx9XlFvcp",
+    "web/pdf_viewer.mjs": "sha384-Vm8r8cVwMps+rKsgyjIcfFWYMNGvu4DblNS+wwwWLdjbsrCMSx4VNoasrlXnIw0w",
+    "build/pdf.worker.min.mjs": "sha384-NfW/OTMWezITv4oaALvfH7MFLwzPxEvpySmDpoALa1mtTY8MC200l0ZNFD+SOlrM",
+}
+
+# Il lettore riempie lo schermo sotto la testata e scorre nel suo riquadro: il piè di pagina non serve.
+# Su mobile il menu lascia spazio al documento; restano il marchio e il link ai documenti.
+STILE_PDF = """
+.pagina { display: flex; flex-direction: column; height: calc(100dvh - 3px); }
+.pagina > main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.pagina > footer { display: none; }
+.comandi-pdf { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .75rem; padding: .6rem 0; border-bottom: 1px solid var(--filetto); }
+.comandi-pdf h1 { flex: 1 1 14rem; min-width: 0; margin: 0; font-size: 1.1rem; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.torna { display: inline-flex; align-items: center; justify-content: center; gap: .35rem; min-width: 2.75rem; min-height: 2.75rem;
+         color: var(--tenue); font-weight: 600; text-decoration: none; white-space: nowrap; }
+/* su mobile della barra resta la freccia: l'etichetta la legge solo lo screen reader */
+@media (max-width: 47.99rem) {
+  .testa .menu { display: none; }
+  .torna .etichetta { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .scarica { padding: 0 .9rem; }
+}
+.torna:hover { color: var(--accento-testo); }
+.numero-pagina { margin: 0 auto 0 0; color: var(--tenue); white-space: nowrap; }
+.zoom { display: inline-flex; border: 1px solid var(--filetto); border-radius: 8px; overflow: hidden; }
+.zoom button { min-width: 2.75rem; height: 2.75rem; padding: 0 .6rem; border: 0; background: transparent; color: var(--inchiostro);
+               font: inherit; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; }
+.zoom button + button { border-left: 1px solid var(--filetto); }
+.zoom button:hover:not(:disabled) { background: var(--superficie); }
+.zoom button:disabled { color: var(--tenue); cursor: default; }
+.scarica { display: inline-flex; align-items: center; height: 2.75rem; padding: 0 1rem; border-radius: 8px; background: var(--inchiostro);
+           color: var(--carta); font-weight: 600; text-decoration: none; white-space: nowrap; }
+.scarica:hover { background: var(--accento-testo); }
+.area-pdf { position: relative; flex: 1; min-height: 0; margin: 0 calc(-1 * clamp(1rem, 4vw, 3rem)); background: var(--superficie); }
+#contenitore-pdf { position: absolute; inset: 0; overflow: auto; overscroll-behavior: contain; }
+#contenitore-pdf:focus-visible { outline-offset: -3px; }
+.pdfViewer { padding: clamp(.5rem, 2vw, 1.5rem) 0; }
+.pdfViewer.removePageBorders .page { margin: 0 auto clamp(.5rem, 2vw, 1.25rem); box-shadow: 0 1px 2px rgb(0 0 0 / .12), 0 6px 24px rgb(0 0 0 / .1); }
+/* fuori dal contenitore, che pdf.js svuota: sopra il riquadro finché il PDF non c'è */
+.avviso-pdf { position: absolute; top: 3rem; left: 0; right: 0; max-width: 32rem; margin: 0 auto; padding: 0 1rem; color: var(--tenue); text-align: center; }
+"""
+
+# Modulo eseguito dopo pdf.js; la configurazione arriva dagli attributi data- del contenitore.
+# "auto" adatta la pagina alla larghezza su mobile, fino al 125% sugli schermi larghi, e si ricalcola a ogni ridimensionamento.
+SCRIPT_PDF = """
+const contenitore = document.getElementById("contenitore-pdf");
+const { pdf, pdfjs, worker } = contenitore.dataset;
+const numero = document.getElementById("pagina-pdf"), zoom = document.getElementById("zoom-pdf"), avviso = document.getElementById("avviso-pdf");
+try {
+  const { pdfjsLib, pdfjsViewer } = globalThis;
+  // il worker passa da un blob, così anche il suo codice è controllato dall'impronta SRI
+  const codice = await (await fetch(pdfjs + "build/pdf.worker.min.mjs", { integrity: worker })).blob();
+  pdfjsLib.GlobalWorkerOptions.workerPort = new Worker(URL.createObjectURL(codice), { type: "module" });
+  const bus = new pdfjsViewer.EventBus();
+  const collegamenti = new pdfjsViewer.PDFLinkService({ eventBus: bus, externalLinkTarget: pdfjsViewer.LinkTarget.BLANK, externalLinkRel: "noopener" });
+  const lettore = new pdfjsViewer.PDFViewer({ container: contenitore, eventBus: bus, linkService: collegamenti, removePageBorders: true });
+  collegamenti.setViewer(lettore);
+  // pdf.js porta la prima pagina a filo del riquadro: si torna in cima per lasciare il margine sopra
+  bus.on("pagesinit", () => { lettore.currentScaleValue = "auto"; contenitore.scrollTop = 0; });
+  bus.on("pagechanging", ({ pageNumber }) => { numero.textContent = `${pageNumber} di ${lettore.pagesCount}`; });
+  bus.on("scalechanging", ({ scale }) => { zoom.textContent = `${Math.round(scale * 100)}%`; });
+  const documento = await pdfjsLib.getDocument({ url: pdf, cMapUrl: pdfjs + "cmaps/", standardFontDataUrl: pdfjs + "standard_fonts/",
+                                               wasmUrl: pdfjs + "wasm/", iccUrl: pdfjs + "iccs/" }).promise;
+  lettore.setDocument(documento);
+  collegamenti.setDocument(documento);
+  numero.textContent = `1 di ${documento.numPages}`;
+  avviso.hidden = true;
+  new ResizeObserver(() => { if (lettore.currentScaleValue === "auto") lettore.currentScaleValue = "auto"; }).observe(contenitore);
+  const azioni = { meno: () => lettore.decreaseScale(), adatta: () => { lettore.currentScaleValue = "auto"; }, piu: () => lettore.increaseScale() };
+  for (const bottone of document.querySelectorAll("[data-zoom]")) {
+    bottone.disabled = false;
+    bottone.addEventListener("click", azioni[bottone.dataset.zoom]);
+  }
+} catch (errore) {
+  console.error(errore);
+  avviso.firstChild.textContent = "Il PDF non si può mostrare qui: ";
+}
+"""
+
 ICONE = {
     "sole": '<svg class="sole" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
     "luna": '<svg class="luna" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
@@ -357,16 +441,17 @@ def evidenzia_cifre(nome):
     return re.sub(r"(\d+)", r'<span class="accento">\1</span>', e(nome))
 
 
-def voce(href, testo, meta="", nascosto="", sotto=""):
+def voce(pdf, testo, meta="", nascosto="", sotto=""):
     """Riga di un sommario: titolo, puntini guida e dettaglio (versione, data, PDF).
 
+    Il titolo porta alla pagina di lettura del PDF, con lo stesso nome e l'estensione .html.
     `nascosto` completa il nome del link per chi usa uno screen reader quando più voci
     hanno lo stesso titolo visibile, per esempio " del 2026-10-14". `sotto` è una seconda
     riga già in HTML, per esempio lo stato di approvazione di un verbale.
     """
     dettaglio = " · ".join(p for p in (meta, "PDF") if p)
     extra = f'<span class="sr-only">{e(nascosto)}</span>' if nascosto else ""
-    collegamento = f'<a href="{e(href)}" target="_blank" rel="noopener">{e(testo)}{extra}{NUOVA_SCHEDA}</a>'
+    collegamento = f'<a href="{e(pdf.removesuffix(".pdf"))}.html">{e(testo)}{extra}</a>'
     seconda = f'<span class="sotto-voce">{sotto}</span>' if sotto else ""
     return (f'<span class="titolo">{collegamento}</span><span class="puntini" aria-hidden="true"></span>'
             f'<span class="dettaglio">{e(dettaglio)}</span>{seconda}')
@@ -406,7 +491,8 @@ def apertura(titolo_html, kicker, sotto="", meta=(), compatta=False, dopo=""):
             f'{testo_sotto}{testo_meta}{dopo}</section>')
 
 
-def pagina(titolo, testata, corpo, gruppo, logo, accento, dati=None, laterale="", corrente=None, script=""):
+def pagina(titolo, testata, corpo, gruppo, logo, accento, dati=None, laterale="", corrente=None, script="", in_testa=""):
+    """Pagina completa del sito; `in_testa` va nell'head prima dello stile del sito, che così prevale a parità di selettore."""
     info = gruppo.get("gruppo", {})
     nome = info.get("nome") or "Documentazione di progetto"
     icona = f'<link rel="icon" type="image/png" href="{e(logo)}">' if logo else ""
@@ -441,6 +527,7 @@ def pagina(titolo, testata, corpo, gruppo, logo, accento, dati=None, laterale=""
 {icona}
 {precarica}
 <script>{SCRIPT_TESTA}</script>
+{in_testa}
 <style>{stile}</style>
 </head>
 <body>
@@ -1107,6 +1194,35 @@ def pagina_glossario(gruppo, voci, logo, accento):
                   corrente="glossario.html", script=SCRIPT_GLOSSARIO)
 
 
+def pagina_pdf(gruppo, logo, accento, pdf):
+    """Pagina di lettura di un PDF del sito: testo selezionabile, link attivi, zoom e download, anche su mobile."""
+    nome = gruppo.get("gruppo", {}).get("nome") or "Documentazione di progetto"
+    titolo = pdf.removesuffix(".pdf").replace("_", " ")
+    # pdf_viewer.css imposta color-scheme su :root: va prima dello stile del sito, che decide il tema
+    in_testa = (f'<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>\n'
+                f'<link rel="stylesheet" href="{PDFJS}web/pdf_viewer.css" integrity="{SRI_PDFJS["web/pdf_viewer.css"]}" crossorigin="anonymous">\n'
+                f"<style>{STILE_PDF}</style>")
+    moduli = "".join(f'<script type="module" src="{PDFJS}{f}" integrity="{SRI_PDFJS[f]}" crossorigin="anonymous"></script>\n'
+                     for f in ("build/pdf.min.mjs", "web/pdf_viewer.mjs"))
+    corpo = f"""<div class="comandi-pdf">
+<a class="torna" href="index.html"><span aria-hidden="true">←</span><span class="etichetta">Documenti</span></a>
+<h1>{e(titolo)}</h1>
+<p class="numero-pagina mono"><span class="sr-only">Pagina </span><span id="pagina-pdf">–</span></p>
+<div class="zoom" role="group" aria-label="Ingrandimento">
+<button type="button" data-zoom="meno" aria-label="Riduci" title="Riduci" disabled>−</button>
+<button type="button" data-zoom="adatta" title="Adatta alla finestra" disabled><span class="sr-only">Adatta alla finestra, ora al </span><span id="zoom-pdf">100%</span></button>
+<button type="button" data-zoom="piu" aria-label="Ingrandisci" title="Ingrandisci" disabled>+</button>
+</div>
+<a class="scarica" href="{e(pdf)}" download>Scarica<span class="sr-only"> il PDF</span></a>
+</div>
+<div class="area-pdf"><div id="contenitore-pdf" tabindex="0" role="region" aria-label="Pagine del documento" data-pdf="{e(pdf)}" data-pdfjs="{PDFJS}" data-worker="{SRI_PDFJS["build/pdf.worker.min.mjs"]}">
+<div class="pdfViewer"></div></div>
+<p class="avviso-pdf" id="avviso-pdf" role="status">Caricamento del PDF… Se non compare, <a href="{e(pdf)}">scaricalo</a>.</p>
+</div>
+{moduli}<script type="module">{SCRIPT_PDF}</script>"""
+    return pagina(f"{titolo} - {nome}", "", corpo, gruppo, logo, accento, in_testa=in_testa)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Compila i documenti pubblicabili e genera il sito.")
     parser.add_argument("--out", required=True, type=Path, help="cartella di destinazione")
@@ -1145,6 +1261,8 @@ def main():
     (out / "glossario.html").write_text(pagina_glossario(gruppo, voci, logo, accento), encoding="utf-8")
     (out / "ruoli.html").write_text(pagina_ruoli(gruppo, logo, accento, periodi), encoding="utf-8")
     (out / "pianificazione.html").write_text(pagina_pianificazione(gruppo, logo, accento, fasi, leggi_ore(), oggi), encoding="utf-8")
+    for pdf in out.glob("*.pdf"):
+        (out / f"{pdf.stem}.html").write_text(pagina_pdf(gruppo, logo, accento, pdf.name), encoding="utf-8")
     print(f"sito generato in {out}: {len(list(out.glob('*.pdf')))} PDF")
 
 
