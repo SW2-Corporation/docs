@@ -10,7 +10,7 @@
   data: "AAAA-MM-GG",
   versione: "1.0.0",
   aggiornato: "AAAA-MM-GG",
-  titolo: "Settimana dal AAAA-MM-GG al AAAA-MM-GG",
+  titolo: "Da AAAA-MM-GG a AAAA-MM-GG",
 )
 
 #slide(titolo: "Fatto e da fare")[
