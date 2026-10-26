@@ -1,0 +1,54 @@
+tipo = "interno"
+data = 2026-10-26
+versione = "1.0.0"
+aggiornato = 2026-10-26
+inizio = "17:00"
+fine = "17:20"
+luogo = "Discord"
+redattore = "Alessandro Paduret"
+verificatore = "David Sirbu"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = []
+ordine_del_giorno = [
+  "Scelta definitiva del capitolato",
+  "Miglioramento dell'organizzazione delle riunioni",
+]
+
+[[punto]]
+titolo = "Scelta definitiva del capitolato"
+sintesi = """Il gruppo deve stabilire definitivamente per quale capitolato candidarsi."""
+
+[[punto]]
+titolo = "Miglioramento dell'organizzazione delle riunioni"
+sintesi = """Il gruppo deve migliorare l'efficienza delle proprie riunioni, al momento organizzate dal Responsabile per ogni settimana."""
+
+[[decisione]]
+id = "VI-2026-10-26.1"
+testo = "Il gruppo effettuerà la candidatura verso C8 (Halue, Sonar)."
+motivazione = "C8 è il miglior capitolato da quanto emerso dall'analisi dei capitolati."
+
+[[decisione]]
+id = "VI-2026-10-26.2"
+testo = "Ogni membro del gruppo si impegna a identificare e comunicare al Responsabile almeno due fasce orarie in cui è sicuro di essere disponibile ogni settimana. Il Responsabile provvede poi a verificare se vi sono allineamenti favorevoli, con lo scopo di stabilire due orari di riunione fissi durante ogni settimana, modificando le Norme di Progetto attuali."
+motivazione = "Avere appuntamenti fissati durante la settimana riduce le necessità organizzative."
+
+[[azione]]
+decisione = "VI-2026-10-26.1"
+descrizione = "Chiudere le issue di attività non legate al capitolato C8 (Halue, Sonar) come \"not planned\"."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-29
+issue = "#80"
+
+[[azione]]
+decisione = "VI-2026-10-26.2"
+descrizione = "Raccogliere le disponibilità dei sei membri e fissare due riunioni settimanali, con modifica delle Norme di Progetto."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-30
+issue = "#81"
