@@ -1,7 +1,7 @@
 tipo = "esterno"
 data = 2026-10-20
-versione = "1.0.0"
-aggiornato = 2026-10-23
+versione = "1.0.1"
+aggiornato = 2026-10-27
 inizio = "16:00"
 fine = "16:30"
 luogo = "Google Meet"
@@ -16,7 +16,7 @@ partecipanti = [
     "David Sirbu",
 ]
 assenti = []
-approvazione_esterna = ""
+approvazione_esterna = "Approvato via email il 2026-10-26"
 ordine_del_giorno = [
     "Allineamento sulla visione generale del capitolato C8 (Sonar)",
     "Perimetro del Minimum Viable Product e criteri per i requisiti desiderabili",
