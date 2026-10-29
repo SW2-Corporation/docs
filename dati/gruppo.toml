@@ -7,10 +7,10 @@ sito = "https://sw2-corporation.github.io/docs/"   # URL GitHub Pages con "/" fi
 repo = "https://github.com/SW2-Corporation/docs"
 
 [progetto]
-capitolato = ""           # es. "C9 - SpecCheck"
-proponente = ""
+capitolato = "C8 - Sonar"
+proponente = "Halue S.r.l. SB"
 costo_aggiudicato = 0.0   # 0 prima dell'aggiudicazione
-consegna_prevista = ""    # AAAA-MM-GG
+consegna_prevista = "2027-03-19"  # AAAA-MM-GG
 
 [soglie]
 gulpease = 40

@@ -63,7 +63,8 @@ ore_previste = 0
   nome = "Dichiarazione degli impegni"
   inizio = 2026-10-22
   fine = 2026-10-29
-  inizio_effettivo = 2026-10-27
+  inizio_effettivo = 2026-10-26
+  fine_effettiva = 2026-10-29
 
   [[fase.attivita]]
   nome = "Lettera di Presentazione e verifica finale"
