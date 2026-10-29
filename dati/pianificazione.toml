@@ -70,6 +70,8 @@ ore_previste = 0
   nome = "Lettera di Presentazione e verifica finale"
   inizio = 2026-10-28
   fine = 2026-10-29
+  inizio_effettivo = 2026-10-29
+  fine_effettiva = 2026-10-29
 
   [[fase.milestone]]
   nome = "Invio della candidatura"
