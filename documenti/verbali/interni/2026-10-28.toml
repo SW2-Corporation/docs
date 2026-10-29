@@ -1,0 +1,38 @@
+tipo = "interno"
+data = 2026-10-28
+versione = "1.0.0"
+aggiornato = 2026-10-28
+inizio = "18:00"
+fine = "19:00"
+luogo = "Discord"
+redattore = "David Sirbu"
+verificatore = "Alessandro Paduret"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = []
+ordine_del_giorno = [
+    "Semplificazione delle Norme di Progetto",
+]
+
+
+[[punto]]
+titolo = "Semplificazione delle Norme di Progetto"
+sintesi = """Il gruppo ha stabilito che le Norme di Progetto attuali vadano modificate poiché troppo complicate."""
+
+[[decisione]]
+id = "VI-2026-10-28.1"
+testo = "Il gruppo ha deciso di rimuovere la sezione 1.6 riguardo alla Copertura delle Norme."
+motivazione = "La sezione 1.6 è ridonante, poiché già ampiamente spiegata nel resto del documento."
+
+[[azione]]
+decisione = "VI-2026-10-28.1"
+descrizione = "Rimuovere la sezione 1.6 delle Norme di Progetto"
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-30
+issue = "#87"
