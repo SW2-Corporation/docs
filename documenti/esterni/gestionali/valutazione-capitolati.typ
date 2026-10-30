@@ -23,7 +23,6 @@ I termini tecnici o con significato specifico nel contesto del progetto sono rac
 
 === Riferimenti normativi
 - #rif-web("Regolamento del progetto didattico di Ingegneria del Software 2026/27 (PD1)", "https://www.math.unipd.it/~tullio/IS-1/2026/Dispense/PD1.pdf", "2026-10-18").
-- #rif-doc("Norme di Progetto", "1.0.0").
 
 === Riferimenti informativi
 - #rif-web("Capitolati d'appalto del corso di Ingegneria del Software 2026/27", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/Capitolati.html", "2026-10-18").
