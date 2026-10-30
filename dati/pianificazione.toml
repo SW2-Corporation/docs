@@ -16,6 +16,7 @@ nota = "Periodo di investimento: le ore non si contabilizzano."
 inizio = 2026-10-12
 fine = 2026-10-30
 inizio_effettivo = 2026-10-12
+fine_effettiva = 2026-10-30
 ore_previste = 0
 
   [[fase.attivita]]
@@ -44,6 +45,7 @@ ore_previste = 0
   inizio = 2026-10-16
   fine = 2026-10-29
   inizio_effettivo = 2026-10-18
+  fine_effettiva = 2026-10-29
 
   [[fase.attivita]]
   nome = "Valutazione dei capitolati"
@@ -76,12 +78,14 @@ ore_previste = 0
   [[fase.milestone]]
   nome = "Invio della candidatura"
   data = 2026-10-30
+  data_effettiva = 2026-10-30
 
 [[fase]]
 nome = "Requirements and Technology Baseline"
 nota = "Dall'aggiudicazione ogni membro registra le ore in dati/ore.csv."
 inizio = 2026-11-03
 fine = 2027-01-08
+ore_previste = 268
 
   [[fase.milestone]]
   nome = "Aggiudicazione"
@@ -143,6 +147,7 @@ fine = 2027-01-08
 nome = "Product Baseline"
 inizio = 2027-01-11
 fine = 2027-03-19
+ore_previste = 276
 
   [[fase.attivita]]
   nome = "Norme di Progetto per codifica e test"
