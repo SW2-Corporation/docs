@@ -1,0 +1,56 @@
+tipo = "interno"
+data = 2026-10-30
+versione = "1.0.0"
+aggiornato = 2026-10-30
+inizio = "10:15"
+fine = "10:35"
+luogo = "In presenza, Padova"
+redattore = "Oussama Mahdi"
+verificatore = "Alessandro Paduret"
+partecipanti = [
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+]
+titolo = "Allineamento della rotazione dei ruoli e consuntivazione della pianificazione"
+ordine_del_giorno = [
+  "Verifica e allineamento della matrice dei ruoli in ruoli.md",
+  "Consuntivazione delle attività di candidatura e configurazione del cruscotto",
+]
+
+[[punto]]
+titolo = "Verifica e allineamento della matrice dei ruoli in ruoli.md"
+sintesi = """Al termine delle lezioni universitarie, i componenti presenti si sono riuniti di persona per un allineamento operativo prima della sottomissione formale della candidatura. Durante la revisione, Oussama Mahdi ha fatto notare che la pagina "Gruppo" del sito rimanda al documento interno ruoli.md, il quale riporta ancora la proposta preliminare del 18 ottobre (con Davide Baraldo come Amministratore nel primo sprint) anziché la matrice definitiva approvata nella Dichiarazione degli impegni con Matteo Bellato. I presenti hanno quindi contattato via messaggio su Telegram i componenti assenti (Davide Baraldo e Matteo Bellato), condividendo la necessità di allineare subito il file per evitare discrepanze informative e concordando l'apertura della relativa issue."""
+
+[[punto]]
+titolo = "Consuntivazione delle attività di candidatura e configurazione del cruscotto"
+sintesi = """Durante l'analisi dello stato del repository, è stato rilevato che l'attività relativa alla prima versione delle Norme di Progetto in pianificazione.toml non presenta la data di fine effettiva, inducendo lo script del cruscotto a segnalare un ritardo ingiustificato nell'indice dei tempi. Tramite il gruppo Telegram, i presenti si sono confrontati con il Responsabile Matteo Bellato e con l'Amministratore Davide Baraldo, concordando di registrare la data di fine effettiva dell'attività, di fissare la data effettiva dell'invio della candidatura e di definire il monte ore preventivato per le fasi RTB e PB."""
+
+[[decisione]]
+id = "VI-2026-10-30.1"
+testo = "Allineare il documento documenti/interni/ruoli.md recependo la matrice di rotazione approvata nella Dichiarazione degli impegni (v1.0.0), previa condivisione via Telegram con i componenti assenti."
+motivazione = "Garantisce coerenza e uniformità tra la documentazione interna del repository e i documenti ufficiali approvati per la candidatura."
+
+[[decisione]]
+id = "VI-2026-10-30.2"
+testo = "Consuntivare la conclusione della prima versione delle Norme di Progetto al 2026-10-29, registrare la data effettiva della candidatura e impostare le ore previste delle fasi RTB e PB in dati/pianificazione.toml, in accordo telematico con il Responsabile."
+motivazione = "Permette al cruscotto di progetto di operare regolarmente senza falsi allarmi sui tempi e predispone il monitoraggio dell'avanzamento per le fasi successive."
+
+[[azione]]
+decisione = "VI-2026-10-30.1"
+descrizione = "Allineare la tabella dei turni in documenti/interni/ruoli.md alla matrice approvata nella Dichiarazione degli impegni."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-10-30
+issue = "#95"
+
+[[azione]]
+decisione = "VI-2026-10-30.2"
+descrizione = "Aggiornare dati/pianificazione.toml inserendo le date effettive della candidatura e le ore previste per RTB e PB."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-10-30
+issue = "#96"
