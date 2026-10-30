@@ -63,7 +63,9 @@ Procedura:
 + Entro 48 ore il redattore scrive il verbale esterno, secondo la procedura dei verbali.
 + Il Responsabile manda il verbale al proponente dalla casella del gruppo e chiede l'approvazione.
 + Alla risposta il redattore registra l'approvazione nel campo dedicato del verbale. Finché manca, il verbale riporta "in attesa".
-+ Se il proponente rimanda il verbale firmato, il redattore salva il PDF accanto al file del verbale, con lo stesso nome e l'estensione `.firmato.pdf`. Il sito pubblica la copia firmata al posto di quella compilata. Da quel momento il verbale non cambia: una correzione richiede una nuova versione e una nuova firma.
++ Se il proponente rimanda il verbale firmato, l'Amministratore salva il PDF in un branch dedicato, accanto al file del verbale, con lo stesso nome e l'estensione `.firmato.pdf`, e apre la pull request.
++ Un membro diverso dall'Amministratore controlla che la copia firmata corrisponda al verbale pubblicato e porti la firma del proponente. A esito positivo approva la pull request e la integra su `main`.
++ Il sito pubblica la copia firmata al posto di quella compilata. Da quel momento il verbale non cambia: una correzione richiede una nuova versione e una nuova firma.
 
 Strumenti: casella email del gruppo, piattaforma video scelta dal proponente, repository della documentazione. Metriche: MPC-01.
 
@@ -248,7 +250,7 @@ La gestione dei processi organizza il lavoro del gruppo: chi fa cosa, quando ci 
 === Ruoli
 Il gruppo usa i sei ruoli del regolamento.
 - Responsabile: pianifica e coordina il lavoro, manda l'ordine del giorno delle riunioni, gestisce la casella email del gruppo, approva i rilasci, presenta il diario di bordo.
-- Amministratore: cura repository, strumenti, controlli automatici, sito, board delle issue ed etichette; norma gli strumenti prima di introdurli.
+- Amministratore: cura repository, strumenti, controlli automatici, sito, board delle issue ed etichette; salva nel repository i verbali firmati dai proponenti; norma gli strumenti prima di introdurli.
 - Analista: studia capitolati e requisiti, scrive la Valutazione dei capitolati e l'Analisi dei Requisiti, prepara le domande per i proponenti.
 - Progettista: definisce l'architettura e la progettazione di dettaglio.
 - Programmatore: scrive codice e test.
