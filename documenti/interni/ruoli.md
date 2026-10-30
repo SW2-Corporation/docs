@@ -67,7 +67,7 @@ In ogni sprint c'è un solo Responsabile e almeno un Verificatore. Negli sprint 
 A ogni cambio di ruolo:
 
 1. aggiungere la riga in `dati/ruoli.csv` con inizio, fine, membro e ruolo, senza sovrapporre i periodi dello stesso membro;
-2. aggiornare la tabella di questo file;
+2. aggiornare le tabelle di questo file;
 3. riportare il cambio nel verbale della riunione che lo decide.
 
 ## Storico delle modifiche
