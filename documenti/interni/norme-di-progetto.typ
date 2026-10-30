@@ -16,7 +16,7 @@ Questo documento fissa il modo di lavorare del gruppo SW2 Corporation. Descrive 
 
 Le norme sono esecutive: dicono cosa fare, quando e come, senza lasciare spazio all'arbitrio. Ogni altro documento del gruppo le cita come riferimento normativo.
 
-Le norme si scrivono prima di svolgere un'attività. Il documento cresce quindi nel tempo. La sezione sulla copertura delle norme dice quali attività sono già normate e quali lo saranno, con la scadenza.
+Le norme si scrivono prima di svolgere un'attività. Il documento cresce quindi nel tempo: la sezione di un'attività non ancora normata dice entro quando lo sarà.
 
 == Scopo del prodotto
 Il prodotto è l'oggetto del capitolato che il gruppo si aggiudica il 2026-11-03. Fino a quella data il gruppo prepara la candidatura: valuta i capitolati, incontra i proponenti e dichiara i propri impegni.
@@ -45,29 +45,6 @@ I processi seguono la tassonomia di ISO/IEC 12207:1995, adattata al progetto. Un
 - le metriche, con codice e definizione.
 
 Le definizioni delle metriche stanno nell'ultima sezione. Le soglie e le misure stanno nel Piano di Qualifica.
-
-== Copertura delle norme
-Il regolamento chiede di normare ogni attività prima di svolgerla. La tabella seguente riporta lo stato di ogni processo e la scadenza per le norme mancanti.
-
-#figure(
-  table(
-    columns: (1.2fr, 2fr, 1fr, auto),
-    table.header([Processo], [Attività], [Stato], [Scadenza]),
-    [Fornitura], [Incontri esplorativi con i proponenti, candidatura], [Normato], [--],
-    [Sviluppo], [Analisi dei requisiti, progettazione, codifica, test], [Da normare prima dell'avvio], [Dopo il 2026-11-03],
-    [Documentazione], [Documenti, verbali, lettere, convenzioni], [Normato], [--],
-    [Gestione della configurazione], [Repository, branch, pull request, rilasci], [Normato], [--],
-    [Verifica], [Controlli automatici e verifica dei documenti], [Normato], [--],
-    [Accertamento della qualità], [Metriche, cruscotto, cicli di miglioramento], [Da normare], [2026-11-02],
-    [Risoluzione dei problemi], [Rischi e problemi], [Da normare], [2026-11-02],
-    [Gestione dei processi], [Ruoli, rotazione, riunioni, comunicazione, issue, #g("Definition of Done")], [Normato], [--],
-    [Gestione dei processi], [Sprint, preventivi e consuntivi, registro delle ore], [Da normare], [2026-11-02],
-    [Infrastruttura], [Strumenti del gruppo], [Normato], [--],
-    [Miglioramento], [Ciclo PDCA sui processi], [Da normare], [2026-11-02],
-    [Formazione], [Apprendimento degli strumenti], [Normato], [--],
-  ),
-  caption: [Stato delle norme per processo],
-)
 
 = Processi primari
 
@@ -105,7 +82,7 @@ Procedura:
 Strumenti: repository della documentazione, sito, casella email del gruppo. Metriche: MPC-03, MPC-05.
 
 == Sviluppo
-Le attività di analisi dei requisiti, progettazione, codifica, integrazione e test iniziano dopo l'aggiudicazione. Il gruppo le norma prima di avviarle, come indica la tabella di copertura. Le norme di progettazione e di codifica entrano in questo documento prima del primo sprint che le prevede.
+Le attività di analisi dei requisiti, progettazione, codifica, integrazione e test iniziano dopo l'aggiudicazione. Il gruppo le norma prima di avviarle. Le norme di progettazione e di codifica entrano in questo documento prima del primo sprint che le prevede.
 
 = Processi di supporto
 
@@ -211,7 +188,7 @@ Procedura:
 + L'autore apre la pull request verso `main`. Il titolo dice cosa cambia. La descrizione cita la issue nella forma `Closes #N`, così l'integrazione la chiude, e riporta il contenuto della modifica e come verificarla.
 + I controlli automatici devono risultare verdi. Un errore si corregge nel contenuto, mai nel controllo.
 + L'autore chiede la verifica a un membro diverso da sé. Per un documento è un Verificatore, per il sito e gli strumenti l'Amministratore o un Verificatore.
-+ Il verificatore controlla la modifica con la Definition of Done e scrive l'esito come revisione della pull request: approvata oppure con le modifiche richieste.
++ Il verificatore controlla la modifica con la #g("Definition of Done") e scrive l'esito come revisione della pull request: approvata oppure con le modifiche richieste.
 + A esito positivo il verificatore integra la pull request con un commit di merge, senza riscrivere la storia.
 + L'integrazione chiude la issue collegata.
 
