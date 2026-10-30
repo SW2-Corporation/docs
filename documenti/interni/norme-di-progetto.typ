@@ -156,6 +156,19 @@ Procedura:
 
 Strumenti: repository della documentazione, controlli automatici, issue. Metriche: MPC-01, MPC-04.
 
+=== Diari di bordo
+Quando: ogni settimana, prima della presentazione ai docenti. Ingressi: i verbali e le issue della settimana. Uscite: il diario pubblicato sul sito.
+
+I diari di bordo seguono l'iter dei verbali.
+
+Procedura:
++ Il Responsabile scrive il diario nel branch `diario/AAAA-MM-GG`, con la data della presentazione.
++ Il Responsabile esegue i controlli automatici e apre la pull request.
++ Un membro diverso dall'autore verifica il diario e approva la pull request.
++ Il verificatore integra la pull request. Il sito pubblica il diario con la versione e la data dell'ultimo aggiornamento.
+
+Strumenti: repository della documentazione, controlli automatici, modello del diario.
+
 == Gestione della configurazione
 
 === Scopo e aspettative
@@ -179,6 +192,7 @@ Il branch `main` contiene solo lavoro verificato. Nessuno scrive direttamente su
 
 I branch prendono il nome dal tipo di lavoro:
 - `verbale/AAAA-MM-GG` per un verbale;
+- `diario/AAAA-MM-GG` per un diario di bordo, con la data della presentazione;
 - `documento/nome-argomento` per un documento, per esempio `documento/norme-di-progetto-verifica`;
 - `dati/argomento` per i dati del gruppo;
 - `sito/argomento` per modello, strumenti e sito.
