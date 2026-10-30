@@ -63,8 +63,8 @@ Procedura:
 + Entro 48 ore il redattore scrive il verbale esterno, secondo la procedura dei verbali.
 + Il Responsabile manda il verbale al proponente dalla casella del gruppo e chiede l'approvazione.
 + Alla risposta il redattore registra l'approvazione nel campo dedicato del verbale. Finché manca, il verbale riporta "in attesa".
-+ Se il proponente rimanda il verbale firmato, l'Amministratore salva il PDF in un branch dedicato, accanto al file del verbale, con lo stesso nome e l'estensione `.firmato.pdf`, e apre la pull request.
-+ Un membro diverso dall'Amministratore controlla che la copia firmata corrisponda al verbale pubblicato e porti la firma del proponente. A esito positivo approva la pull request e la integra su `main`.
++ Se il proponente rimanda il verbale firmato, l'Amministratore salva il PDF in un branch dedicato. Il file sta accanto al verbale, con lo stesso nome e l'estensione `.firmato.pdf`. L'Amministratore apre la pull request.
++ Un membro diverso dall'Amministratore verifica la copia firmata, approva la pull request e la integra su `main`.
 + Il sito pubblica la copia firmata al posto di quella compilata. Da quel momento il verbale non cambia: una correzione richiede una nuova versione e una nuova firma.
 
 Strumenti: casella email del gruppo, piattaforma video scelta dal proponente, repository della documentazione. Metriche: MPC-01.
@@ -162,8 +162,8 @@ Quando: ogni settimana, prima della presentazione ai docenti. Ingressi: i verbal
 I diari di bordo seguono l'iter dei verbali.
 
 Procedura:
-+ Il Responsabile scrive il diario nel branch `diario/AAAA-MM-GG`, con la data della presentazione.
-+ Il Responsabile esegue i controlli automatici e apre la pull request.
++ L'autore scrive il diario nel branch `diario/AAAA-MM-GG`, con la data della presentazione.
++ L'autore esegue i controlli automatici e apre la pull request.
 + Un membro diverso dall'autore verifica il diario e approva la pull request.
 + Il verificatore integra la pull request. Il sito pubblica il diario con la versione e la data dell'ultimo aggiornamento.
 
