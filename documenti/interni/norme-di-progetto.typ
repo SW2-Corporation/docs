@@ -281,7 +281,9 @@ Il gruppo usa i sei ruoli del regolamento.
 - Ogni periodo è registrato in `dati/ruoli.csv`, con inizio, fine, membro e ruolo. I controlli automatici usano questo file.
 
 === Riunioni
-Il gruppo tiene due riunioni interne a settimana su Discord, nei giorni e orari fissati dal Responsabile a inizio settimana. Una riunione straordinaria si convoca su Telegram con almeno un giorno di anticipo.
+Il gruppo tiene due riunioni interne a settimana su Discord, il martedì alle 17:30 e il venerdì alle 18:00.
+
+Una riunione straordinaria si convoca su Telegram con almeno un giorno di anticipo.
 
 Procedura:
 + Il giorno prima il Responsabile pubblica su Telegram l'ordine del giorno, con i punti e il tempo previsto.
