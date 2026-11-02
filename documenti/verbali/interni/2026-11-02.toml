@@ -1,0 +1,91 @@
+tipo = "interno"
+data = 2026-11-02
+versione = "1.0.0"
+aggiornato = 2026-11-02
+inizio = "17:30"
+fine = "18:15"
+luogo = "Discord"
+redattore = "Alessandro Paduret"
+verificatore = "David Sirbu"
+partecipanti = [
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = [
+  "Davide Baraldo",
+]
+titolo = "Miglioramento dei processi di gestione e normazione delle procedure operative"
+ordine_del_giorno = [
+  "Flessibilità nella redazione dei verbali",
+  "Procedura di backup per la presentazione del diario di bordo",
+  "Gestione delle indisponibilità e ridistribuzione del carico di lavoro",
+  "Miglioramento continuo dei processi e formalizzazione nelle Norme di Progetto",
+]
+
+[[punto]]
+titolo = "Flessibilità nella redazione dei verbali"
+sintesi = """Durante la discussione sull'organizzazione operativa delle riunioni interne, il gruppo ha evidenziato come l'attuale vincolo dell'ordine alfabetico per cognome per la designazione del redattore risulti eccessivamente rigido. Tale rigidità può generare difficoltà operative in caso di assenze impreviste o quando circostanze contingenti consiglino di affidare la stesura a un componente già allineato sui temi trattati. Si concorda pertanto di rendere la procedura più flessibile: l'assegnazione potrà avvenire per disponibilità o previo accordo tra i componenti presenti alla riunione, fermo restando l'obbligo di un'equa rotazione e il principio inderogabile di indipendenza tra redattore e verificatore."""
+
+[[punto]]
+titolo = "Procedura di backup per la presentazione del diario di bordo"
+sintesi = """Il gruppo ha riscontrato una lacuna nelle procedure definite per il diario di bordo: allo stato attuale la responsabilità dell'esposizione settimanale ricade esclusivamente sul Responsabile di progetto in carica, senza la previsione formale di una figura sostitutiva in caso di sua assenza o indisponibilità. Per prevenire scoperture istituzionali, si stabilisce di integrare le Norme di Progetto prevedendo che, qualora il Responsabile sia impossibilitato a presenziare, il ruolo di relatore del diario di bordo venga assunto in via prioritaria dall'Amministratore o, in subordine, da un altro componente appositamente delegato."""
+
+[[punto]]
+titolo = "Gestione delle indisponibilità e ridistribuzione del carico di lavoro"
+sintesi = """È emersa la necessità di formalizzare le modalità operative da seguire nel caso in cui un componente sia impossibilitato, per cause sopraggiunte o impegni imprevisti, a portare a termine le proprie attività nei tempi previsti dallo sprint. Viene concordato che il componente deve dare tempestiva comunicazione dell'impedimento sul gruppo Telegram, indicando lo stato delle attività in corso. Il Responsabile, in coordinamento con il gruppo, provvederà prontamente a riassegnare e ridistribuire il carico di lavoro residuo tra gli altri membri, garantendo la continuità operativa ed evitando ritardi sulle scadenze fissate."""
+
+[[punto]]
+titolo = "Miglioramento continuo dei processi e formalizzazione nelle Norme di Progetto"
+sintesi = """In vista dell'avvio del primo sprint con l'inizio della fase di Requirements and Technology Baseline, il gruppo ha concordato l'opportunità di definire e normare formalmente un processo di miglioramento continuo dei processi. Si decide di incaricare l'Amministratore entrante di redigere una bozza che codifichi le modalità con cui proporre, discutere, approvare a verbale e integrare nelle Norme di Progetto i miglioramenti operativi e le azioni correttive individuate durante il ciclo di vita del progetto."""
+
+[[decisione]]
+id = "VI-2026-11-02.1"
+testo = "Rendere flessibile l'assegnazione del ruolo di redattore dei verbali delle riunioni interne, consentendo la scelta per disponibilità o accordo tra i presenti nel rispetto dell'equa rotazione e dell'indipendenza dalla verifica."
+motivazione = "Supera la rigidità dell'ordine alfabetico, permettendo al gruppo di adattarsi tempestivamente ad assenze e imprevisti."
+
+[[decisione]]
+id = "VI-2026-11-02.2"
+testo = "Introdurre nelle Norme di Progetto una figura di backup per la presentazione del diario di bordo, affidando la supplenza all'Amministratore o a un componente delegato in caso di assenza del Responsabile."
+motivazione = "Garantisce continuità e tempestività nell'esposizione dello stato di avanzamento al committente anche a fronte di impedimenti del Responsabile."
+
+[[decisione]]
+id = "VI-2026-11-02.3"
+testo = "Formalizzare la procedura di segnalazione delle indisponibilità individuali tramite avviso tempestivo su Telegram e contestuale ridistribuzione del carico di lavoro da parte del Responsabile."
+motivazione = "Evita colli di bottiglia e ritardi nel completamento delle issue pianificate per lo sprint."
+
+[[decisione]]
+id = "VI-2026-11-02.4"
+testo = "Definire nelle Norme di Progetto una procedura strutturata per la proposta, l'approvazione a verbale e il recepimento dei miglioramenti dei processi di lavoro del gruppo."
+motivazione = "Assicura un'evoluzione controllata e tracciata dei processi in conformità agli standard di qualità del progetto."
+
+[[azione]]
+decisione = "VI-2026-11-02.1"
+descrizione = "Aggiornare le Norme di Progetto per consentire flessibilità nella scelta del redattore dei verbali."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-11-16
+issue = "#104"
+
+[[azione]]
+decisione = "VI-2026-11-02.2"
+descrizione = "Aggiornare le Norme di Progetto formalizzando la procedura di backup del Responsabile per il diario di bordo."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-11-16
+issue = "#105"
+
+[[azione]]
+decisione = "VI-2026-11-02.3"
+descrizione = "Aggiornare le Norme di Progetto con la procedura di notifica delle indisponibilità e ridistribuzione delle attività."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-11-16
+issue = "#106"
+
+[[azione]]
+decisione = "VI-2026-11-02.4"
+descrizione = "Redigere e inserire nelle Norme di Progetto la sezione relativa al miglioramento continuo dei processi."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-11-16
+issue = "#107"
+
