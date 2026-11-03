@@ -29,6 +29,7 @@ I termini con un significato specifico per il progetto stanno nel glossario del 
 === Riferimenti normativi
 - #rif-web("Regolamento del progetto didattico di Ingegneria del Software 2026/27 (PD1)", "https://www.math.unipd.it/~tullio/IS-1/2026/Dispense/PD1.pdf", "2026-10-18").
 - Verbale interno 2026-10-16, con le decisioni sul modo di lavorare del gruppo.
+- Verbale interno 2026-11-02, con le decisioni sulle procedure operative.
 
 === Riferimenti informativi
 - ISO/IEC 12207:1995, Information technology, Software life cycle processes: la tassonomia dei processi usata in questo documento.
@@ -285,9 +286,13 @@ Il gruppo tiene due riunioni interne a settimana su Discord, il martedì alle 17
 
 Una riunione straordinaria si convoca su Telegram con almeno un giorno di anticipo.
 
+All'apertura di ogni riunione i presenti scelgono il redattore, per disponibilità o di comune accordo. Sono candidati tutti i presenti, tranne il Responsabile, che conduce la riunione, e l'unico Verificatore in carica, che deve poter verificare il verbale.
+La scelta rispetta l'equa rotazione fra i membri, prediligendo membri che hanno scritto meno verbali.
+Se nessuno si offre e non c'è accordo, il verbale lo scrive il candidato che ne ha scritti meno; a parità, il primo in ordine alfabetico di cognome.
+
 Procedura:
 + Il giorno prima il Responsabile pubblica su Telegram l'ordine del giorno, con i punti e il tempo previsto.
-+ Il Responsabile conduce la riunione. Il redattore prende appunti. Il redattore cambia a ogni riunione, in ordine alfabetico di cognome, saltando il Responsabile.
++ Il Responsabile conduce la riunione. Il redattore, scelto in apertura, prende appunti.
 + Per ogni punto il gruppo registra una decisione con la sua motivazione. Per ogni decisione che richiede lavoro il gruppo fissa un'azione, un assegnatario e una scadenza.
 + Il redattore scrive il verbale entro 48 ore, secondo la procedura dei verbali.
 
