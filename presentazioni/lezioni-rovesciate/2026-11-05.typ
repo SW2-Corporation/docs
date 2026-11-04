@@ -4,7 +4,7 @@
 #show: presentazione.with(
   evento: "Lezione rovesciata",
   data: "2026-11-05",
-  titolo: "Come facciamo documentazione",
+  titolo: "Documentare: cosa, da dove, come",
 )
 
 // riquadro di uno stato o di un passo, per i diagrammi a frecce
@@ -22,233 +22,178 @@
   ..passi.pos().map(p => (p, freccia)).flatten().slice(0, -1),
 ))
 
-#slide(titolo: "Il percorso")[
+// domanda aperta da portare in aula, con il dato che la motiva
+#let domanda(testo, nota: none) = block(
+  width: 100%,
+  stroke: (left: 3pt + palette.accento),
+  inset: (left: 14pt, y: 6pt),
+  below: 0.8em,
+  [*#testo* #if nota != none [\ #text(size: 14pt, fill: palette.tenue, nota)]],
+)
+
+// risposta provvisoria del gruppo, in fondo alla slide
+#let risposta(corpo) = block(
+  width: 100%,
+  fill: palette.zebra,
+  radius: 4pt,
+  inset: 12pt,
+  [#text(size: 14pt, fill: palette.tenue)[LA NOSTRA RISPOSTA PROVVISORIA] \ #corpo],
+)
+
+#slide(titolo: "Da dove parliamo")[
+  - Sei persone, tre settimane di lavoro, tutto in un repository sotto controllo di versione.
+  - 12 verbali, 33 pull request integrate, Norme di Progetto modificate in 11 commit in due settimane.
+  - Portiamo domande aperte. Per ognuna diciamo la risposta provvisoria che ci siamo dati facendo.
+  - Seguiamo la traccia della lezione:
+    + A1: cosa documentare, per obbligo o per opportunità;
+    + A2: con quali contenuti, tratti da dove;
+    + A3: come produrre documentazione efficace ed efficiente.
+]
+
+#slide(titolo: "Cosa documentare (A1)")[
+  #set text(size: 16pt)
   #grid(
-    columns: (1fr, 1fr),
-    column-gutter: 1.5cm,
+    columns: (1.2fr, 1fr),
+    column-gutter: 1.2cm,
     [
-      *Teoria*
-      - La documentazione è un processo
-      - Cosa chiede il regolamento
-      - Versione, verifica, approvazione
-      - Qualità di un documento
+      *Per obbligo* #text(size: 13pt, fill: palette.tenue)[(PD1, slide 24)]
+      - Piano di Progetto, Piano di Qualifica
+      - Norme di Progetto, verbali, Glossario
+      - Analisi dei Requisiti, Specifica Architetturale, Manuale Utente
+      - Lettera di Presentazione, diario di bordo
     ],
     [
-      *Pratica*
-      - Documenti come codice
-      - Ciclo di vita e flusso di lavoro
-      - Controlli automatici e verifica
-      - Pubblicazione e cosa miglioriamo
+      *Per opportunità*
+      - decisioni con codice e motivazione
+      - ore, ruoli e pianificazione come dati
+      - regole di stile e controlli che le applicano
     ],
+  )
+  #v(0.3cm)
+  #risposta[Si documenta ciò che qualcuno rileggerà per decidere, per verificare o per riprendere un lavoro. Se non sappiamo dire chi lo rileggerà, forse non serve.]
+]
+
+#slide(titolo: "Domande su A1")[
+  #domanda(
+    "Un documento obbligatorio che nessuno rilegge è un obbligo assolto o un costo senza valore?",
+  )
+  #domanda(
+    "PD1 chiede verbali come \"breve rendiconto\": agenda, decisioni, azioni. Quanto della discussione va scritto?",
+    nota: "I nostri verbali hanno una sintesi per ogni punto. Serve a chi era assente, o è un costo?",
+  )
+  #domanda(
+    "Si norma prima di fare. Come si norma bene un'attività che non si è mai svolta?",
+    nota: "Noi: quattro modifiche alle Norme di Progetto decise il 2026-11-02, tutte su lacune scoperte lavorando.",
   )
 ]
 
-#slide(titolo: "La documentazione è un processo")[
-  - Processo: attività correlate che trasformano ingressi in uscite, secondo regole date, consumando risorse.
-  - ISO/IEC 12207 la mette tra i *processi di supporto*: serve i processi primari, non vive da sola.
-  - Attività del processo:
-    + pianificare: quali documenti, per chi, quando;
-    + progettare: struttura e modelli;
-    + produrre: scrivere, verificare, rilasciare;
-    + mantenere: aggiornare con versioni tracciate.
-  - Si norma prima di fare: ogni attività ha una procedura nelle Norme di Progetto.
-]
-
-#slide(titolo: "Cosa chiede il regolamento")[
-  - Il gruppo si dota di un _way of working_: le Norme di Progetto sono un documento *esecutivo*, non narrativo.
-  - Verbali: breve rendiconto delle riunioni, con ordine del giorno, decisioni e azioni.
-  - Glossario: spiega ogni termine specializzato.
-  - Tutti i documenti stanno in un repository, *sotto controllo di versione*.
-  - Ogni documento ha il proprio registro delle modifiche.
-]
-
-#slide(titolo: "Versione, verifica, approvazione")[
-  - *Versione*: identifica uno stato del documento. Non cambia mai senza una verifica.
-  - *Verifica*: "ho fatto bene il prodotto?". La fa una persona diversa dall'autore.
-  - *Approvazione*: autorizza il rilascio. Non è una verifica.
-  - *Baseline*: versione approvata, modificabile solo con procedure formali.
-  - *Registro delle modifiche*: modifiche logiche verificate, non il log dei commit.
-]
-
-#slide(titolo: "Qualità di un documento")[
-  #grid(
-    columns: (1fr, 1fr),
-    column-gutter: 1.5cm,
-    [
-      *Cosa deve essere*
-      - leggibile, per un lettore noto
-      - coerente con verbali e regolamento
-      - tracciabile: ogni affermazione ha una fonte
-      - verificabile con una lista di controllo
-    ],
-    [
-      *Come si scrive*
-      - frasi brevi su un solo tema
-      - verbi attivi
-      - elenchi invece di narrazione
-      - lessico del corso: "Lettera di Presentazione", "decisioni prese", "lo sprint"
-    ],
-  )
-]
-
-#slide(titolo: "Documenti come codice")[
+#slide(titolo: "Con quali contenuti, tratti da dove (A2)")[
   #grid(
     columns: (1.1fr, 1fr),
     column-gutter: 1cm,
     [
-      - Un repository `docs`, pubblico, su GitHub.
-      - Documenti in *Typst*, verbali in *TOML*, registri e dati in *CSV* e TOML.
-      - Un modello comune: copertina, registro, stile, slide.
-      - Ogni modifica passa da issue, branch e pull request.
+      *Fonti*
+      - regolamento e lezioni
+      - capitolato e incontri con il proponente
+      - decisioni interne, nei verbali
+      - dati misurati: ore, ruoli, costi
     ],
     [
-      #set text(size: 14pt)
-      ```
-      dati/          gruppo, ruoli, ore
-      documenti/
-        esterni/     con registro
-        interni/     Norme di Progetto
-        lettere/     AAAA-MM-GG.typ
-        verbali/     AAAA-MM-GG.toml
-      presentazioni/ diari di bordo
-      modello/       modello Typst
-      strumenti/     controlli e sito
+      #set text(size: 13pt)
+      ```toml
+      [[decisione]]
+      id = "VI-2026-10-30.2"
+      testo = "Consuntivare la conclusione
+        della prima versione delle Norme
+        di Progetto al 2026-10-29, ..."
+      motivazione = "Permette al cruscotto
+        di operare senza falsi allarmi ..."
       ```
     ],
   )
+  #v(0.4cm)
+  #risposta[
+    - Ogni dato vive in un solo posto e i documenti lo leggono: versione e data dal registro, ore e costi da `dati/`.
+    - Ogni affermazione verificabile cita una fonte: è un punto della lista di verifica.
+  ]
 ]
 
-#slide(titolo: "Tipi di documento")[
-  #set text(size: 16pt)
-  #table(
-    columns: (auto, auto, auto, 1fr),
-    align: left + horizon,
-    inset: 8pt,
-    table.header([*Tipo*], [*Versione*], [*Registro*], [*Note*]),
-    [Documenti con registro], [sì], [sì], [copertina, registro, indice, introduzione],
-    [Lettera di Presentazione], [no, solo data], [no], [una per consegna, in cima al sito],
-    [Verbali], [sì, da 1.0.0], [no], [TOML impaginato dal modello],
-    [Diari di bordo], [sì, da 1.0.0], [no], [slide settimanali per i docenti],
+#slide(titolo: "Domande su A2")[
+  #domanda(
+    "Se lo stesso dato serve a più documenti, dove deve vivere? E chi ne risponde?",
+    nota: "Le ore compaiono nel Piano di Progetto, nel cruscotto e nel diario di bordo.",
+  )
+  #domanda(
+    "Dai gruppi degli anni scorsi si prende la struttura, non il testo. Dove passa il confine?",
+  )
+  #domanda(
+    "Il registro delle modifiche non è la storia dei commit. Si può generare dalle pull request senza perdere senso?",
+    nota: "Chi decide cosa è una modifica da registrare?",
   )
 ]
 
-#slide(titolo: "Ciclo di vita di un documento")[
-  #v(0.5cm)
+#slide(titolo: "Documentazione efficace ed efficiente (A3)")[
+  #grid(
+    columns: (1fr, 1fr),
+    column-gutter: 1.5cm,
+    [
+      *Efficace: qualità informativa*
+      - un lettore noto per ogni documento
+      - frasi brevi, elenchi, lessico del corso
+      - verifica di un'altra persona, con una lista di controllo
+    ],
+    [
+      *Efficiente: impiego di risorse*
+      - un modello Typst comune: copertina, registro, stile
+      - 45 controlli automatici a ogni pull request
+      - sito rigenerato a ogni integrazione su `main`
+    ],
+  )
+  #v(0.4cm)
+  #risposta[La macchina controlla la forma, la persona controlla il contenuto. Ogni errore di forma che sfugge diventa un nuovo controllo.]
+]
+
+#slide(titolo: "Come lavoriamo oggi")[
+  #v(0.3cm)
+  #catena(
+    passo("Issue", nota: "criteri di accettazione"),
+    passo("Branch", nota: "documento/argomento"),
+    passo("Pull request", nota: "controlli automatici"),
+    passo("Verifica", nota: "un altro membro"),
+    passo("Merge", nota: "chiude la issue"),
+  )
+  #v(0.8cm)
   #catena(
     passo("Bozza", nota: "in lavorazione"),
     passo("In verifica", nota: "pull request aperta"),
     passo("Verificato", nota: "riga nel registro"),
     passo("Approvato", nota: "riga del Responsabile"),
   )
-  #v(0.8cm)
-  - Versioni X.Y.Z: Z per una modifica minore, Y per una sostanziale, X solo con l'approvazione.
-  - Solo la riga di approvazione porta il documento sul sito: le bozze non si pubblicano.
-]
-
-#slide(titolo: "Dal lavoro a main")[
-  #v(0.3cm)
-  #catena(
-    passo("Issue", nota: "criteri di accettazione"),
-    passo("Branch", nota: "documento/argomento"),
-    passo("Pull request", nota: "Closes #N"),
-    passo("Verifica", nota: "un altro membro"),
-    passo("Merge", nota: "chiude la issue"),
-  )
   #v(0.6cm)
-  - Nessuno scrive direttamente su `main`: contiene solo lavoro verificato.
-  - Commit in italiano, con nome e cognome, che citano la issue: "Rif. \#12".
-  - `main` è protetto: serve il controllo `verifica` verde e l'approvazione di un altro membro.
+  - Su `main` arriva solo lavoro verificato. Sul sito arriva solo ciò che è approvato.
 ]
 
-#slide(titolo: "Registro e verbali sono dati")[
-  #grid(
-    columns: (1fr, 1fr),
-    column-gutter: 1cm,
-    [
-      *Registro delle modifiche (CSV)*
-      #set text(size: 13pt)
-      ```
-      versione,data,autore,verificatore,descrizione
-      0.1.0,2026-11-01,Matteo Bellato,
-        Alessandro Paduret,Prima versione
-        registrata e orari fissi ...
-      ```
-      #set text(size: 18pt)
-      Copertina e piè di pagina leggono la versione dalla prima riga.
-    ],
-    [
-      *Verbale (TOML)*
-      #set text(size: 13pt)
-      ```toml
-      tipo = "interno"
-      data = 2026-10-15
-      versione = "1.0.0"
-      redattore = "Matteo Bellato"
-      verificatore = "Alessandro Paduret"
-      ordine_del_giorno = [...]
-      [[punto]]
-      titolo = "Prima rotazione dei ruoli"
-      ```
-      #set text(size: 18pt)
-      Il modello lo impagina: stessa struttura per tutti.
-    ],
+#slide(titolo: "Domande su A3")[
+  #domanda(
+    "Gli strumenti costano ore, e ognuno ne ha tra 80 e 95. Quanto investire in automazione all'inizio? Come si misura se ripaga?",
+  )
+  #domanda(
+    "Un indice di leggibilità come Gulpease misura la qualità informativa, o solo la lunghezza di frasi e parole?",
+  )
+  #domanda(
+    "Verifica rapida o verifica leggera? Come si distinguono?",
+    nota: "Il diario del 2026-11-02 segnala le approvazioni come attività bloccante. Eppure metà delle nostre pull request è integrata entro 12 minuti dall'apertura.",
   )
 ]
 
-#slide(titolo: "Controlli automatici")[
-  - `strumenti/verifica.py` controlla tutto il repository; il workflow `Verifica` lo esegue a ogni pull request.
-  - Ogni problema è una riga: percorso, riga, codice, messaggio.
-    - *E*: errore, ferma la pull request.
-    - *W*: avviso, da risolvere prima del rilascio.
-  - Cosa controlla: registro, versioni e persone diverse; date AAAA-MM-GG; titoli e lessico; schema dei verbali; diari.
-  - Leggibilità: indice Gulpease sopra la soglia del gruppo (40).
-]
-
-#slide(titolo: "Verifica umana")[
-  La macchina controlla la forma, il verificatore controlla il contenuto.
-  + La struttura segue le norme.
-  + Il contenuto risponde allo scopo ed è coerente con verbali e regolamento.
-  + Ogni affermazione verificabile ha una fonte.
-  + Le convenzioni sono rispettate.
-  + I controlli automatici sono verdi.
-  + Versione e registro sono coerenti con la modifica.
-
-  L'esito va nella pull request, punto per punto.
-]
-
-#slide(titolo: "Pubblicazione")[
-  - A ogni merge su `main` il sito si rigenera da solo.
-  - Mostra solo ciò che è rilasciato: documenti approvati, Lettere di Presentazione, verbali, diari.
-  - Ordine dal più recente, con la Lettera di Presentazione in cima.
-  - Ogni documento mostra versione e data dell'ultimo aggiornamento.
-  - Il cruscotto legge ore e costi da `dati/` e li confronta con le soglie.
-]
-
-#slide(titolo: "Cosa abbiamo imparato")[
+#slide(titolo: "Le nostre domande, in breve")[
+  #set text(size: 16pt)
   #grid(
-    columns: (1fr, 1fr),
-    column-gutter: 1.5cm,
-    [
-      *Funziona*
-      - Gli errori di forma non arrivano più ai verificatori.
-      - Versione e data non vanno più aggiornate a mano.
-      - La storia di ogni modifica è tracciata.
-    ],
-    [
-      *Da migliorare*
-      - Le pull request in attesa di verifica bloccano il lavoro.
-      - Mancano norme per alcuni casi, per esempio le presentazioni.
-      - Ogni lacuna diventa una modifica alle Norme di Progetto.
-    ],
+    columns: (auto, 1fr),
+    column-gutter: 0.6cm,
+    row-gutter: 0.55cm,
+    [*A1*], [Documento obbligatorio che nessuno rilegge: obbligo assolto o costo? \ Quanto della discussione va nel verbale? \ Come si norma un'attività mai svolta?],
+    [*A2*], [Dove vive un dato usato da più documenti? \ Dal lavoro altrui: dove passa il confine tra struttura e testo? \ Il registro si può generare dalle pull request?],
+    [*A3*], [Quanto investire in automazione, e come misurare se ripaga? \ Cosa misura davvero un indice di leggibilità? \ Verifica rapida o verifica leggera?],
   )
-]
-
-#slide(titolo: "Domande")[
-  #v(1fr)
-  #align(center)[
-    #text(size: 30pt, weight: "bold")[Grazie]
-    #v(0.4cm)
-    Repository: `github.com/SW2-Corporation/docs`
-  ]
-  #v(1fr)
 ]
