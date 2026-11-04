@@ -338,6 +338,21 @@ Chi trova una issue fatta che non soddisfa la Definition of Done la riapre e scr
 
 Strumenti: protezione di `main` su GitHub, configurata dall'Amministratore; modello di pull request `.github/pull_request_template.md`; workflow `Verifica`. Metriche: MPC-06.
 
+=== Indisponibilità
+Quando: un membro sa di non poter finire una o più issue entro la scadenza. Ingressi: le issue del membro. Uscite: le issue riassegnate o tornate da fare.
+
+Procedura:
++ Il membro avvisa il gruppo su Telegram appena lo sa, prima della scadenza. Per ogni issue indica lo stato e la stima residua.
++ Se può, il membro salva nel branch della issue il lavoro già fatto.
++ Entro 24 ore dall'avviso il Responsabile, sentito il gruppo, riassegna ogni issue. Rispetta il monte ore complessivo e il limite orario a persona, indicate nella Dichiarazione degli Impegni.
++ Il Responsabile aggiorna nella issue assegnatario, ruolo e stima. Il nuovo assegnatario registra le ore con il ruolo che ricopre.
++ Se nessuno può prendere una issue, la issue torna da fare con la stima residua e il Responsabile ne aggiorna la scadenza.
++ Il verbale della riunione successiva conferma ogni riassegnazione con una decisione e un'azione.
+
+Se l'indisponibile è il Responsabile, a riassegnare provvedere l'Amministratore.
+
+Strumenti: Telegram, issue.
+
 == Infrastruttura
 #figure(
   table(
