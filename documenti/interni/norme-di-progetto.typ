@@ -168,6 +168,11 @@ Procedura:
 + Un membro diverso dall'autore verifica il diario e approva la pull request.
 + Il verificatore integra la pull request. Il sito pubblica il diario con la versione e la data dell'ultimo aggiornamento.
 
+Il Responsabile presenta il diario ai docenti.
+Durante le lezioni di presentazione dei diari è presente l'Amministratore che fa da sostituto in caso di imprevisti del Responsabile.
+Se l'Amministratore non può svolgere questa funzione, avvisa il Responsabile almeno 24 ore prima, che delega un sostituto su Telegram.
+Nel caso il Responsabile sappia già prima della lezione di non poter svolgere la funzione, avvisa il gruppo su Telegram. Indica un sostituto per la presentazione oltre all'Amministratore.
+
 Strumenti: repository della documentazione, controlli automatici, modello del diario.
 
 == Gestione della configurazione
