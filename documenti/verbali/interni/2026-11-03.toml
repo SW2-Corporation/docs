@@ -1,0 +1,112 @@
+tipo = "interno"
+data = 2026-11-03
+versione = "1.0.0"
+aggiornato = 2026-11-03
+inizio = "18:00"
+fine = "19:00"
+luogo = "Discord"
+redattore = "Oussama Mahdi"
+verificatore = "David Sirbu"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = []
+titolo = "Recepimento dei rilievi di candidatura e pianificazione della RTB"
+ordine_del_giorno = [
+  "Recepimento dei rilievi del committente sulla candidatura",
+  "Pianificazione delle attività per la RTB e milestone su GitHub",
+  "Avvio dell'Analisi dei Requisiti e predisposizione delle attività successive",
+]
+
+[[punto]]
+titolo = "Recepimento dei rilievi del committente sulla candidatura"
+sintesi = """In apertura di riunione, il gruppo ha preso in esame il documento di aggiudicazione degli appalti pubblicato dal committente Prof. Tullio Vardanega, nel quale il capitolato C8 (Sonar) è stato formalmente aggiudicato a SW2 Corporation con una valutazione di 13 punti. Il gruppo ha discusso i rilievi costruttivi ricevuti, concordando di intervenire tempestivamente sulle seguenti aree di miglioramento: aggiornare il generatore del sito per far aprire i documenti HTML e i file PDF su una nuova scheda del browser; ottimizzare la tabella di tracciamento nei verbali, realizzando una vista coesa che colleghi chiaramente decisioni, azioni, assegnatari, collegamenti alle issue su GitHub e scadenze; integrare l'indicazione del versionamento nel template dei verbali ed estendere il versionamento formale al Glossario; chiarire nel Piano di Progetto che la ripartizione oraria personale per ruolo rappresenta una stima e un obiettivo programmatico verso cui tendere, anziché un vincolo contrattuale rigido."""
+
+[[punto]]
+titolo = "Pianificazione delle attività per la RTB e milestone su GitHub"
+sintesi = """Con l'avvio ufficiale dello Sprint 1 e della fase di Requirements and Technology Baseline, il gruppo ha concordato le priorità gestionali immediate. Il Responsabile è stato incaricato di configurare le milestone di progetto sulla piattaforma GitHub per tracciare con precisione l'avanzamento verso i traguardi intermedi della RTB. Contestualmente, si è deliberata la redazione della prima bozza del Piano di Progetto, che recepirà l'impostazione flessibile e dinamica della ripartizione oraria, regolando il consumo delle ore tramite il ciclo settimanale di ripianificazione e consuntivazione."""
+
+[[punto]]
+titolo = "Avvio dell'Analisi dei Requisiti e predisposizione delle attività successive"
+sintesi = """Il gruppo ha formalizzato l'avvio delle attività analitiche sul capitolato C8. Gli Analisti sono stati incaricati di elaborare la prima bozza dell'Analisi dei Requisiti, identificando gli attori di sistema e i primi macro-casi d'uso correlati al parsing dei template Liquid, alla generazione del grafo di dipendenze e alle interazioni con Shopify Admin API, nonché di raccogliere i quesiti di approfondimento da sottoporre a Halue S.r.l. SB nel kick-off meeting. È stato inoltre stabilito come principio metodologico che la stesura del Piano di Qualifica e lo sviluppo del Proof of Concept verranno avviati in parallelo non appena la bozza iniziale dei requisiti avrà raggiunto un livello di definizione stabile e condiviso."""
+
+[[decisione]]
+id = "VI-2026-11-03.1"
+testo = "Aggiornare la vista web del repository affinché i documenti si aprano in una nuova scheda, ottimizzare la tabella di tracciamento dei verbali unificando decisioni e azioni con i collegamenti alle issue GitHub, integrare l'indicazione di versione nel template dei verbali e introdurre il versionamento formale del Glossario."
+motivazione = "Recepisce direttamente i rilievi della commissione di aggiudicazione per ottimizzare l'usabilità del sito e la coesione del tracciamento, migliorando la qualità formale dei documenti."
+
+[[decisione]]
+id = "VI-2026-11-03.2"
+testo = "Configurare le milestone della RTB su GitHub e redigere la prima bozza del Piano di Progetto recependo l'indicazione della commissione di considerare la ripartizione oraria personale per ruolo come obiettivo target tendenziale e ripianificabile, piuttosto che come vincolo assoluto."
+motivazione = "Assicura un monitoraggio trasparente delle scadenze della RTB e allinea la pianificazione economica e temporale ai criteri di flessibilità indicati dal committente."
+
+[[decisione]]
+id = "VI-2026-11-03.3"
+testo = "Avviare la stesura della prima bozza dell'Analisi dei Requisiti per il capitolato C8 (Sonar), identificando attori e macro-casi d'uso e raccogliendo i punti di chiarimento da discutere con il proponente."
+motivazione = "Fornisce la base metodologica per definire il perimetro del prodotto e avviare il dialogo tecnico con Halue S.r.l. SB."
+
+[[decisione]]
+id = "VI-2026-11-03.4"
+testo = "Condizionare l'avvio formale della stesura del Piano di Qualifica e dello sviluppo del Proof of Concept al consolidamento della bozza iniziale dell'Analisi dei Requisiti."
+motivazione = "Garantisce che la definizione delle metriche di qualità, dei test e delle verifiche di fattibilità tecnologica poggi su requisiti chiari e condivisi."
+
+[[azione]]
+decisione = "VI-2026-11-03.1"
+descrizione = "Aggiornare strumenti/sito.py per aprire i documenti in una nuova scheda e ottimizzare la tabella di tracciamento dei verbali in modello/verbale.typ."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-11-16
+issue = "#116"
+
+[[azione]]
+decisione = "VI-2026-11-03.1"
+descrizione = "Introdurre la tracciabilità delle modifiche e la gestione del versionamento per il Glossario."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-11-16
+issue = "#117"
+
+[[azione]]
+decisione = "VI-2026-11-03.2"
+descrizione = "Creare le milestone su GitHub per la fase di Requirements and Technology Baseline."
+assegnatario = "Patrizio Eleuteri"
+scadenza = 2026-11-06
+issue = "#118"
+
+[[azione]]
+decisione = "VI-2026-11-03.2"
+descrizione = "Redigere la prima bozza del Piano di Progetto trattando la ripartizione oraria come obiettivo target ripianificabile."
+assegnatario = "Patrizio Eleuteri"
+scadenza = 2026-11-16
+issue = "#119"
+
+[[azione]]
+decisione = "VI-2026-11-03.3"
+descrizione = "Redigere la bozza iniziale dell'Analisi dei Requisiti per il capitolato C8 con la definizione di attori e casi d'uso principali."
+assegnatario = "Oussama Mahdi"
+scadenza = 2026-11-16
+issue = "#120"
+
+[[azione]]
+decisione = "VI-2026-11-03.3"
+descrizione = "Predisporre la lista dei quesiti tecnici e di dominio per l'incontro di kick-off con il proponente Halue S.r.l. SB."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-11-06
+issue = "#121"
+
+[[azione]]
+decisione = "VI-2026-11-03.4"
+descrizione = "Impostare la struttura del Piano di Qualifica subordinandola ai requisiti definiti nella prima bozza dell'Analisi dei Requisiti."
+assegnatario = "David Sirbu"
+scadenza = 2026-11-16
+issue = "#122"
+
+[[azione]]
+decisione = "VI-2026-11-03.4"
+descrizione = "Definire l'architettura preliminare e il perimetro del Proof of Concept sulla base della bozza dell'Analisi dei Requisiti."
+assegnatario = "Alessandro Paduret"
+scadenza = 2026-11-16
+issue = "#123"
