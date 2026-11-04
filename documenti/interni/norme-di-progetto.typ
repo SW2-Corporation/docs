@@ -169,9 +169,9 @@ Procedura:
 + Il verificatore integra la pull request. Il sito pubblica il diario con la versione e la data dell'ultimo aggiornamento.
 
 Il Responsabile presenta il diario ai docenti.
-Durante le lezioni di presentazione dei diari è presente l'Amministratore che fa da sostituto in caso di imprevisti del Responsabile.
-Se l'Amministratore non può svolgere questa funzione, avvisa il Responsabile almeno 24 ore prima, che delega un sostituto su Telegram.
-Nel caso il Responsabile sappia già prima della lezione di non poter svolgere la funzione, avvisa il gruppo su Telegram. Indica un sostituto per la presentazione oltre all'Amministratore.
+Durante le lezioni di presentazione dei diari è presente l'Amministratore, che sostituisce il Responsabile in caso di imprevisti.
+Se l'Amministratore non può svolgere questa funzione, avvisa almeno 24 ore prima il Responsabile, che delega un sostituto su Telegram.
+Nel caso il Responsabile sappia già prima della lezione di non poter svolgere la funzione, avvisa il gruppo su Telegram. Indica un sostituto per la presentazione oltre all'Amministratore. L'Amministratore presenta in via prioritaria, il sostituto è la riserva.
 
 Strumenti: repository della documentazione, controlli automatici, modello del diario.
 
@@ -270,7 +270,7 @@ La gestione dei processi organizza il lavoro del gruppo: chi fa cosa, quando ci 
 === Ruoli
 Il gruppo usa i sei ruoli del regolamento.
 - Responsabile: pianifica e coordina il lavoro, manda l'ordine del giorno delle riunioni, gestisce la casella email del gruppo, approva i rilasci, presenta il diario di bordo.
-- Amministratore: cura repository, strumenti, controlli automatici, sito, board delle issue ed etichette; salva nel repository i verbali firmati dai proponenti; norma gli strumenti prima di introdurli.
+- Amministratore: cura repository, strumenti, controlli automatici, sito, board delle issue ed etichette; salva nel repository i verbali firmati dai proponenti; norma gli strumenti prima di introdurli; presenta il diario di bordo in assenza del Responsabile.
 - Analista: studia capitolati e requisiti, scrive la Valutazione dei capitolati e l'Analisi dei Requisiti, prepara le domande per i proponenti.
 - Progettista: definisce l'architettura e la progettazione di dettaglio.
 - Programmatore: scrive codice e test.
