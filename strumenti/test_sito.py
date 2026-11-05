@@ -242,6 +242,9 @@ class TestSito(unittest.TestCase):
         self.assertIn("getElementById('cerca')", html)
         self.assertIn('aria-live="polite"', html)
         self.assertIn("<li>1 voce</li>", sito.pagina_glossario(GRUPPO, voci[:1], None, "#000000"))
+        self.assertNotIn("aggiornato il", html)
+        versionato = sito.pagina_glossario(GRUPPO, voci, None, "#000000", "1.1.0", D(2026, 11, 3))
+        self.assertIn("<li>v1.1.0 · aggiornato il 2026-11-03</li>", versionato)
         vuoto = sito.pagina_glossario(GRUPPO, [], None, "#000000")
         self.assertIn("Nessuna voce ancora presente", vuoto)
 

@@ -811,6 +811,16 @@ class Verifica:
         if self.errore_glossario:
             self.segnala(rel, self.errore_glossario[0], "E-GLOSSARIO", self.errore_glossario[1])
             return
+        # versione e data dell'ultimo aggiornamento come nei verbali: nasce alla 1.0.0 e cresce in Y o Z
+        versione, aggiornato = self.glossario.get("versione"), self.glossario.get("aggiornato")
+        if not (isinstance(versione, str) and re.fullmatch(r"1\.\d+\.\d+", versione)):
+            self.segnala(rel, riga_valore(testo, "versione"), "E-GLOSSARIO",
+                         'versione mancante o non valida: il glossario nasce alla "1.0.0" e cresce in Y o Z')
+        if not isinstance(aggiornato, dt.date):
+            self.segnala(rel, riga_valore(testo, "aggiornato"), "E-GLOSSARIO",
+                         "aggiornato mancante: la data AAAA-MM-GG dell'ultima modifica")
+        elif aggiornato > dt.date.today():
+            self.segnala(rel, riga_valore(testo, "aggiornato"), "E-GLOSSARIO", f"aggiornato {aggiornato} nel futuro")
         visti = {}
         for i, voce in enumerate(self.glossario.get("voce", []), start=1):
             riga = riga_voce(testo, "voce", i)

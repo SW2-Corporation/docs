@@ -1648,15 +1648,19 @@ def senza_accenti(testo):
     return "".join(c for c in unicodedata.normalize("NFD", testo) if not unicodedata.combining(c)).casefold()
 
 
-def pagina_glossario(gruppo, voci, logo, accento):
+def pagina_glossario(gruppo, voci, logo, accento, versione="", aggiornato=None):
     nome = gruppo.get("gruppo", {}).get("nome") or "Documentazione di progetto"
     per_iniziale = {}
     for voce_ in sorted(voci, key=lambda v: senza_accenti(v["termine"])):
         iniziale = senza_accenti(voce_["termine"])[:1].upper()
         per_iniziale.setdefault(iniziale if iniziale.isalpha() else "#", []).append(voce_)
 
+    meta = ["1 voce" if len(voci) == 1 else f"{len(voci)} voci"]
+    # versione e data dell'ultimo aggiornamento, come per ogni documento
+    if versione and aggiornato:
+        meta.append(e(f"v{versione} · aggiornato il {aggiornato}"))
     testata = apertura(e("Glossario"), nome, "I termini del progetto, con definizioni e sinonimi, come sono usati nei documenti.",
-                       ["1 voce" if len(voci) == 1 else f"{len(voci)} voci"], compatta=True)
+                       meta, compatta=True)
     if not per_iniziale:
         corpo = [sezione("vuoto", "Nessuna voce", '<p class="vuoto">Nessuna voce ancora presente</p>')]
         return pagina(f"Glossario - {nome}", testata, "\n".join(corpo), gruppo, logo, accento,
@@ -1733,7 +1737,8 @@ def main():
     (out / ".nojekyll").write_text("", encoding="utf-8")
 
     gruppo = tomllib.loads((RADICE / "dati/gruppo.toml").read_text(encoding="utf-8-sig"))
-    voci = tomllib.loads((RADICE / "dati/glossario.toml").read_text(encoding="utf-8-sig")).get("voce", [])
+    glossario = tomllib.loads((RADICE / "dati/glossario.toml").read_text(encoding="utf-8-sig"))
+    voci = glossario.get("voce", [])
     periodi = leggi_ruoli()
     info = gruppo.get("gruppo", {})
     accento = info.get("colore") or ACCENTO_PREDEFINITO
@@ -1748,7 +1753,8 @@ def main():
     (out / "index.html").write_text(pagina_indice(gruppo, typst, out, logo, accento, fasi, oggi), encoding="utf-8")
     (out / "cruscotto.html").write_text(pagina_cruscotto(gruppo, logo, accento, fasi, ore, leggi_preventivo(), periodi, oggi),
                                         encoding="utf-8")
-    (out / "glossario.html").write_text(pagina_glossario(gruppo, voci, logo, accento), encoding="utf-8")
+    (out / "glossario.html").write_text(pagina_glossario(gruppo, voci, logo, accento, glossario.get("versione", ""),
+                                                         glossario.get("aggiornato")), encoding="utf-8")
     (out / "ruoli.html").write_text(pagina_ruoli(gruppo, logo, accento, periodi), encoding="utf-8")
     (out / "pianificazione.html").write_text(pagina_pianificazione(gruppo, logo, accento, fasi, ore, oggi), encoding="utf-8")
     for pdf in out.glob("*.pdf"):

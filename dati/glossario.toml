@@ -4,6 +4,11 @@
 # definizione = "Prototipo che dimostra la fattibilità delle tecnologie scelte."
 # sinonimi = ["PoC"]          # opzionale
 
+# Versione e data dell'ultima modifica, come nei verbali: il glossario nasce alla 1.0.0 e ogni
+# modifica verificata fa crescere Y se aggiunge, toglie o cambia una voce, Z negli altri casi.
+versione = "1.0.0"
+aggiornato = 2026-10-23
+
 [[voce]]
 termine = "Definition of Done"
 definizione = "Elenco delle condizioni verificabili che un prodotto di lavoro soddisfa perché il gruppo lo consideri fatto. Vale per issue, sprint e consegne ed è fissata nelle Norme di Progetto."

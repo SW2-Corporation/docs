@@ -202,7 +202,7 @@ Il sito segue il tema chiaro o scuro del dispositivo; il bottone in alto a destr
 ## Convenzioni
 
 - Date sempre AAAA-MM-GG, nel testo e nei nomi dei file; orari HH:MM.
-- Ogni documento riporta, nel PDF e sul sito, la versione e la data dell'ultimo aggiornamento: i documenti con registro le prendono dalla prima riga del registro, i verbali e i diari di bordo dai campi `versione` e `aggiornato`. La Lettera di Presentazione ha solo la data; le slide del diario di bordo mostrano solo la versione.
+- Ogni documento riporta, nel PDF e sul sito, la versione e la data dell'ultimo aggiornamento: i documenti con registro le prendono dalla prima riga del registro, i verbali, i diari di bordo e il glossario dai campi `versione` e `aggiornato` (per il glossario in testa a `dati/glossario.toml`, mostrati nella pagina Glossario). La Lettera di Presentazione ha solo la data; le slide del diario di bordo mostrano solo la versione.
 - Verbali e lettere non hanno registro delle modifiche.
 - Il registro delle modifiche è in ordine LIFO: la prima riga è la più recente.
 - Ogni riga del registro è una modifica già verificata: prima si verifica, poi si incrementa la versione (Z per le modifiche minori, Y per quelle sostanziali). Autore e verificatore sono persone diverse.
