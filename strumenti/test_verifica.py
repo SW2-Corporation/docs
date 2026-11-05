@@ -57,6 +57,9 @@ Verificatore = 15
 """
 
 GLOSSARIO = """\
+versione = "1.0.0"
+aggiornato = 2026-10-15
+
 [[voce]]
 termine = "Proof of Concept"
 definizione = "Prototipo che dimostra la fattibilità delle tecnologie."
@@ -319,6 +322,13 @@ class TestGlossario(Base):
         codici = self.codici()
         self.assertEqual(codici.count("E-GLOSSARIO"), 2)
         self.assertEqual(codici.count("W-GLOSSARIO"), 1)
+
+    def test_versione_e_aggiornamento(self):
+        for errato in (GLOSSARIO.replace('versione = "1.0.0"\n', ""),
+                       GLOSSARIO.replace('"1.0.0"', '"0.1.0"'),
+                       GLOSSARIO.replace("aggiornato = 2026-10-15", "aggiornato = 2999-01-01")):
+            self.scrivi("dati/glossario.toml", errato)
+            self.assertEqual(self.codici(), ["E-GLOSSARIO"])
 
 
 class TestVerbale(Base):
