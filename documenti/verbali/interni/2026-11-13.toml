@@ -1,0 +1,94 @@
+tipo = "interno"
+data = 2026-11-13
+versione = "1.0.0"
+aggiornato = 2026-11-15
+inizio = "16:00"
+fine = "17:00"
+luogo = "Discord"
+redattore = "Matteo Bellato"
+verificatore = "David Sirbu"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+]
+assenti = ["Alessandro Paduret", "David Sirbu"]
+titolo = "Indisponibilità del capitolato C8 e passaggio al capitolato C9"
+ordine_del_giorno = [
+  "Ritiro dell'aggiudicazione del capitolato C8 e opzioni del committente",
+  "Tempo utile e contabilizzazione delle ore",
+  "Revisione degli impegni e del preventivo",
+  "Contatto con il proponente Zucchetti",
+]
+
+[[punto]]
+titolo = "Ritiro dell'aggiudicazione del capitolato C8 e opzioni del committente"
+sintesi = """Il gruppo ha esaminato la comunicazione ricevuta alle 15:40 dal committente, Prof. Tullio Vardanega. Il proponente Halue non ha le risorse per seguire due gruppi nel primo semestre e ha espresso la preferenza per l'altro gruppo aggiudicatario. Il committente ha quindi ritirato l'aggiudicazione del capitolato C8 a SW2 Corporation e ha offerto due opzioni. La prima conserva il capitolato C8 e rinvia il progetto al secondo lotto, o prima se l'altro gruppo terminasse prima del 2027-03-19. La seconda porta il gruppo, senza una nuova candidatura, sul capitolato C9 (SpecCheck) di Zucchetti, l'unico con capienza residua. In questo caso il gruppo può negoziare con il proponente, anche con il sostegno del committente, un'interpretazione del capitolato più vincolata e meno esplorativa. Il gruppo sceglie la seconda opzione."""
+
+[[punto]]
+titolo = "Tempo utile e contabilizzazione delle ore"
+sintesi = """Dal 2026-11-03 il gruppo ha lavorato sul capitolato C8: bozza dell'Analisi dei Requisiti, quesiti per l'incontro di avvio con Halue e perimetro del Proof of Concept. La settimana dal 2026-11-16 serve a ripartire: contatto con Zucchetti, studio del capitolato C9 e nuova pianificazione. Il gruppo propone al committente di contabilizzare le ore per C9 dal 2026-11-24 e di riportare a parte, nel Piano di Progetto, le ore precedenti."""
+
+[[punto]]
+titolo = "Revisione degli impegni e del preventivo"
+sintesi = """Il tempo utile per il capitolato C9 si riduce di circa tre settimane. Il gruppo propone al committente un preventivo ridotto e un perimetro più piccolo, da concordare con Zucchetti. Il nuovo preventivo è di 10.330 € e 523 ore, invece di 10.920 € e 544 ore. Non scende oltre, per restare sopra il costo minimo per sei persone e sopra le 80 ore a persona. La consegna resta il 2027-03-19."""
+
+[[punto]]
+titolo = "Contatto con il proponente Zucchetti"
+sintesi = """Per concordare interpretazione e perimetro del capitolato serve un incontro di avvio con Zucchetti. Il gruppo chiede al committente l'assenso a scrivere subito al dott. Gregorio Piccoli e gli offre di restare in copia, se lo ritiene utile."""
+
+[[decisione]]
+id = "VI-2026-11-13.1"
+testo = "Proseguire nel primo lotto con il capitolato C9 (SpecCheck) di Zucchetti e concordare con il proponente un'interpretazione più vincolata del capitolato, con i formati di ingresso e i criteri di accettazione misurabili fissati per iscritto. Il Responsabile comunica la scelta al committente in giornata e propone di discutere i punti aperti a margine del diario di bordo del 2026-11-16."
+motivazione = "Il gruppo resta nel primo lotto e mantiene la consegna al 2027-03-19. L'interpretazione vincolata riduce il rischio di un perimetro troppo aperto, rilevato dal gruppo nella Valutazione dei capitolati."
+
+[[decisione]]
+id = "VI-2026-11-13.2"
+testo = "Dedicare la settimana dal 2026-11-16 alla ripartenza sul capitolato C9 e proporre al committente di contabilizzare le ore per C9 dal 2026-11-24, con le ore svolte sul capitolato C8 dal 2026-11-03 riportate a parte nel Piano di Progetto."
+motivazione = "Il consuntivo di C9 resta separato dal lavoro svolto su C8. Il gruppo ha il tempo per contattare il proponente, studiare il capitolato e rifare la pianificazione."
+
+[[decisione]]
+id = "VI-2026-11-13.3"
+testo = "Proporre al committente un preventivo ridotto di 10.330 € e 523 ore, invece di 10.920 € e 544 ore, con un perimetro più piccolo da concordare con Zucchetti e la consegna invariata al 2027-03-19, e aggiornare di conseguenza la Dichiarazione degli impegni."
+motivazione = "Il tempo utile per C9 si riduce di circa tre settimane. Il preventivo non scende oltre, per restare sopra il costo minimo per sei persone e sopra le 80 ore a persona."
+
+[[decisione]]
+id = "VI-2026-11-13.4"
+testo = "Chiedere al committente l'assenso a contattare Zucchetti e, ottenutolo, scrivere al dott. Gregorio Piccoli per chiedere un incontro di avvio, con il committente in copia se lo ritiene utile."
+motivazione = "L'incontro di avvio serve a concordare con il proponente interpretazione e perimetro del capitolato, da cui dipendono la nuova pianificazione e gli impegni."
+
+[[azione]]
+decisione = "VI-2026-11-13.1"
+descrizione = "Rispondere al committente con la scelta del capitolato C9 e le proposte su tempo utile, impegni e contatto con Zucchetti."
+assegnatario = "Patrizio Eleuteri"
+scadenza = 2026-11-13
+issue = "#129"
+
+[[azione]]
+decisione = "VI-2026-11-13.1"
+descrizione = "Studiare il capitolato C9 e preparare i quesiti per l'incontro di avvio con Zucchetti, su formati di ingresso e criteri di accettazione."
+assegnatario = "Davide Baraldo"
+scadenza = 2026-11-16
+issue = "#130"
+
+[[azione]]
+decisione = "VI-2026-11-13.2"
+descrizione = "Rifare la pianificazione per il capitolato C9 nei dati del gruppo e nel Piano di Progetto, con le ore svolte sul capitolato C8 riportate a parte."
+assegnatario = "Oussama Mahdi"
+scadenza = 2026-11-23
+issue = "#131"
+
+[[azione]]
+decisione = "VI-2026-11-13.3"
+descrizione = "Aggiornare la Dichiarazione degli impegni con il capitolato C9 e il preventivo di 10.330 € e 523 ore, e inviarne il collegamento al committente."
+assegnatario = "Oussama Mahdi"
+scadenza = 2026-11-23
+issue = "#132"
+
+[[azione]]
+decisione = "VI-2026-11-13.4"
+descrizione = "Scrivere al dott. Gregorio Piccoli di Zucchetti, con l'assenso del committente, per chiedere un incontro di avvio."
+assegnatario = "Patrizio Eleuteri"
+scadenza = 2026-11-16
+issue = "#133"
