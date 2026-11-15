@@ -35,6 +35,8 @@ I termini con un significato specifico per il progetto stanno nel glossario del 
 - ISO/IEC 12207:1995, Information technology, Software life cycle processes: la tassonomia dei processi usata in questo documento.
 - #rif-web("Capitolati d'appalto 2026/27", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/Capitolati.html", "2026-10-18").
 - #rif-web("K. Schwaber, J. Sutherland, The Scrum Guide, novembre 2020", "https://scrumguides.org/scrum-guide.html", "2026-10-20").
+- #rif-web("Processi di ciclo di vita, lezione T02 di Ingegneria del Software 2026/27", "https://www.math.unipd.it/~tullio/IS-1/2026/Dispense/T02.pdf", "2026-11-15").
+- #rif-web("Gestione di progetto, lezione T04 di Ingegneria del Software 2026/27", "https://www.math.unipd.it/~tullio/IS-1/2026/Dispense/T04.pdf", "2026-11-15").
 
 == Struttura del documento
 I processi seguono la tassonomia di ISO/IEC 12207:1995, adattata al progetto. Un processo è un insieme di attività, mai un documento o un prodotto. Ogni processo ha:
@@ -270,7 +272,7 @@ La gestione dei processi organizza il lavoro del gruppo: chi fa cosa, quando ci 
 === Ruoli
 Il gruppo usa i sei ruoli del regolamento.
 - Responsabile: pianifica e coordina il lavoro, manda l'ordine del giorno delle riunioni, gestisce la casella email del gruppo, approva i rilasci, presenta il diario di bordo.
-- Amministratore: cura repository, strumenti, controlli automatici, sito, board delle issue ed etichette; salva nel repository i verbali firmati dai proponenti; norma gli strumenti prima di introdurli; presenta il diario di bordo in assenza del Responsabile.
+- Amministratore: cura repository, strumenti, controlli automatici, sito, board delle issue ed etichette; salva nel repository i verbali firmati dai proponenti; norma gli strumenti prima di introdurli; aggiorna queste norme con i miglioramenti approvati; presenta il diario di bordo in assenza del Responsabile.
 - Analista: studia capitolati e requisiti, scrive la Valutazione dei capitolati e l'Analisi dei Requisiti, prepara le domande per i proponenti.
 - Progettista: definisce l'architettura e la progettazione di dettaglio.
 - Programmatore: scrive codice e test.
@@ -302,7 +304,7 @@ Procedura:
 + Il redattore scrive il verbale entro 48 ore, secondo la procedura dei verbali.
 
 === Comunicazione
-- Il gruppo si coordina su Telegram. Il canale serve per avvisi, domande brevi e convocazioni.
+- Il gruppo si coordina su Telegram. Il canale serve per avvisi, domande brevi, convocazioni, proporre miglioramenti.
 - Le riunioni si tengono su Discord.
 - Con proponenti e docenti il gruppo scrive solo dalla casella sw2corporation\@gmail.com, gestita dal Responsabile in carica. La casella inoltra ogni messaggio a tutti i membri.
 - Le email ai docenti contengono solo link, mai allegati.
@@ -376,7 +378,61 @@ Ogni membro installa Git, Typst e Python, clona il repository della documentazio
 Chi introduce uno strumento nuovo scrive prima la norma che ne regola l'uso in questo documento.
 
 == Miglioramento
-Il gruppo norma entro il 2026-11-02 il miglioramento dei processi. L'impostazione decisa il 2026-10-16 è questa: quando una retrospettiva o una metrica mostra un problema in un processo, il gruppo apre su quel processo un ciclo PDCA con una metrica e un obiettivo. Il gruppo prova la modifica, ne misura l'effetto e poi la adotta in queste norme, la abbandona o ripete il ciclo. Il verbale di retrospettiva registra ogni ciclo.
+
+=== Scopo e aspettative
+Il miglioramento valuta e corregge il modo di lavorare del gruppo per tutta la durata del progetto. Ha le tre attività di ISO/IEC 12207:1995: la definizione dei processi, cioè queste norme; la valutazione dei processi, nella retrospettiva di ogni sprint; il miglioramento, con il ciclo PDCA (Plan, Do, Check, Act). Il gruppo si aspetta che ogni modifica a un processo nasca da un problema documentato, abbia un obiettivo misurabile, sia approvata a verbale, entri in queste norme e sia verificata dopo l'uso.
+
+Il ciclo PDCA agisce solo sui processi definiti in queste norme, mai sui prodotti. Ha quattro fasi:
+- Plan: il gruppo trova la causa del problema e sceglie una modifica al processo, con un obiettivo e la metrica che lo misura;
+- Do: la modifica entra in queste norme e il gruppo la applica;
+- Check: alla data fissata il gruppo misura l'effetto e lo confronta con l'obiettivo;
+- Act: il gruppo conferma la modifica, la corregge con un nuovo ciclo oppure la toglie.
+
+Un ciclo prende l'identificativo della decisione a verbale che lo apre.
+
+=== Fonti dei miglioramenti
+Un ciclo parte da una di queste fonti:
+- la retrospettiva di uno sprint;
+- una metrica di processo o un indicatore del cruscotto fuori soglia;
+- un rilievo del committente o del proponente sul modo di lavorare del gruppo, per esempio dopo una revisione di avanzamento;
+- un problema segnalato da un membro durante il lavoro, come una norma ambigua o una procedura che blocca il lavoro;
+- un problema che si ripete nei prodotti, per esempio lo stesso errore trovato in più verifiche, quando la causa sta in un processo.
+
+Un rilievo sul modo di lavorare riceve una risposta nel verbale della riunione successiva. Il gruppo lo recepisce con un ciclo oppure lo respinge con una motivazione.
+
+=== Valutazione dei processi
+Quando: nella retrospettiva, cioè nella prima riunione di ogni sprint, sullo sprint appena concluso. Ingressi: il cruscotto, le metriche di processo, le proposte ricevute e i cicli con la verifica in scadenza. Uscite: il punto di retrospettiva del verbale, con decisioni e azioni.
+
+Procedura:
++ Il Responsabile mette la retrospettiva al primo punto dell'ordine del giorno. Vi elenca le proposte ricevute e i cicli da verificare.
++ Il Responsabile dello sprint concluso presenta il cruscotto e le metriche di processo fuori soglia.
++ Ogni membro dice cosa ha funzionato e cosa no nel modo di lavorare, e perché.
++ Il gruppo verifica i cicli in scadenza, con la procedura del ciclo di miglioramento.
++ Per ogni problema di processo il gruppo cerca la causa. Poi apre un ciclo, rimanda il problema alla retrospettiva successiva oppure lo scarta. Un rinvio o uno scarto ha sempre una motivazione.
++ Il redattore riporta nella sintesi del punto cosa ha funzionato, cosa no e le cause trovate.
+
+Strumenti: Discord, cruscotto, verbali.
+
+=== Ciclo di miglioramento
+Quando: per ogni problema di processo che il gruppo decide di affrontare. Ingressi: il problema e la sua evidenza. Uscite: la decisione a verbale, queste norme aggiornate e l'esito della verifica.
+
+Procedura:
++ Ogni membro può proporre un miglioramento in qualsiasi momento. Scrive su Telegram il processo, il problema con la sua evidenza e la modifica proposta.
++ Il Responsabile mette la proposta all'ordine del giorno della prima riunione utile.
++ Il gruppo discute la proposta e cerca la causa del problema. Se la approva, il verbale registra una decisione. Il testo indica il processo, la modifica, l'obiettivo con la sua metrica e la data della verifica. La motivazione riporta il problema e la sua evidenza.
++ La decisione genera l'azione che aggiorna queste norme. La issue ha l'etichetta "miglioramento" e di norma va all'Amministratore.
++ L'assegnatario segue la procedura per scrivere un documento con registro. La descrizione della riga del registro cita la decisione.
++ La modifica vale dall'integrazione su `main`, salvo una data diversa fissata dalla decisione o da queste norme.
++ Alla data della verifica il Responsabile mette il ciclo all'ordine del giorno, di norma nella retrospettiva. Il gruppo misura la metrica e la confronta con l'obiettivo.
++ Una nuova decisione registra l'esito e cita quella del ciclo. Se l'obiettivo è raggiunto, la modifica resta. Altrimenti il gruppo apre un nuovo ciclo oppure toglie la modifica da queste norme, con un'azione e la sua issue.
+
+Se un problema di processo blocca il lavoro e non può aspettare la riunione, il Responsabile decide una misura temporanea e la comunica su Telegram. Il verbale della riunione successiva la conferma con una decisione, che apre il ciclo.
+
+Una correzione di queste norme che non cambia il modo di lavorare, come un errore di scrittura, non richiede un ciclo. Segue la sola procedura per scrivere un documento con registro.
+
+Il Piano di Qualifica elenca i cicli aperti e chiusi, con decisione, obiettivo, metrica, data della verifica ed esito.
+
+Strumenti: Telegram, verbali, issue con l'etichetta "miglioramento", repository della documentazione. Metriche: MPC-07, MPC-08.
 
 == Formazione
 Ogni membro impara uno strumento prima di usarlo nel progetto. La fonte principale è la documentazione ufficiale dello strumento e il `README.md` del repository. Chi conosce già uno strumento prepara una breve sessione per gli altri, nella riunione in cui lo strumento viene adottato. Le lezioni del corso sono la fonte per i processi e i documenti.
@@ -394,6 +450,8 @@ Le metriche di processo hanno codice MPC-nn, quelle di prodotto MPD-nn. I codici
     [MPC-04], [Azioni tracciate], [Azioni dei verbali con issue / azioni totali], [Nessuna azione fuori dal tracciamento], [`strumenti/verifica.py`],
     [MPC-05], [Errori dei controlli automatici], [Numero di errori segnalati dai controlli su `main`], [Repository sempre conforme alle norme], [Workflow `Verifica`],
     [MPC-06], [Issue riaperte], [Issue riaperte nel periodo / issue fatte nel periodo], [Nessun lavoro dichiarato fatto senza esserlo], [Eventi delle issue su GitHub],
+    [MPC-07], [Cicli di miglioramento verificati], [Cicli con l'esito a verbale entro la data della verifica / cicli con la data della verifica scaduta], [Nessuna modifica ai processi senza misura dell'effetto], [Verbali],
+    [MPC-08], [Cicli di miglioramento efficaci], [Cicli chiusi con l'obiettivo raggiunto / cicli chiusi], [Modifiche ai processi utili], [Verbali],
   ),
   caption: [Metriche di processo definite],
 )
