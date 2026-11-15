@@ -2,10 +2,10 @@
 
 #show: presentazione.with(
   evento: "Diario di bordo",
-  data: "2026-11-08",
+  data: "2026-11-09",
   versione: "1.0.0",
-  aggiornato: "2026-11-07",
-  titolo: "Da 2026-11-01 a 2026-11-07",
+  aggiornato: "2026-11-08",
+  titolo: "Da 2026-11-01 a 2026-11-08",
 )
 
 #slide(titolo: "Fatto e da fare")[
