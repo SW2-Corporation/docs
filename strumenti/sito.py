@@ -526,7 +526,7 @@ def evidenzia_cifre(nome):
 def voce(pdf, testo, meta="", nascosto="", sotto=""):
     """Voce di un elenco di documenti: titolo, riga dei dettagli e link per scaricare il PDF.
 
-    Il titolo porta alla pagina di lettura del PDF, con lo stesso nome e l'estensione .html.
+    Il titolo porta alla pagina di lettura del PDF, con lo stesso nome e l'estensione .html, in una nuova scheda.
     `meta` (data, versione) è testo in monospazio; `sotto` è già in HTML e lo segue nella stessa
     riga, per esempio lo stato di approvazione di un verbale. `nascosto` completa il nome dei link
     per chi usa uno screen reader quando più voci hanno lo stesso titolo visibile, per esempio " del 2026-10-14".
@@ -534,7 +534,7 @@ def voce(pdf, testo, meta="", nascosto="", sotto=""):
     extra = f'<span class="sr-only">{e(nascosto)}</span>' if nascosto else ""
     parti = [f'<span class="mono">{e(meta)}</span>' if meta else "", sotto]
     dettaglio = " · ".join(p for p in parti if p)
-    return (f'<a class="titolo" href="{e(pdf.removesuffix(".pdf"))}.html">{e(testo)}{extra}</a>'
+    return (f'<a class="titolo" href="{e(pdf.removesuffix(".pdf"))}.html" target="_blank" rel="noopener">{e(testo)}{extra}{NUOVA_SCHEDA}</a>'
             + (f'<span class="dettaglio">{dettaglio}</span>' if dettaglio else "")
             + f'<a class="pdf" href="{e(pdf)}" download>PDF<span class="sr-only"> di {e(testo)}{e(nascosto)}</span></a>')
 

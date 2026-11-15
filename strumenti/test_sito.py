@@ -103,14 +103,16 @@ class TestSito(unittest.TestCase):
 
     def test_voce_ed_elenco(self):
         riga = sito.voce("a.pdf", "Doc", "v1.0.0", sotto="aggiornato il 2026-10-29")
-        # il titolo apre la pagina di lettura del PDF, nella stessa scheda; il PDF si scarica dal suo link
-        self.assertIn('<a class="titolo" href="a.html">Doc</a>', riga)
+        # il titolo apre la pagina di lettura del PDF in una nuova scheda; il PDF si scarica dal suo link
+        self.assertIn('<a class="titolo" href="a.html" target="_blank" rel="noopener">Doc'
+                      '<span class="sr-only"> (si apre in una nuova scheda)</span></a>', riga)
         self.assertIn('<span class="dettaglio"><span class="mono">v1.0.0</span> · aggiornato il 2026-10-29</span>', riga)
         self.assertIn('<a class="pdf" href="a.pdf" download>PDF<span class="sr-only"> di Doc</span></a>', riga)
-        self.assertNotIn("nuova scheda", riga)
+        self.assertEqual(riga.count("nuova scheda"), 1)
         self.assertNotIn("dettaglio", sito.voce("a.pdf", "Doc"))
         con_data = sito.voce("v.pdf", "Verbale interno", "2026-10-14", nascosto=" del 2026-10-14")
-        self.assertIn('<a class="titolo" href="v.html">Verbale interno<span class="sr-only"> del 2026-10-14</span></a>', con_data)
+        self.assertIn('<a class="titolo" href="v.html" target="_blank" rel="noopener">Verbale interno'
+                      '<span class="sr-only"> del 2026-10-14</span><span class="sr-only"> (si apre in una nuova scheda)</span></a>', con_data)
         self.assertIn('PDF<span class="sr-only"> di Verbale interno del 2026-10-14</span>', con_data)
         self.assertIn('<p class="vuoto">vuoto &amp; basta</p>', sito.elenco([], "vuoto & basta"))
         self.assertIn('<ol class="voci"><li class="voce">riga</li></ol>', sito.elenco(["riga"], "vuoto"))
@@ -182,8 +184,9 @@ class TestSito(unittest.TestCase):
                 voci = sito.diari("typst", out)
             # data e versione nel nome del PDF, il più recente in cima
             self.assertEqual(compilati, ["Diario_di_bordo_2026-11-02.pdf", "Diario_di_bordo_2026-10-26_v1.0.1.pdf"])
-            self.assertIn('<a class="titolo" href="Diario_di_bordo_2026-10-26_v1.0.1.html">Settimana dal 2026-10-19 al 2026-10-25'
-                          '<span class="sr-only">, diario di bordo del 2026-10-26</span></a>', voci[1])
+            self.assertIn('<a class="titolo" href="Diario_di_bordo_2026-10-26_v1.0.1.html" target="_blank" rel="noopener">'
+                          'Settimana dal 2026-10-19 al 2026-10-25<span class="sr-only">, diario di bordo del 2026-10-26</span>'
+                          '<span class="sr-only"> (si apre in una nuova scheda)</span></a>', voci[1])
             self.assertIn('<span class="dettaglio"><span class="mono">2026-10-26 · v1.0.1</span> · '
                           'aggiornato\u00a0il\u00a02026-10-27</span>', voci[1])
             self.assertIn('<a class="pdf" href="Diario_di_bordo_2026-10-26_v1.0.1.pdf" download>', voci[1])
