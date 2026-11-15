@@ -42,7 +42,9 @@
   (
     if d >= 60 { str(calc.quo(d, 60)) + " h" },
     if calc.rem(d, 60) > 0 { str(calc.rem(d, 60)) + " min" },
-  ).filter(x => x != none).join(" ")
+  )
+    .filter(x => x != none)
+    .join(" ")
 }
 
 // "#12" è una issue di questo repo: il link parte da repo in dati/gruppo.toml; di un altro repo serve l'URL completo
@@ -122,29 +124,47 @@
   ]
 ]
 
-= Decisioni
-#if elenco("decisione").len() == 0 [Nessuna decisione presa.] else {
-  figure(
-    table(
-      columns: (auto, 3fr, 2fr),
-      table.header([ID], [Decisione], [Motivazione]),
-      ..elenco("decisione").map(d => (d.id, d.testo, d.motivazione)).flatten(),
-    ),
-    caption: [Decisioni prese],
+= Decisioni e azioni
+#let decisioni = elenco("decisione")
+#let azioni = elenco("azione")
+// un'azione senza la sua decisione sparirebbe dalla tabella
+#for a in azioni {
+  assert(
+    decisioni.any(d => d.id == a.decisione),
+    message: "azione riferita a una decisione inesistente: " + a.decisione,
   )
 }
-
-= Azioni
-#if elenco("azione").len() == 0 [Nessuna azione assegnata.] else {
+#if decisioni.len() == 0 [Nessuna decisione presa.] else {
+  let colonna-id(id, ultima: false) = table.cell(
+    fill: palette.zebra,
+    align: left + top,
+    ..if not ultima { (stroke: (bottom: none)) },
+    id,
+  )
+  let blocco(d) = {
+    let sue = azioni.filter(a => a.decisione == d.id)
+    let righe = if sue.len() == 0 {
+      ((table.cell(colspan: 4, text(fill: palette.tenue)[Nessuna azione]),),)
+    } else {
+      sue.map(a => (a.descrizione, a.assegnatario, data-it(a.scadenza), issue(a.at("issue", default: ""))))
+    }
+    (
+      table.header(level: 2, colonna-id(d.id), table.cell(colspan: 4, fill: palette.zebra, stack(
+        spacing: 0.6em,
+        d.testo,
+        text(size: 9pt, fill: palette.tenue)[Motivazione: #d.motivazione],
+      ))),
+      ..righe.enumerate().map(((i, riga)) => (colonna-id([], ultima: i == righe.len() - 1), ..riga)).flatten(),
+    )
+  }
   figure(
     table(
       columns: (auto, 1fr, auto, auto, auto),
-      table.header([Decisione], [Azione], [Assegnatario], [Scadenza], [Issue]),
-      // ID completo della decisione per massima tracciabilità
-      ..elenco("azione")
-        .map(a => (a.decisione, a.descrizione, a.assegnatario, data-it(a.scadenza), issue(a.at("issue", default: ""))))
-        .flatten(),
+      // niente righe alternate: il grigio distingue le decisioni dalle azioni
+      fill: (_, y) => if y == 0 { palette.accento },
+      table.header([ID], [Decisione e azioni], [Assegnatario], [Scadenza], [Issue]),
+      ..decisioni.map(blocco).flatten(),
     ),
-    caption: [Azioni assegnate],
+    caption: [Decisioni prese e azioni assegnate],
   )
 }
