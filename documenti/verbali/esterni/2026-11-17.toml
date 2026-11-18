@@ -1,0 +1,171 @@
+tipo = "esterno"
+data = 2026-11-17
+versione = "1.0.0"
+aggiornato = 2026-11-18
+inizio = "15:03"
+fine = "16:00"
+luogo = "Google Meet"
+redattore = "Matteo Bellato"
+verificatore = "Davide Baraldo"
+partecipanti = [
+  "Davide Baraldo",
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = []
+approvazione_esterna = ""
+titolo = "Incontro di avvio per il capitolato C9 (SpecCheck)"
+ordine_del_giorno = [
+  "Organizzazione e cadenza degli incontri di avanzamento con Zucchetti",
+  "Scelta dell'agente di harness e versioni di OpenCode",
+  "Linguaggio di sviluppo dei plugin",
+  "Formato dei diagrammi e formalizzazione della specifica dei casi d'uso",
+  "Integrazione con OpenSpec (proposal, design, tasks)",
+  "Trattamento dei requisiti non funzionali e separazione tra analisi e progettazione",
+  "Definizione della mancata coincidenza e controllo di conformità",
+  "Delimitazione del perimetro di SpecCheck rispetto al codice",
+  "Materiale di prova per la verifica",
+  "Infrastruttura computazionale e disponibilità di modelli LLM",
+  "Licenze software e modalità di lavoro congiunto",
+]
+
+[[esterni]]
+nome = "Gregorio Piccoli"
+ruolo = "Referente aziendale"
+azienda = "Zucchetti S.p.A."
+
+[[punto]]
+titolo = "Organizzazione e cadenza degli incontri di avanzamento con Zucchetti"
+sintesi = """Gregorio Piccoli ha chiarito che gli incontri si tengono singolarmente con ciascun gruppo per rispettare ritmi e soluzioni autonome. Il proponente chiede di incontrarsi almeno prima di ciascuna delle tre tappe cardine del progetto didattico: la chiusura dell'Analisi dei Requisiti, la presentazione del Proof of Concept e la consegna dell'MVP. Per qualsiasi dubbio intermedio, il referente è disponibile per ulteriori sessioni da remoto o per incontri di persona presso la sede aziendale."""
+
+[[punto]]
+titolo = "Scelta dell'agente di harness e versioni di OpenCode"
+sintesi = """Il gruppo ha chiesto se Zucchetti usi una versione specifica di OpenCode, perché tra la v1 e la v2 cambia il modo di scrivere i plugin. Il referente ha spiegato che Zucchetti non usa una versione fissa: internamente convivono la v1 e la v2. Zucchetti consiglia OpenCode per la sua facilità nel lavorarci sopra, ma accetta anche alternative come Pi Agent o Claude Code: l'importante è che l'agente di harness permetta di scrivere skill e plugin."""
+
+[[punto]]
+titolo = "Linguaggio di sviluppo dei plugin"
+sintesi = """Davide Baraldo ha chiesto conferma che i plugin di OpenCode si scrivano in TypeScript. Il proponente ha indicato TypeScript o JavaScript come punto di partenza, da cui si possono agganciare altri linguaggi: tra gli esempi di plugin per OpenCode ce ne sono anche in Python. Scrivere direttamente in TypeScript evita un passaggio."""
+
+[[punto]]
+titolo = "Formato dei diagrammi e formalizzazione della specifica dei casi d'uso"
+sintesi = """Per la rappresentazione dei diagrammi dei casi d'uso sono stati suggeriti i formati testuali dichiarativi Mermaid e PlantUML, preferiti rispetto ai formati immagine (PNG/JPEG) per ridurre la complessità. La lettura di formati immagine resta comunque come possibile funzione da esplorare. Il proponente ha evidenziato che la semantica di un caso d'uso risiede principalmente nel testo che lo accompagna. Ha quindi suggerito di definire regole per scrivere questo testo, così che l'LLM lo interpreti correttamente: disambiguare del tutto una specifica è difficile, ma l'ambiguità va tenuta bassa."""
+
+[[punto]]
+titolo = "Integrazione con OpenSpec (proposal, design, tasks)"
+sintesi = """Gregorio Piccoli ha presentato OpenSpec (openspec.dev), il sistema di gestione delle specifiche che Zucchetti usa per governare le modifiche al codice, e ne ha mostrato l'uso in un proprio progetto. Per ogni intervento OpenSpec non implementa subito, ma scrive tre file: proposal.md, la richiesta esaminata e ampliata con i punti critici; design.md, con contesto, obiettivi, decisioni e progettazione tecnica; tasks.md, l'elenco dei compiti. L'implementazione parte poi con il comando apply. Attualmente OpenSpec genera la proposta a partire da chat informali. L'obiettivo raccomandato per SpecCheck è innestarsi a monte di OpenSpec, facendo sì che la proposta derivi da casi d'uso rigorosi. Secondo il proponente, i casi d'uso possono essere già scritti oppure elicitati da una skill che intervista l'utente, come fa Grill me di Matt Pocock. Aprendo la proposta, il proponente vorrebbe ritrovare i diagrammi dei casi d'uso e come il sistema li ha interpretati, per capire se l'LLM ha compreso la richiesta."""
+
+[[punto]]
+titolo = "Trattamento dei requisiti non funzionali e separazione tra analisi e progettazione"
+sintesi = """Alla domanda su come trattare aspetti non riconducibili ai casi d'uso, come prestazioni e sicurezza, il proponente ha descritto due passaggi. Prima gli analisti funzionali raccolgono le richieste dei clienti come casi d'uso, senza dettagli tecnici. Poi le richieste confluiscono nei requisiti, rivisti anche dalla parte tecnica: è qui che entrano i requisiti non funzionali. Casi d'uso e requisiti diventano infine la specifica data all'agente di harness. Il proponente ha sottolineato che l'analisi deve dire cosa si vuole ottenere, non come realizzarlo."""
+
+[[punto]]
+titolo = "Definizione della mancata coincidenza e controllo di conformità"
+sintesi = """Il proponente ha chiarito la mancata coincidenza citata nel capitolato. I casi d'uso raccolti nell'analisi, che il proponente chiama pre-proposta, proseguono in OpenSpec, che ne ricava una proposta con un design di realizzazione (proposal.md e design.md). Proposta e design devono contenere i casi d'uso della pre-proposta; se i documenti trattano argomenti diversi, la mancata coincidenza va segnalata. L'elenco dei compiti in tasks.md non interessa ai fini del controllo. Secondo il proponente il controllo potrebbe essere una skill che cerca nella proposta il contenuto della pre-proposta."""
+
+[[punto]]
+titolo = "Delimitazione del perimetro di SpecCheck rispetto al codice"
+sintesi = """Davide Baraldo ha chiesto se il plugin debba limitarsi a ragionare sulle specifiche, come le skill Grill me, partendo anche da casi d'uso già scritti e senza intervenire sul codice. Il proponente ha risposto di lasciare la scrittura del codice all'agente di harness, che pianifica ed esegue materialmente lo sviluppo, e di affiancargli un sistema di skill per gestire le specifiche, come OpenSpec o la raccolta Grill me di Matt Pocock."""
+
+[[punto]]
+titolo = "Materiale di prova per la verifica"
+sintesi = """Davide Baraldo ha chiesto se Zucchetti fornisca materiale su cui provare la verifica o se debba prepararlo il gruppo. Il proponente ha riferito che, secondo il committente, Prof. Tullio Vardanega, il corso indica già diversi siti con esempi di progetti. Ha quindi suggerito di usare uno di questi esempi, un progetto precedente del gruppo oppure un progetto inventato, che si può anche concordare con il proponente."""
+
+[[punto]]
+titolo = "Infrastruttura computazionale e disponibilità di modelli LLM"
+sintesi = """Gregorio Piccoli ha confermato che in caso di necessità Zucchetti darà accesso al gruppo ad endpoint API sulle macchine aziendali, sui quali sono operativi modelli avanzati. Inoltre, il proponente ha confermato che il gruppo potrà utilizzare sia i modelli già integrati gratuitamente nell'harness OpenCode, sia modelli open-weight eseguiti in locale per lo sviluppo e il testing rapido."""
+
+[[punto]]
+titolo = "Licenze software e modalità di lavoro congiunto"
+sintesi = """Il referente ha espresso la preferenza di Zucchetti per licenze open source e per OpenCode rispetto a Claude Code, senza porre vincoli: conta più la discussione che la scelta della licenza. Il gruppo sceglierà le tecnologie in autonomia, mantenendo il canale email aperto per allineamenti e valutando una visita conoscitiva in sede."""
+
+[[decisione]]
+id = "VE-2026-11-17.1"
+testo = "Mantenere il perimetro del capitolato, con tutti i requisiti obbligatori: SpecCheck verifica anche il codice, ma non lo scrive, perché la scrittura resta all'agente di harness. Aggiungere l'elicitazione dei casi d'uso come requisito opzionale. Chiedere al proponente di confermare per iscritto se proposal.md e design.md valgono come specifiche dei requisiti del capitolato."
+motivazione = "Il proponente ha indicato di lasciare la scrittura del codice all'agente di harness, come già prevede il capitolato: la verifica del codice resta tra i requisiti obbligatori. L'elicitazione l'ha proposta il proponente come possibile skill, e i requisiti opzionali li possono aggiungere i gruppi. Un'interpretazione fissata per iscritto riduce il rischio di un progetto troppo aperto."
+
+[[decisione]]
+id = "VE-2026-11-17.2"
+testo = "Sviluppare SpecCheck come estensione di OpenCode, fissando la versione da usare, e integrarlo con OpenSpec a monte della proposta: la proposta deve nascere dai casi d'uso e mostrarne i diagrammi con l'interpretazione data dal sistema."
+motivazione = "Il capitolato chiede estensioni per OpenCode e indica OpenSpec come esempio di architettura. Il proponente usa OpenSpec e vuole capire dalla proposta se l'LLM ha compreso i casi d'uso. La versione va fissata perché tra la v1 e la v2 cambia il modo di scrivere i plugin."
+
+[[decisione]]
+id = "VE-2026-11-17.3"
+testo = "Descrivere i casi d'uso letti da SpecCheck in Markdown, con i diagrammi in Mermaid o PlantUML e il testo scritto secondo regole fisse, da rivedere alla luce dello studio del proponente sull'estensione dei casi d'uso."
+motivazione = "Il proponente ha suggerito i due formati testuali e regole di scrittura per il testo: il diagramma dei casi d'uso dice poco, e un testo libero rischia di essere interpretato male dall'LLM. Regole fisse riducono l'ambiguità, anche se non la eliminano. La scelta tra Mermaid e PlantUML richiede una prova sul supporto dei diagrammi dei casi d'uso."
+
+[[decisione]]
+id = "VE-2026-11-17.4"
+testo = "Realizzare il controllo della mancata coincidenza come skill che cerca in proposal.md e design.md i casi d'uso della pre-proposta e segnala quelli che non trova, prima che OpenSpec passi all'implementazione."
+motivazione = "Lo ha suggerito il proponente. Un controllo prima dell'implementazione intercetta le proposte che si allontanano dai casi d'uso quando correggerle costa ancora poco."
+
+[[decisione]]
+id = "VE-2026-11-17.5"
+testo = "Usare per sviluppo e test i modelli gratuiti di OpenCode e modelli open-weight eseguiti in locale, e chiedere a Zucchetti l'accesso ai modelli sulle sue macchine quando serve."
+motivazione = "Il capitolato prevede che Zucchetti dia accesso a modelli grandi, con un limite di costo, e a modelli piccoli senza limiti, per verificare la solidità di SpecCheck anche con LLM ridotti. All'incontro il proponente ha confermato l'accesso su richiesta."
+
+[[decisione]]
+id = "VE-2026-11-17.6"
+testo = "Incontrare il proponente almeno prima della chiusura dell'Analisi dei Requisiti, del Proof of Concept e dell'MVP, e a breve per conoscere il suo studio sull'estensione dei casi d'uso. Tra un incontro e l'altro gli allineamenti avvengono via email, con la possibilità di incontri in sede."
+motivazione = "Il proponente chiede di incontrarsi almeno prima di ogni tappa e si è offerto per un nuovo incontro, da remoto o in sede, anche per presentare il suo studio sui casi d'uso."
+
+[[decisione]]
+id = "VE-2026-11-17.7"
+testo = "Usare come materiale di prova un progetto inventato, con casi d'uso e documenti di OpenSpec che contengono discrepanze note."
+motivazione = "Il proponente accetta anche un progetto inventato e si è offerto di discuterlo con il gruppo. Le discrepanze note permettono di misurare quante ne rileva SpecCheck."
+
+[[decisione]]
+id = "VE-2026-11-17.8"
+testo = "Avviare il Proof of Concept nello sprint in corso, in parallelo all'Analisi dei Requisiti. Prima si aggiornano le Norme di Progetto con gli strumenti del PoC, il repository del prodotto e le regole di codifica. Poi si parte dall'ambiente di sviluppo e dal prototipo della skill di confronto, previsti dalle decisioni VE-2026-11-17.2 e VE-2026-11-17.4."
+motivazione = "Il capitolato consiglia di dedicare il PoC soprattutto agli algoritmi di confronto e alla lettura dei diagrammi dei casi d'uso. Sono le parti basate sulle capacità degli LLM, che secondo il capitolato potrebbero non essere definite in modo certo. I loro esiti servono all'Analisi dei Requisiti per fissare formati e controlli realizzabili. Con il passaggio a C9 il tempo utile si è inoltre ridotto di circa tre settimane. Le Norme di Progetto chiedono di normare strumenti nuovi, repository del prodotto e codifica prima di usarli."
+
+[[azione]]
+decisione = "VE-2026-11-17.1"
+descrizione = "Inviare via email a Zucchetti (gregorio.piccoli@zucchetti.it) il presente verbale per approvazione formale, chiedendo conferma per iscritto che proposal.md e design.md valgono come specifiche dei requisiti."
+assegnatario = "Oussama Mahdi"
+scadenza = 2026-11-23
+issue = "#139"
+
+[[azione]]
+decisione = "VE-2026-11-17.2"
+descrizione = "Allestire l'ambiente di sviluppo del PoC con OpenCode e la CLI di OpenSpec, nelle versioni fissate dalle Norme di Progetto."
+assegnatario = "Alessandro Paduret"
+scadenza = 2026-11-25
+issue = "#140"
+
+[[azione]]
+decisione = "VE-2026-11-17.3"
+descrizione = "Definire una prima versione del modello di scrittura dei casi d'uso letti da SpecCheck, scegliendo tra Mermaid e PlantUML per i diagrammi, da rivedere quando il proponente avrà illustrato il suo studio sull'estensione dei casi d'uso."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-11-24
+issue = "#141"
+
+[[azione]]
+decisione = "VE-2026-11-17.4"
+descrizione = "Sviluppare il prototipo per il PoC della skill che confronta i casi d'uso con proposal.md e design.md."
+assegnatario = "David Sirbu"
+scadenza = 2026-11-30
+issue = "#142"
+
+[[azione]]
+decisione = "VE-2026-11-17.6"
+descrizione = "Proporre a Gregorio Piccoli le date per il prossimo incontro, dedicato anche allo studio del proponente sull'estensione dei casi d'uso."
+assegnatario = "Oussama Mahdi"
+scadenza = 2026-11-23
+issue = "#143"
+
+[[azione]]
+decisione = "VE-2026-11-17.7"
+descrizione = "Preparare il progetto di prova, con le discrepanze note e il loro elenco, per misurare l'accuratezza di SpecCheck."
+assegnatario = "Patrizio Eleuteri"
+scadenza = 2026-11-29
+issue = "#144"
+
+[[azione]]
+decisione = "VE-2026-11-17.8"
+descrizione = "Aggiornare le Norme di Progetto con gli strumenti del PoC e le loro versioni, il repository del prodotto e le regole di codifica, prima di allestire l'ambiente di sviluppo."
+assegnatario = "Alessandro Paduret"
+scadenza = 2026-11-23
+issue = "#145"
