@@ -1,7 +1,7 @@
 tipo = "esterno"
 data = 2026-11-17
-versione = "1.0.0"
-aggiornato = 2026-11-18
+versione = "1.0.1"
+aggiornato = 2026-11-19
 inizio = "15:03"
 fine = "16:00"
 luogo = "Google Meet"
@@ -16,7 +16,7 @@ partecipanti = [
   "David Sirbu",
 ]
 assenti = []
-approvazione_esterna = ""
+approvazione_esterna = "Approvato con firma il 2026-11-19"
 titolo = "Incontro di avvio per il capitolato C9 (SpecCheck)"
 ordine_del_giorno = [
   "Organizzazione e cadenza degli incontri di avanzamento con Zucchetti",
