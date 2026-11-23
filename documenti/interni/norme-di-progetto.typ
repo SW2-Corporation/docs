@@ -30,6 +30,7 @@ I termini con un significato specifico per il progetto stanno nel glossario del 
 - #rif-web("Regolamento del progetto didattico di Ingegneria del Software 2026/27 (PD1)", "https://www.math.unipd.it/~tullio/IS-1/2026/Dispense/PD1.pdf", "2026-10-18").
 - Verbale interno 2026-10-16, con le decisioni sul modo di lavorare del gruppo.
 - Verbale interno 2026-11-02, con le decisioni sulle procedure operative.
+- Verbale esterno 2026-11-17, con le decisioni sull'estensione di OpenCode e sull'avvio dello sviluppo (VE-2026-11-17.2, VE-2026-11-17.8).
 
 === Riferimenti informativi
 - ISO/IEC 12207:1995, Information technology, Software life cycle processes: la tassonomia dei processi usata in questo documento.
@@ -37,6 +38,8 @@ I termini con un significato specifico per il progetto stanno nel glossario del 
 - #rif-web("K. Schwaber, J. Sutherland, The Scrum Guide, novembre 2020", "https://scrumguides.org/scrum-guide.html", "2026-10-20").
 - #rif-web("Processi di ciclo di vita, lezione T02 di Ingegneria del Software 2026/27", "https://www.math.unipd.it/~tullio/IS-1/2026/Dispense/T02.pdf", "2026-11-15").
 - #rif-web("Gestione di progetto, lezione T04 di Ingegneria del Software 2026/27", "https://www.math.unipd.it/~tullio/IS-1/2026/Dispense/T04.pdf", "2026-11-15").
+- #rif-web("OpenCode, Plugins", "https://opencode.ai/docs/build/plugins/", "2026-11-23").
+- #rif-web("OpenSpec, Documentation", "https://openspec.dev/docs/", "2026-11-23").
 
 == Struttura del documento
 I processi seguono la tassonomia di ISO/IEC 12207:1995, adattata al progetto. Un processo è un insieme di attività, mai un documento o un prodotto. Ogni processo ha:
@@ -87,7 +90,33 @@ Procedura:
 Strumenti: repository della documentazione, sito, casella email del gruppo. Metriche: MPC-03, MPC-05.
 
 == Sviluppo
-Le attività di analisi dei requisiti, progettazione, codifica, integrazione e test iniziano dopo l'aggiudicazione. Il gruppo le norma prima di avviarle. Le norme di progettazione e di codifica entrano in questo documento prima del primo sprint che le prevede.
+
+=== Scopo e aspettative
+Il processo di sviluppo produce il software del capitolato: prima il #g("PoC"), poi l'MVP. Dal 2026-11-17 il gruppo sviluppa il PoC in parallelo all'Analisi dei Requisiti (VE-2026-11-17.8). Il gruppo si aspetta codice tipizzato, provato da test automatici e integrato su `main` solo dopo una verifica indipendente.
+
+Il gruppo norma ogni attività prima di avviarla. Le norme di analisi dei requisiti e di progettazione entrano in questo documento prima dello sprint che le prevede.
+
+=== Codifica del PoC
+Quando: a ogni modifica del codice nel repository del prodotto. Ingressi: la issue con i criteri di accettazione. Uscite: codice e test integrati su `main`.
+
+Regole:
+- Il codice è in TypeScript. Il controllo dei tipi usa la modalità `strict` del file `tsconfig.json` del repository.
+- Il codice usa solo sintassi che Node.js toglie senza trasformarla (`erasableSyntaxOnly`): niente `enum`, `namespace` né proprietà dichiarate nei parametri dei costruttori.
+- Gli import locali riportano l'estensione `.ts`, per esempio `import { descriviStato } from "./stato.ts"`.
+- Nomi, commenti e messaggi sono in italiano. Restano in inglese i nomi imposti dalle interfacce di OpenCode e di OpenSpec.
+- Solo il punto d'ingresso del plugin e gli adattatori verso l'esterno usano l'interfaccia dei plugin di OpenCode. Il resto del codice non dipende da OpenCode.
+- La logica si prova con test automatici che non richiedono OpenCode né un LLM. I test stanno in `test/`, in file con il suffisso `.test.ts`, e usano il modulo `node:test` di Node.js.
+- L'architettura del prodotto e le sue motivazioni stanno nella Specifica Tecnica. Queste regole non la fissano.
+- Il repository non contiene segreti. Chiavi, password e token stanno nelle variabili d'ambiente o nella configurazione locale di OpenCode.
+- Ogni dipendenza ha la versione esatta in `package.json` e in `package-lock.json`. Una dipendenza nuova entra solo dopo che la tabella degli strumenti di queste norme la riporta.
+
+Procedura:
++ Il Programmatore apre nel repository del prodotto il branch della issue.
++ Il Programmatore scrive i test della logica, poi il codice che li supera.
++ Il Programmatore esegue in locale `npm run verifica`, cioè controllo dei tipi e test, e corregge ogni errore.
++ Il Programmatore apre la pull request secondo la procedura della gestione della configurazione.
+
+Strumenti: Node.js, npm, TypeScript, OpenCode, CLI di OpenSpec, repository del prodotto. Metriche: MPC-02, MPC-05.
 
 = Processi di supporto
 
@@ -183,7 +212,9 @@ Strumenti: repository della documentazione, controlli automatici, modello del di
 La gestione della configurazione conserva la storia di ogni prodotto del gruppo e ne controlla le modifiche. Il gruppo si aspetta che ogni modifica sia tracciata da una issue, passi da una pull request verificata e che il sito mostri solo versioni approvate.
 
 === Repository
-Il gruppo lavora nell'organizzazione GitHub SW2-Corporation. Il repository `docs` è pubblico e contiene la documentazione: dati del gruppo, modello Typst, documenti, verbali, strumenti di controllo e workflow. Il repository del prodotto nasce dopo l'aggiudicazione e viene normato prima dell'uso.
+Il gruppo lavora nell'organizzazione GitHub SW2-Corporation, con due repository pubblici:
+- `docs`, il repository della documentazione: dati del gruppo, modello Typst, documenti, verbali, strumenti di controllo e workflow;
+- `speccheck`, il repository del prodotto: il codice di SpecCheck, a partire dal PoC.
 
 La struttura del repository della documentazione è fissa:
 - `dati/`: gruppo, ruoli, ore, preventivo, glossario;
@@ -195,6 +226,16 @@ La struttura del repository della documentazione è fissa:
 - `modello/`: il modello Typst;
 - `strumenti/`: controlli automatici, test e generazione del sito.
 
+La struttura del repository del prodotto è fissa:
+- `src/`: il codice del plugin e la logica di SpecCheck;
+- `test/`: i test automatici;
+- `.opencode/plugins/speccheck/`: il punto d'ingresso da cui OpenCode carica il plugin;
+- `esempi/`: i progetti di prova, con casi d'uso e modifiche proposte di OpenSpec con discrepanze note (VE-2026-11-17.7);
+- `strumenti/`: i controlli dell'ambiente di sviluppo;
+- `.github/`: workflow e modelli di issue e pull request;
+- `package.json` e `package-lock.json`: le dipendenze, con le versioni esatte;
+- `README.md`: installazione e avvio dell'ambiente, esecuzione dei test e delle skill.
+
 === Branch e commit
 Il branch `main` contiene solo lavoro verificato. Nessuno scrive direttamente su `main`: ogni modifica nasce in un branch e arriva su `main` con una pull request.
 
@@ -205,16 +246,23 @@ I branch prendono il nome dal tipo di lavoro:
 - `dati/argomento` per i dati del gruppo;
 - `sito/argomento` per modello, strumenti e sito.
 
+Nel repository del prodotto valgono le stesse regole, con altri tipi di lavoro:
+- `funzione/argomento` per una funzione nuova o estesa, per esempio `funzione/confronto-casi-d-uso`;
+- `correzione/argomento` per la correzione di un difetto;
+- `ambiente/argomento` per dipendenze, configurazione di OpenCode, controlli e workflow.
+
 Ogni commit porta l'identità git del membro, con nome e cognome. Il messaggio è in italiano. La prima riga descrive la modifica in al massimo 72 caratteri. Il corpo cita la issue con il suo numero, per esempio "Rif. \#12".
 
 === Pull request
 Procedura:
 + L'autore apre la pull request verso `main`. Il titolo dice cosa cambia. La descrizione cita la issue nella forma `Closes #N`, così l'integrazione la chiude, e riporta il contenuto della modifica e come verificarla.
 + I controlli automatici devono risultare verdi. Un errore si corregge nel contenuto, mai nel controllo.
-+ L'autore chiede la verifica a un membro diverso da sé. Per un documento è un Verificatore, per il sito e gli strumenti l'Amministratore o un Verificatore.
++ L'autore chiede la verifica a un membro diverso da sé. Per un documento e per il codice del prodotto è un Verificatore, per il sito e gli strumenti l'Amministratore o un Verificatore.
 + Il verificatore controlla la modifica con la #g("Definition of Done") e scrive l'esito come revisione della pull request: approvata oppure con le modifiche richieste.
 + A esito positivo il verificatore integra la pull request con un commit di merge, senza riscrivere la storia.
 + L'integrazione chiude la issue collegata.
+
+Nel repository del prodotto il workflow `Verifica` esegue `npm run verifica` a ogni pull request e a ogni integrazione: controllo dei tipi e test. La protezione di `main` ha le stesse regole del repository della documentazione.
 
 Strumenti: GitHub, GitHub Actions. Metriche: MPC-02, MPC-05.
 
@@ -366,6 +414,12 @@ Strumenti: Telegram, issue.
     [Typst], [Compilazione dei documenti con il modello del gruppo], [0.15.1],
     [Python], [Controlli automatici, test e generazione del sito, senza librerie esterne], [3.11 o successiva],
     [Git], [Controllo di versione, con l'identità del membro], [--],
+    [OpenCode], [Agente di harness che carica il plugin di SpecCheck; pacchetto npm `@opencode/cli`], [2.3.2],
+    [Interfaccia dei plugin di OpenCode], [Scrittura del plugin con `Plugin.define`; pacchetto npm `@opencode/plugin`], [2.3.2],
+    [CLI di OpenSpec], [Sistema di specifiche con cui SpecCheck si integra: generazione e lettura delle modifiche proposte nelle prove e nei progetti di prova (VE-2026-11-17.2, VE-2026-11-17.7); pacchetto npm `@fission-ai/openspec`], [2.1.1],
+    [TypeScript], [Linguaggio del plugin e della logica di SpecCheck, con il controllo dei tipi di `tsc`. Il plugin lo esegue OpenCode, test e controlli li esegue Node.js], [7.0.2],
+    [Node.js], [Ambiente di esecuzione di test, controlli e CLI; esegue TypeScript senza compilarlo], [26 LTS],
+    [npm], [Installazione delle dipendenze con le versioni esatte di `package-lock.json`], [quella di Node.js 26],
     [Discord], [Riunioni], [--],
     [Telegram], [Coordinamento interno], [--],
     [Casella email del gruppo], [Comunicazioni con proponenti e docenti], [--],
@@ -374,6 +428,8 @@ Strumenti: Telegram, issue.
 )
 
 Ogni membro installa Git, Typst e Python, clona il repository della documentazione e imposta nome e cognome nella configurazione git del clone. Il file `README.md` del repository spiega i comandi: `make` compila i documenti, `make verifica` esegue i controlli, `make test` esegue i test, `make sito` genera il sito in locale.
+
+Per il repository del prodotto ogni membro installa anche Node.js 26. Nel clone esegue `npm ci`, che installa OpenCode, la CLI di OpenSpec e TypeScript nelle versioni della tabella. Avvia OpenCode dal clone con `npm run opencode`, che usa la versione fissata e non un'eventuale installazione globale. Il file `README.md` del repository del prodotto spiega i comandi.
 
 Chi introduce uno strumento nuovo scrive prima la norma che ne regola l'uso in questo documento.
 
