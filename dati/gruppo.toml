@@ -7,8 +7,8 @@ sito = "https://sw2-corporation.github.io/docs/"   # URL GitHub Pages con "/" fi
 repo = "https://github.com/SW2-Corporation/docs"
 
 [progetto]
-capitolato = "C8 - Sonar"
-proponente = "Halue S.r.l. SB"
+capitolato = "C9 - SpecCheck"
+proponente = "Zucchetti S.p.A."
 costo_aggiudicato = 0.0   # 0 prima dell'aggiudicazione
 consegna_prevista = "2027-03-19"  # AAAA-MM-GG
 
