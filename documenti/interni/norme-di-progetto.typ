@@ -216,6 +216,8 @@ Il gruppo lavora nell'organizzazione GitHub SW2-Corporation, con due repository 
 - `docs`, il repository della documentazione: dati del gruppo, modello Typst, documenti, verbali, strumenti di controllo e workflow;
 - `speccheck`, il repository del prodotto: il codice di SpecCheck, a partire dal PoC.
 
+Il codice del repository del prodotto è distribuito con la licenza open source MIT, riportata nel file `LICENSE`.
+
 La struttura del repository della documentazione è fissa:
 - `dati/`: gruppo, ruoli, ore, preventivo, glossario;
 - `documenti/esterni/gestionali/` e `documenti/esterni/tecnici/`: documenti esterni con registro;
@@ -231,10 +233,10 @@ La struttura del repository del prodotto è fissa:
 - `test/`: i test automatici;
 - `.opencode/plugins/speccheck/`: il punto d'ingresso da cui OpenCode carica il plugin;
 - `esempi/`: i progetti di prova, con casi d'uso e modifiche proposte di OpenSpec con discrepanze note (VE-2026-11-17.7);
-- `strumenti/`: i controlli dell'ambiente di sviluppo;
 - `.github/`: workflow e modelli di issue e pull request;
-- `package.json` e `package-lock.json`: le dipendenze, con le versioni esatte;
-- `README.md`: installazione e avvio dell'ambiente, esecuzione dei test e delle skill.
+- `package.json`, `package-lock.json` e `.npmrc`: le dipendenze, con le versioni esatte, e la versione di Node.js;
+- `README.md`: installazione e avvio dell'ambiente, esecuzione dei test e delle skill;
+- `LICENSE`: il testo della licenza MIT.
 
 === Branch e commit
 Il branch `main` contiene solo lavoro verificato. Nessuno scrive direttamente su `main`: ogni modifica nasce in un branch e arriva su `main` con una pull request.
@@ -262,7 +264,7 @@ Procedura:
 + A esito positivo il verificatore integra la pull request con un commit di merge, senza riscrivere la storia.
 + L'integrazione chiude la issue collegata.
 
-Nel repository del prodotto il workflow `Verifica` esegue `npm run verifica` a ogni pull request e a ogni integrazione: controllo dei tipi e test. La protezione di `main` ha le stesse regole del repository della documentazione.
+Nel repository del prodotto il workflow `Verifica` installa le dipendenze con `npm ci` su una macchina pulita, controlla che OpenCode risponda con la versione fissata ed esegue `npm run verifica` a ogni pull request e a ogni integrazione: controllo dei tipi e test. La protezione di `main` ha le stesse regole del repository della documentazione.
 
 Strumenti: GitHub, GitHub Actions. Metriche: MPC-02, MPC-05.
 
@@ -429,7 +431,7 @@ Strumenti: Telegram, issue.
 
 Ogni membro installa Git, Typst e Python, clona il repository della documentazione e imposta nome e cognome nella configurazione git del clone. Il file `README.md` del repository spiega i comandi: `make` compila i documenti, `make verifica` esegue i controlli, `make test` esegue i test, `make sito` genera il sito in locale.
 
-Per il repository del prodotto ogni membro installa anche Node.js 26. Nel clone esegue `npm ci`, che installa OpenCode, la CLI di OpenSpec e TypeScript nelle versioni della tabella. Avvia OpenCode dal clone con `npm run opencode`, che usa la versione fissata e non un'eventuale installazione globale. Il file `README.md` del repository del prodotto spiega i comandi.
+Per il repository del prodotto ogni membro installa anche Node.js 26. Il file `.npmrc` del repository contiene `engine-strict=true`, così npm non installa le dipendenze con una versione di Node.js diversa. Nel clone il membro esegue `npm ci`, che installa OpenCode, la CLI di OpenSpec e TypeScript nelle versioni della tabella. Avvia OpenCode dal clone con `npm run opencode`, che usa la versione fissata e non un'eventuale installazione globale. Il file `README.md` del repository del prodotto spiega i comandi.
 
 Chi introduce uno strumento nuovo scrive prima la norma che ne regola l'uso in questo documento.
 
