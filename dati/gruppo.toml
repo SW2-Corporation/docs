@@ -9,7 +9,7 @@ repo = "https://github.com/SW2-Corporation/docs"
 [progetto]
 capitolato = "C9 - SpecCheck"
 proponente = "Zucchetti S.p.A."
-costo_aggiudicato = 0.0   # 0 prima dell'aggiudicazione
+costo_aggiudicato = 10330.0   # preventivo ridotto per C9 (VI-2026-11-13.3)
 consegna_prevista = "2027-03-19"  # AAAA-MM-GG
 
 [soglie]
