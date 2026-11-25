@@ -60,3 +60,5 @@ Supabase
 NEXUM
 Valentino Baraldo
 GitHub
+SpecCheck
+Gregorio Piccoli
