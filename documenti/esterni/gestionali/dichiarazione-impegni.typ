@@ -103,7 +103,7 @@ I termini tecnici o con significato specifico nel contesto del progetto sono rac
 - Verbale esterno 2026-11-17, approvato con firma da Zucchetti il 2026-11-19, con l'interpretazione del capitolato C9 concordata con il proponente (VE-2026-11-17.1, VE-2026-11-17.2, VE-2026-11-17.3, VE-2026-11-17.4 e VE-2026-11-17.7).
 
 === Riferimenti informativi
-- #rif-web("Capitolato C9: SpecCheck -- Sviluppo di Skills per OpenCode per la verifica della tracciabilità end-to-end da casi d'uso a requisiti e codice sorgente", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/C9-SpecCheck.pdf", "2026-11-25").
+- #rif-web("Capitolato C9: SpecCheck – Sviluppo di Skills per OpenCode per la verifica della tracciabilità end-to-end da casi d'uso a requisiti e codice sorgente", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/C9-SpecCheck.pdf", "2026-11-25").
 
 = Impegni assunti
 
@@ -174,11 +174,11 @@ Il gruppo ha individuato cinque fattori principali di rischio:
 - *Sessione d'esami accademici (gennaio -- febbraio 2027):* gli esami universitari invernali possono ridurre temporaneamente la disponibilità dei componenti. Per mitigare il problema, l'intensità oraria programmata scende a circa #intensita(5, 7) ore settimanali a persona negli sprint 5 -- 7. L'Analisi dei Requisiti e il PoC vengono completati in anticipo, entro la candidatura RTB del 2026-12-11. Il Responsabile assegna compiti indipendenti e asincroni;
 - *Festività natalizie (fine dicembre 2026 -- inizio gennaio 2027):* le festività possono rallentare le comunicazioni interne e rendere temporaneamente non reperibile il proponente. Le consegne principali vengono verificate prima della pausa. GitHub, Telegram e Discord rimangono operativi per brevi allineamenti periodici;
 - *Disponibilità dei componenti e gestione degli imprevisti:* cause personali o impegni didattici imprevisti possono generare squilibri temporanei nella suddivisione del lavoro. Il gruppo mitiga la criticità mediante due riunioni interne a settimana su Discord, come previsto dalle Norme di Progetto (VI-2026-10-26.2). In caso di necessità, il Responsabile riassegna prontamente i task tra i membri, nel rispetto del monte ore complessivo e del limite di 95 ore a persona. La rotazione dei ruoli garantisce competenze diffuse tra tutti i membri;
-- *Curva di apprendimento dello stack tecnologico:* le tecnologie del capitolato C9 (OpenCode, specifica OpenSpec, linguaggi di marcatura ed esecuzione dei diagrammi come Markdown, Mermaid o PlantUML, strumenti di analisi TypeScript) sono in larga misura nuove per i componenti. Lo studio iniziale può richiedere più tempo del previsto e ritardare l'Analisi dei Requisiti e il PoC. Per mitigare il rischio, il gruppo ripartisce lo studio preliminare delle tecnologie tra i membri; attiva un ambiente di lavoro condiviso nello sprint 2 (#140); sviluppa spike tecnici comparativi (#141) e mantiene un canale continuo di confronto con i referenti di Zucchetti;
-- *Perimetro aperto e verifiche non deterministiche con LLM:* la natura aperta del capitolato C9 e l'uso di #g("Large Language Model") (LLM) per verificare la conformità tra requisiti, casi d'uso e codice sorgente comportano due rischi: confini sfumati e risposte probabilistiche, difficili da valutare in modo deterministico. Per mitigarli, il gruppo adotta specifiche misure ingegneristiche nel rispetto delle interpretazioni concordate con Zucchetti (VE-2026-11-17):
-  - vincoli di prompt rigorosi e schemi strutturati di output (JSON Schema) per guidare e rendere deterministiche e analizzabili le valutazioni dell'LLM;
-  - disaccoppiamento architetturale tra controlli strutturali e sintattici deterministici (conformità dei casi d'uso in Markdown/Mermaid/PlantUML e tracciamento tra `proposal.md` e `design.md`, VE-2026-11-17.3, VE-2026-11-17.4) e inferenza semantica demandata all'LLM;
-  - banco di prova sintetico (_toy project_, VE-2026-11-17.7) contenente discrepanze note introdotte ad hoc, su cui eseguire run di benchmark ripetuti per misurare metriche quantitative di accuratezza e validare la stabilità dei risultati;
+- *Curva di apprendimento dello stack tecnologico:* le tecnologie del capitolato C9 (OpenCode, specifica OpenSpec, linguaggi di marcatura ed esecuzione dei diagrammi come Markdown, Mermaid o PlantUML, strumenti di analisi TypeScript) sono in larga misura nuove per i componenti. Lo studio iniziale può richiedere più tempo del previsto e ritardare l'Analisi dei Requisiti e il PoC. Per mitigare il rischio, il gruppo ripartisce lo studio preliminare delle tecnologie tra i membri; attiva un ambiente di lavoro condiviso nello sprint 2 (\#140); sviluppa prove tecniche comparative (\#141) e mantiene un canale continuo di confronto con i referenti di Zucchetti;
+- *Perimetro aperto e verifiche non deterministiche con LLM:* la natura aperta del capitolato C9 e l'uso di #g("Large Language Model") (LLM) per verificare la conformità tra requisiti, casi d'uso e codice sorgente comportano due rischi: confini sfumati e risposte probabilistiche, difficili da valutare in modo deterministico. Per mitigarli, il gruppo adotta specifiche misure ingegneristiche nel rispetto di quanto concordato con Zucchetti nel verbale esterno del 2026-11-17:
+  - vincoli di prompt rigorosi e schemi strutturati di output (JSON Schema) per guidare e rendere controllabili e analizzabili le valutazioni dell'LLM;
+  - controlli sintattici deterministici sul formato dei casi d'uso in Markdown con diagrammi Mermaid o PlantUML (VE-2026-11-17.3), affiancati a una skill con il modello dedicata a riscontrare la presenza dei casi d'uso in `proposal.md` e `design.md` (VE-2026-11-17.4);
+  - banco di prova con un progetto inventato contenente discrepanze note (VE-2026-11-17.7), su cui eseguire prove ripetute di benchmark per misurare l'accuratezza e verificare la stabilità dei risultati;
   - SpecCheck si concentra esclusivamente sulla verifica della coerenza, mentre la scrittura del codice rimane all'agente OpenCode (VE-2026-11-17.1).
 
 #figure(
@@ -200,11 +200,11 @@ Il gruppo ha individuato cinque fattori principali di rischio:
 
     [Curva di apprendimento dello stack tecnologico],
     [Tempi di apprendimento elevati e possibili ritardi su requisiti e PoC.],
-    [Ripartizione dello studio preliminare; allestimento ambiente nello sprint 2 (#140); spike tecnici comparativi (#141); confronto continuo con Zucchetti.],
+    [Ripartizione dello studio preliminare; allestimento ambiente nello sprint 2 (\#140); prove tecniche comparative (\#141); confronto continuo con Zucchetti.],
 
     [Perimetro aperto e verifiche non deterministiche con LLM],
     [Confini applicativi aperti, variabilità delle risposte ed errori semantici dell'LLM.],
-    [Output JSON con prompt vincolati; disaccoppiamento tra controlli strutturali deterministici e inferenza semantica; banco di prova sintetico con discrepanze note (VE-2026-11-17.7); benchmark e test multipli di ripetibilità.],
+    [Output in schema JSON con prompt vincolati per rendere controllabili le risposte; controlli sintattici (VE-2026-11-17.3) affiancati a skill con il modello (VE-2026-11-17.4); progetto inventato con discrepanze note (VE-2026-11-17.7) e prove ripetute.],
   ),
   caption: [Sintesi dei rischi attesi e delle misure di mitigazione],
 )

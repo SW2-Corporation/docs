@@ -35,7 +35,7 @@ I termini tecnici o con significato specifico nel contesto del progetto sono rac
 - #rif-web("Capitolato C6 - SCSDF: Caching semantico e dashboard FinOps (Var Group)", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/C6.pdf", "2026-10-18").
 - #rif-web("Capitolato C7 - SmartDashboard: BI self-service potenziata da AI (Ergon Informatica)", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/C7.pdf", "2026-10-18").
 - #rif-web("Capitolato C8 - Sonar: documentazione vivente di uno store Shopify (Halue)", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/C8.pdf", "2026-10-18").
-- #rif-web("Capitolato C9: SpecCheck -- Sviluppo di Skills per OpenCode per la verifica della tracciabilità end-to-end da casi d'uso a requisiti e codice sorgente", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/C9-SpecCheck.pdf", "2026-11-25").
+- #rif-web("Capitolato C9 - SpecCheck: tracciabilità casi d'uso, requisiti e codice (Zucchetti)", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/C9.pdf", "2026-10-18").
 
 = Criteri di valutazione
 
