@@ -103,7 +103,7 @@ I termini tecnici o con significato specifico nel contesto del progetto sono rac
 - Verbale esterno 2026-11-17, approvato con firma da Zucchetti il 2026-11-19, con l'interpretazione del capitolato C9 concordata con il proponente (VE-2026-11-17.1, VE-2026-11-17.2, VE-2026-11-17.3, VE-2026-11-17.4 e VE-2026-11-17.7).
 
 === Riferimenti informativi
-- #rif-web("Capitolato C9 - SpecCheck: tracciabilità casi d’uso, requisiti e codice sorgente (Zucchetti)", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/C9.pdf", "2026-11-16").
+- #rif-web("Capitolato C9: SpecCheck -- Sviluppo di Skills per OpenCode per la verifica della tracciabilità end-to-end da casi d'uso a requisiti e codice sorgente", "https://www.math.unipd.it/~tullio/IS-1/2026/Progetto/C9-SpecCheck.pdf", "2026-11-25").
 
 = Impegni assunti
 
@@ -116,8 +116,8 @@ L'impegno orario complessivo ammonta a #ore-totali ore di lavoro produttivo, tra
 A seguito dell'indisponibilità del capitolato C8 e del riorientamento concordato sul capitolato C9 (VI-2026-11-13.1, VI-2026-11-13.2 e VI-2026-11-13.3), il gruppo ha rideterminato gli impegni temporali ed economici:
 - il tempo utile per il nuovo capitolato si riduce di circa tre settimane rispetto alla pianificazione originaria;
 - il monte ore complessivo viene ricalibrato a #ore-totali ore (rispetto alle 544 ore iniziali) per un importo preventivato di #euro(costo-totale) (rispetto ai 10.920,00\u{a0}€ iniziali), garantendo la permanenza sopra la soglia minima di 80 ore a componente e sopra il costo minimo per sei componenti stabilito dal regolamento;
-- le ore per C9 si contano dal 2026-11-24, come proposto con la decisione VI-2026-11-13.2 e accettato dal committente via email il 2026-11-13;
-- le ore svolte dal 2026-11-03 al 2026-11-23 sono riportate a parte nel Piano di Progetto e non concorrono al computo a carico del committente per il capitolato C9. Fino al 2026-11-13 riguardano il capitolato C8: bozza di Analisi dei Requisiti, quesiti tecnici per Halue e perimetro preliminare del #g("Proof of Concept") (PoC). Dal 2026-11-16 riguardano la ripartenza su C9: contatto con Zucchetti, incontro di avvio, studio del capitolato e nuova pianificazione;
+- le ore per C9 si contano dal 2026-11-24, come proposto con la decisione VI-2026-11-13.2;
+- le ore svolte dal 2026-11-03 al 2026-11-23 saranno riportate a parte nel Piano di Progetto e non concorrono al computo a carico del committente per il capitolato C9. Fino al 2026-11-13 riguardano il capitolato C8: bozza di Analisi dei Requisiti, quesiti tecnici per Halue e perimetro preliminare del #g("Proof of Concept") (PoC). Dal 2026-11-16 riguardano la ripartenza su C9: contatto con Zucchetti, incontro di avvio, studio del capitolato e nuova pianificazione;
 - la scadenza finale di consegna rimane invariata al *#gruppo.progetto.consegna_prevista*.
 
 == Scadenza di consegna e motivazione
@@ -169,24 +169,24 @@ Per armonizzare l'impegno progettuale con il calendario accademico, l'intensità
 
 = Rischi attesi e misure di mitigazione
 
-Il gruppo ha individuato quattro fattori principali di rischio:
+Il gruppo ha individuato cinque fattori principali di rischio:
 
 - *Sessione d'esami accademici (gennaio -- febbraio 2027):* gli esami universitari invernali possono ridurre temporaneamente la disponibilità dei componenti. Per mitigare il problema, l'intensità oraria programmata scende a circa #intensita(5, 7) ore settimanali a persona negli sprint 5 -- 7. L'Analisi dei Requisiti e il PoC vengono completati in anticipo, entro la candidatura RTB del 2026-12-11. Il Responsabile assegna compiti indipendenti e asincroni;
 - *Festività natalizie (fine dicembre 2026 -- inizio gennaio 2027):* le festività possono rallentare le comunicazioni interne e rendere temporaneamente non reperibile il proponente. Le consegne principali vengono verificate prima della pausa. GitHub, Telegram e Discord rimangono operativi per brevi allineamenti periodici;
 - *Disponibilità dei componenti e gestione degli imprevisti:* cause personali o impegni didattici imprevisti possono generare squilibri temporanei nella suddivisione del lavoro. Il gruppo mitiga la criticità mediante due riunioni interne a settimana su Discord, come previsto dalle Norme di Progetto (VI-2026-10-26.2). In caso di necessità, il Responsabile riassegna prontamente i task tra i membri, nel rispetto del monte ore complessivo e del limite di 95 ore a persona. La rotazione dei ruoli garantisce competenze diffuse tra tutti i membri;
-- *Perimetro aperto e verifiche non deterministiche:* la natura aperta del capitolato C9 e l'uso di #g("Large Language Model") (LLM) per verificare la conformità tra requisiti, casi d'uso e codice sorgente comportano due rischi: confini sfumati e risposte probabilistiche, difficili da valutare in modo deterministico. Per mitigarli, il gruppo ha concordato con Zucchetti un'interpretazione del capitolato nell'incontro di avvio del 2026-11-17. Il verbale, approvato con firma dal proponente il 2026-11-19, stabilisce che:
-  - SpecCheck è un'estensione di OpenCode, in una versione fissata, e si integra con OpenSpec a monte della proposta, che deve nascere dai casi d'uso (VE-2026-11-17.2);
-  - i casi d'uso letti da SpecCheck sono scritti in Markdown secondo regole fisse, con i diagrammi in Mermaid o PlantUML, da scegliere dopo una prova (VE-2026-11-17.3);
-  - un controllo cerca nei documenti di OpenSpec, `proposal.md` e `design.md`, i casi d'uso di partenza e segnala quelli che non trova (VE-2026-11-17.4);
-  - SpecCheck verifica anche il codice, ma non lo scrive: la scrittura resta all'agente, cioè a OpenCode (VE-2026-11-17.1);
-  - l'accuratezza si misura su un progetto inventato, con casi d'uso e documenti di OpenSpec che contengono discrepanze note (VE-2026-11-17.7).
+- *Curva di apprendimento dello stack tecnologico:* le tecnologie del capitolato C9 (OpenCode, specifica OpenSpec, linguaggi di marcatura ed esecuzione dei diagrammi come Markdown, Mermaid o PlantUML, strumenti di analisi TypeScript) sono in larga misura nuove per i componenti. Lo studio iniziale può richiedere più tempo del previsto e ritardare l'Analisi dei Requisiti e il PoC. Per mitigare il rischio, il gruppo ripartisce lo studio preliminare delle tecnologie tra i membri; attiva un ambiente di lavoro condiviso nello sprint 2 (#140); sviluppa spike tecnici comparativi (#141) e mantiene un canale continuo di confronto con i referenti di Zucchetti;
+- *Perimetro aperto e verifiche non deterministiche con LLM:* la natura aperta del capitolato C9 e l'uso di #g("Large Language Model") (LLM) per verificare la conformità tra requisiti, casi d'uso e codice sorgente comportano due rischi: confini sfumati e risposte probabilistiche, difficili da valutare in modo deterministico. Per mitigarli, il gruppo adotta specifiche misure ingegneristiche nel rispetto delle interpretazioni concordate con Zucchetti (VE-2026-11-17):
+  - vincoli di prompt rigorosi e schemi strutturati di output (JSON Schema) per guidare e rendere deterministiche e analizzabili le valutazioni dell'LLM;
+  - disaccoppiamento architetturale tra controlli strutturali e sintattici deterministici (conformità dei casi d'uso in Markdown/Mermaid/PlantUML e tracciamento tra `proposal.md` e `design.md`, VE-2026-11-17.3, VE-2026-11-17.4) e inferenza semantica demandata all'LLM;
+  - banco di prova sintetico (_toy project_, VE-2026-11-17.7) contenente discrepanze note introdotte ad hoc, su cui eseguire run di benchmark ripetuti per misurare metriche quantitative di accuratezza e validare la stabilità dei risultati;
+  - SpecCheck si concentra esclusivamente sulla verifica della coerenza, mentre la scrittura del codice rimane all'agente OpenCode (VE-2026-11-17.1).
 
 #figure(
   table(
     columns: (1.1fr, 1.1fr, 1.8fr),
     align: (left, left, left),
     table.header([*Fattore di rischio*], [*Impatto potenziale*], [*Misure di mitigazione*]),
-    [Sessione d'esami (gennaio -- febbraio 2027)],
+    [Sessione d'esami accademici (gennaio -- febbraio 2027)],
     [Riduzione del tempo disponibile e discontinuità operativa.],
     [Intensità a circa #intensita(5, 7) h settimanali a persona; Analisi dei Requisiti e PoC completati entro il 2026-12-11; task asincroni.],
 
@@ -194,13 +194,17 @@ Il gruppo ha individuato quattro fattori principali di rischio:
     [Rallentamento dei contatti interni e assenza temporanea del proponente.],
     [Sprint 4 orientato a compiti autonomi; chiusura anticipata dei deliverable; coordinamento asincrono.],
 
-    [Disponibilità dei componenti e imprevisti],
+    [Disponibilità dei componenti e gestione degli imprevisti],
     [Squilibri individuali di carico e ritardi su task critici.],
     [Due riunioni interne a settimana; riassegnazione dei task da parte del Responsabile; competenze diffuse.],
 
-    [Perimetro aperto e verifiche con LLM],
-    [Confini applicativi sfumati e difficoltà di verifica deterministica.],
-    [Interpretazione del capitolato concordata con Zucchetti nel verbale esterno 2026-11-17: estensione di OpenCode integrata con OpenSpec; casi d'uso in Markdown con diagrammi Mermaid o PlantUML; controllo dei casi d'uso su `proposal.md` e `design.md`; progetto inventato con discrepanze note.],
+    [Curva di apprendimento dello stack tecnologico],
+    [Tempi di apprendimento elevati e possibili ritardi su requisiti e PoC.],
+    [Ripartizione dello studio preliminare; allestimento ambiente nello sprint 2 (#140); spike tecnici comparativi (#141); confronto continuo con Zucchetti.],
+
+    [Perimetro aperto e verifiche non deterministiche con LLM],
+    [Confini applicativi aperti, variabilità delle risposte ed errori semantici dell'LLM.],
+    [Output JSON con prompt vincolati; disaccoppiamento tra controlli strutturali deterministici e inferenza semantica; banco di prova sintetico con discrepanze note (VE-2026-11-17.7); benchmark e test multipli di ripetibilità.],
   ),
   caption: [Sintesi dei rischi attesi e delle misure di mitigazione],
 )
