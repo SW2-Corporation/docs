@@ -7,7 +7,7 @@
 # Versione e data dell'ultima modifica, come nei verbali: il glossario nasce alla 1.0.0 e ogni
 # modifica verificata fa crescere Y se aggiunge, toglie o cambia una voce, Z negli altri casi.
 versione = "1.1.0"
-aggiornato = 2026-11-25
+aggiornato = 2026-11-26
 
 [[voce]]
 termine = "Definition of Done"
