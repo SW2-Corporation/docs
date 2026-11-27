@@ -1,0 +1,95 @@
+tipo = "esterno"
+data = 2026-11-26
+versione = "1.0.0"
+aggiornato = 2026-11-27
+inizio = "09:00"
+fine = "09:57"
+luogo = "Google Meet"
+redattore = "Oussama Mahdi"
+verificatore = "Davide Baraldo"
+partecipanti = [
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = ["Davide Baraldo"]
+approvazione_esterna = ""
+titolo = "Allineamento tecnico sull'estensione dei casi d'uso e sui vincoli di SpecCheck"
+ordine_del_giorno = [
+  "Estensione dei casi d'uso e limiti delle descrizioni procedurali",
+  "Approccio basato sui dati, grafo delle dipendenze e punti di responsabilità",
+  "Formalismi esplorativi per flussi multi-attore e collegamento alla progettazione",
+  "Scelta del formalismo per i diagrammi dei casi d'uso",
+  "Lingua dei casi d'uso e organizzazione di file e cartelle",
+  "Esiti della verifica e obiettivo di fattibilità di SpecCheck",
+  "Linguaggio target per i test sul codice e versioni di OpenCode",
+]
+
+[[esterni]]
+nome = "Gregorio Piccoli"
+ruolo = "Referente aziendale"
+azienda = "Zucchetti S.p.A."
+
+[[punto]]
+titolo = "Estensione dei casi d'uso e limiti delle descrizioni procedurali"
+sintesi = """Su richiesta di Matteo Bellato, Gregorio Piccoli ha approfondito il tema dell'estensione dei casi d'uso già accennato nell'incontro di avvio. Il referente ha osservato che i casi d'uso tradizionali risultano spesso scollegati dalla successiva progettazione (ad esempio dal diagramma delle classi) e che la stesura di sequenze rigide di passi ("passo 1, passo 2, passo 3") anticipa in fase di analisi un flusso procedurale (flowchart) quando il problema non è ancora noto. Questo approccio rischia di trasformare lo sviluppatore in un traduttore meccanico di istruzioni anziché in un progettista, oltre a non rispecchiare il comportamento delle interfacce grafiche moderne, in cui l'utente interagisce in ordine non lineare."""
+
+[[punto]]
+titolo = "Approccio basato sui dati, grafo delle dipendenze e punti di responsabilità"
+sintesi = """Per rendere i casi d'uso più espressivi e verificabili da SpecCheck, Gregorio Piccoli ha proposto come spunto metodologico di spostare il focus dai passi procedurali ai dati scambiati tra attore e sistema (ad esempio, nel caso del prelievo al Bancomat: importo, PIN, conto corrente associato alla carta, data di sistema e codice dello sportello). I dati risultano molto più stabili delle procedure e consentono di controllare con maggiore concretezza se quanto dichiarato nel caso d'uso raggiunge effettivamente le operazioni verso il database. In luogo di una sequenza lineare fissa, il referente ha suggerito di modellare eventuali vincoli d'ordine tramite un grafo delle dipendenze (un'azione segue un'altra solo se ne dipende logicamente), rendendo valide tutte le implementazioni che rispettano tali dipendenze. Ha infine evidenziato l'utilità di individuare i punti di responsabilità, ovvero i punti in cui ciascun attore altera lo stato del sistema, e la gerarchia degli attori a supporto del principio del minimo privilegio."""
+
+[[punto]]
+titolo = "Formalismi esplorativi per flussi multi-attore e collegamento alla progettazione"
+sintesi = """Per gestire i casi d'uso multi-attore o distribuiti nel tempo (come la richiesta ferie del dipendente e la successiva approvazione da parte del manager), in cui la scomposizione isolata nasconde il flusso complessivo e i vincoli temporali, Gregorio Piccoli ha segnalato due formalismi esplorativi: le Use Case Maps (con riferimento condiviso https://third-bit.com/2018/12/27/use-case-maps/) e il Robustness Diagram della metodologia ICONIX, utili a collegare casi d'uso, interfacce e diagramma delle classi. Il referente ha precisato che si tratta di spunti metodologici non vincolanti lasciati all'esplorazione del gruppo."""
+
+[[punto]]
+titolo = "Scelta del formalismo per i diagrammi dei casi d'uso"
+sintesi = """Matteo Bellato ha riferito le prove già avviate dal gruppo (riferimento #141), dalle quali emerge la preferenza per Mermaid, e ha chiesto a Gregorio Piccoli se Zucchetti S.p.A. avesse preferenze tra Mermaid e PlantUML. Il referente ha chiarito che non vi è alcuna imposizione o preferenza aziendale e che il gruppo può adottare liberamente il formalismo ritenuto più efficace."""
+
+[[punto]]
+titolo = "Lingua dei casi d'uso e organizzazione di file e cartelle"
+sintesi = """Matteo Bellato ha proposto di limitare l'analisi iniziale dei casi d'uso alla sola lingua italiana per contenere la complessità; il referente ha espresso pieno accordo. In merito all'organizzazione dei file di input (ipotesi di un file per caso d'uso in una cartella dedicata), Gregorio Piccoli ha sconsigliato di vincolare SpecCheck a una struttura rigida predefinita, invitando il gruppo a mantenere flessibilità per adattarsi a repository organizzati in modo diverso."""
+
+[[punto]]
+titolo = "Esiti della verifica e obiettivo di fattibilità di SpecCheck"
+sintesi = """Matteo Bellato ha proposto un insieme finito di cinque esiti per classificare la verifica di ciascun caso d'uso: coperto, parzialmente coperto, non coperto, incoerente e non determinabile. Gregorio Piccoli ha condiviso la proposta. Il referente ha inoltre confermato che l'obiettivo prioritario del progetto è valutare la fattibilità della verifica automatica e misurare quanti casi d'uso risultino effettivamente verificabili su un campione di riferimento, piuttosto che consegnare subito un prodotto pronto per l'integrazione in produzione."""
+
+[[punto]]
+titolo = "Linguaggio target per i test sul codice e versioni di OpenCode"
+sintesi = """Matteo Bellato ha proposto di concentrare i primi test di lettura e verifica del codice sul linguaggio TypeScript per disporre di un terreno concreto prima di eventuali estensioni ad altri linguaggi; il referente ha approvato. Riguardo alle versioni di OpenCode CLI, Gregorio Piccoli ha ribadito che non occorre vincolarsi alla v1 o alla v2 vista la rapida evoluzione dello strumento: il gruppo è libero di usare la versione più comoda."""
+
+[[decisione]]
+id = "VE-2026-11-26.1"
+testo = "Analizzare inizialmente i casi d'uso in lingua italiana e non vincolare SpecCheck a una struttura rigida di file o cartelle."
+motivazione = "L'uso iniziale della sola lingua italiana riduce la complessità dello strumento, mentre l'assenza di vincoli rigidi su file e cartelle risponde all'indicazione del proponente di supportare repository reali con organizzazioni eterogenee."
+
+[[decisione]]
+id = "VE-2026-11-26.2"
+testo = "Adottare i cinque esiti proposti per classificare la verifica di ciascun caso d'uso: coperto, parzialmente coperto, non coperto, incoerente e non determinabile."
+motivazione = "Una classificazione finita, condivisa con il proponente, permette di valutare in modo chiaro il grado di copertura e la fattibilità della verifica automatica."
+
+[[decisione]]
+id = "VE-2026-11-26.3"
+testo = "Confermare l'adozione di Mermaid per i diagrammi dei casi d'uso sulla base delle prove svolte (#141), focalizzare inizialmente la verifica sul codice scritto in TypeScript e lasciare aperta la versione di OpenCode CLI da adottare."
+motivazione = "I test svolti in #141 hanno orientato la scelta su Mermaid, mentre il proponente ha confermato piena libertà rispetto a PlantUML e alla versione di OpenCode, approvando TypeScript come riferimento concreto iniziale."
+
+[[decisione]]
+id = "VE-2026-11-26.4"
+testo = "Valutare in modo esplorativo i formalismi Use Case Maps e Robustness Diagram come possibile collegamento tra analisi dei casi d'uso e progettazione, senza introdurli come vincolo obbligatorio."
+motivazione = "Il proponente ha segnalato entrambi i formalismi come spunti non vincolanti utili a modellare flussi multi-attore e a colmare il divario tra casi d'uso e diagramma delle classi."
+
+[[azione]]
+decisione = "VE-2026-11-26.3"
+descrizione = "Impostare le prove del Proof of Concept sul codice target TypeScript, documentando la versione di OpenCode CLI utilizzata."
+assegnatario = "David Sirbu"
+scadenza = 2026-11-30
+issue = "#157"
+
+[[azione]]
+decisione = "VE-2026-11-26.4"
+descrizione = "Esplorare l'applicabilità di Use Case Maps e Robustness Diagram in relazione ai casi d'uso multi-attore e al percorso verso la progettazione."
+assegnatario = "Patrizio Eleuteri"
+scadenza = 2026-11-30
+issue = "#158"
