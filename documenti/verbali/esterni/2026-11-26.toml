@@ -38,15 +38,15 @@ sintesi = """Su richiesta di Matteo Bellato, Gregorio Piccoli ha approfondito il
 
 [[punto]]
 titolo = "Approccio basato sui dati, grafo delle dipendenze e punti di responsabilità"
-sintesi = """Per rendere i casi d'uso più espressivi e verificabili da SpecCheck, Gregorio Piccoli ha proposto come spunto metodologico di spostare il focus dai passi procedurali ai dati scambiati tra attore e sistema (ad esempio, nel caso del prelievo al Bancomat: importo, PIN, conto corrente associato alla carta, data di sistema e codice dello sportello). I dati risultano molto più stabili delle procedure e consentono di controllare con maggiore concretezza se quanto dichiarato nel caso d'uso raggiunge effettivamente le operazioni verso il database. In luogo di una sequenza lineare fissa, il referente ha suggerito di modellare eventuali vincoli d'ordine tramite un grafo delle dipendenze (un'azione segue un'altra solo se ne dipende logicamente), rendendo valide tutte le implementazioni che rispettano tali dipendenze. Ha infine evidenziato l'utilità di individuare i punti di responsabilità, ovvero i punti in cui ciascun attore altera lo stato del sistema, e la gerarchia degli attori a supporto del principio del minimo privilegio."""
+sintesi = """Come spunto metodologico non vincolante per migliorare la verificabilità di SpecCheck, Gregorio Piccoli ha suggerito di spostare l'attenzione dai passi procedurali ai dati scambiati tra attore e sistema (più stabili delle procedure e riscontrabili nelle operazioni sul database), di esprimere eventuali vincoli d'ordine tramite un grafo delle dipendenze anziché sequenze lineari fisse e di individuare i punti di responsabilità e la gerarchia degli attori a supporto del minimo privilegio."""
 
 [[punto]]
 titolo = "Formalismi esplorativi per flussi multi-attore e collegamento alla progettazione"
-sintesi = """Per gestire i casi d'uso multi-attore o distribuiti nel tempo (come la richiesta ferie del dipendente e la successiva approvazione da parte del manager), in cui la scomposizione isolata nasconde il flusso complessivo e i vincoli temporali, Gregorio Piccoli ha segnalato due formalismi esplorativi: le Use Case Maps (con riferimento condiviso https://third-bit.com/2018/12/27/use-case-maps/) e il Robustness Diagram della metodologia ICONIX, utili a collegare casi d'uso, interfacce e diagramma delle classi. Il referente ha precisato che si tratta di spunti metodologici non vincolanti lasciati all'esplorazione del gruppo."""
+sintesi = """Per modellare casi d'uso multi-attore o distribuiti nel tempo e collegarli alla progettazione delle classi, Gregorio Piccoli ha segnalato due formalismi esplorativi non vincolanti: le Use Case Maps (https://third-bit.com/2018/12/27/use-case-maps/) e il Robustness Diagram della metodologia ICONIX."""
 
 [[punto]]
 titolo = "Scelta del formalismo per i diagrammi dei casi d'uso"
-sintesi = """Matteo Bellato ha chiesto a Gregorio Piccoli eventuali preferenze di Zucchetti S.p.A. tra Mermaid e PlantUML per la rappresentazione dei diagrammi dei casi d'uso. Il referente ha chiarito che non vi è alcuna imposizione o preferenza aziendale e che il gruppo può adottare liberamente il formalismo ritenuto più efficace."""
+sintesi = """Matteo Bellato ha chiesto a Gregorio Piccoli eventuali preferenze di Zucchetti S.p.A. tra Mermaid e PlantUML per i diagrammi dei casi d'uso. Il referente ha chiarito che non vi è alcuna preferenza aziendale, lasciando al gruppo piena libertà di concludere la scelta nell'attività prevista (#141)."""
 
 [[punto]]
 titolo = "Lingua dei casi d'uso e organizzazione di file e cartelle"
@@ -72,40 +72,35 @@ motivazione = "Una classificazione finita, condivisa con il proponente, permette
 
 [[decisione]]
 id = "VE-2026-11-26.3"
-testo = "Adottare Mermaid per i diagrammi dei casi d'uso letti da SpecCheck (a completamento di VE-2026-11-17.3)."
-motivazione = "Il proponente ha confermato l'assenza di preferenze tra Mermaid e PlantUML, consentendo al gruppo di chiudere la scelta a favore di Mermaid."
-
-[[decisione]]
-id = "VE-2026-11-26.4"
 testo = "Focalizzare inizialmente le prove di lettura e verifica sul codice sorgente scritto in TypeScript, prima di valutare eventuali estensioni ad altri linguaggi."
 motivazione = "Il proponente ha approvato TypeScript come riferimento concreto iniziale su cui verificare la fattibilità del tracciamento."
 
 [[decisione]]
-id = "VE-2026-11-26.5"
+id = "VE-2026-11-26.4"
 testo = "Mantenere per OpenCode e i relativi plugin la versione 2.3.2 fissata nelle Norme di Progetto (VE-2026-11-17.2)."
 motivazione = "Il proponente ha chiarito che non impone cambi di versione a fronte della rapida evoluzione di OpenCode, rendendo valido mantenere la versione già normata senza modificare le Norme di Progetto."
 
 [[decisione]]
-id = "VE-2026-11-26.6"
+id = "VE-2026-11-26.5"
 testo = "Valutare in modo esplorativo i formalismi Use Case Maps e Robustness Diagram come possibile collegamento tra analisi dei casi d'uso e progettazione, senza introdurli come vincolo obbligatorio."
 motivazione = "Il proponente ha segnalato entrambi i formalismi come spunti non vincolanti utili a modellare flussi multi-attore e a colmare il divario tra casi d'uso e diagramma delle classi."
 
 [[azione]]
 decisione = "VE-2026-11-26.2"
-descrizione = "Aggiornare la bozza di Analisi dei Requisiti recependo le decisioni VE-2026-11-26.1, VE-2026-11-26.2 e VE-2026-11-26.3 (lingua italiana, organizzazione autonoma di file e cartelle, adozione di Mermaid e raccordo tra i cinque esiti e «non giudicato»)."
+descrizione = "Aggiornare la bozza di Analisi dei Requisiti recependo le decisioni VE-2026-11-26.1 e VE-2026-11-26.2 (lingua italiana, organizzazione autonoma di file e cartelle e raccordo tra i cinque esiti e «non giudicato»)."
 assegnatario = "Matteo Bellato"
 scadenza = 2026-11-30
 issue = "#161"
 
 [[azione]]
-decisione = "VE-2026-11-26.4"
+decisione = "VE-2026-11-26.3"
 descrizione = "Impostare le prove del Proof of Concept sul codice target TypeScript utilizzando la versione 2.3.2 di OpenCode fissata dalle Norme di Progetto."
 assegnatario = "David Sirbu"
 scadenza = 2026-11-30
 issue = "#157"
 
 [[azione]]
-decisione = "VE-2026-11-26.6"
+decisione = "VE-2026-11-26.5"
 descrizione = "Esplorare l'applicabilità di Use Case Maps e Robustness Diagram in relazione ai casi d'uso multi-attore e al percorso verso la progettazione."
 assegnatario = "Patrizio Eleuteri"
 scadenza = 2026-11-30
