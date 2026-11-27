@@ -1,0 +1,107 @@
+tipo = "esterno"
+data = 2026-11-26
+versione = "1.0.0"
+aggiornato = 2026-11-27
+inizio = "09:00"
+fine = "09:57"
+luogo = "Google Meet"
+redattore = "Oussama Mahdi"
+verificatore = "Davide Baraldo"
+partecipanti = [
+  "Matteo Bellato",
+  "Patrizio Eleuteri",
+  "Oussama Mahdi",
+  "Alessandro Paduret",
+  "David Sirbu",
+]
+assenti = ["Davide Baraldo"]
+approvazione_esterna = ""
+titolo = "Allineamento tecnico sull'estensione dei casi d'uso e sui vincoli di SpecCheck"
+ordine_del_giorno = [
+  "Estensione dei casi d'uso e limiti delle descrizioni procedurali",
+  "Approccio basato sui dati, grafo delle dipendenze e punti di responsabilità",
+  "Formalismi esplorativi per flussi multi-attore e collegamento alla progettazione",
+  "Scelta del formalismo per i diagrammi dei casi d'uso",
+  "Lingua dei casi d'uso e organizzazione di file e cartelle",
+  "Esiti della verifica, obiettivo di fattibilità e perimetro di SpecCheck",
+  "Linguaggio target per i test sul codice e versione di OpenCode",
+]
+
+[[esterni]]
+nome = "Gregorio Piccoli"
+ruolo = "Referente aziendale"
+azienda = "Zucchetti S.p.A."
+
+[[punto]]
+titolo = "Estensione dei casi d'uso e limiti delle descrizioni procedurali"
+sintesi = """Su richiesta di Matteo Bellato, Gregorio Piccoli ha approfondito il tema dell'estensione dei casi d'uso già accennato nell'incontro di avvio. Il referente ha osservato che i casi d'uso tradizionali risultano spesso scollegati dalla successiva progettazione (ad esempio dal diagramma delle classi) e che la stesura di sequenze rigide di passi ("passo 1, passo 2, passo 3") anticipa in fase di analisi un flusso procedurale (flowchart) quando il problema non è ancora noto. Questo approccio rischia di trasformare lo sviluppatore in un traduttore meccanico di istruzioni anziché in un progettista, oltre a non rispecchiare il comportamento delle interfacce grafiche moderne, in cui l'utente interagisce in ordine non lineare."""
+
+[[punto]]
+titolo = "Approccio basato sui dati, grafo delle dipendenze e punti di responsabilità"
+sintesi = """Come spunto metodologico non vincolante per migliorare la verificabilità di SpecCheck, Gregorio Piccoli ha suggerito di spostare l'attenzione dai passi procedurali ai dati scambiati tra attore e sistema (più stabili delle procedure e riscontrabili nelle operazioni sul database), di esprimere eventuali vincoli d'ordine tramite un grafo delle dipendenze anziché sequenze lineari fisse e di individuare i punti di responsabilità e la gerarchia degli attori a supporto del minimo privilegio."""
+
+[[punto]]
+titolo = "Formalismi esplorativi per flussi multi-attore e collegamento alla progettazione"
+sintesi = """Per modellare casi d'uso multi-attore o distribuiti nel tempo e collegarli alla progettazione delle classi, Gregorio Piccoli ha segnalato due formalismi esplorativi non vincolanti: le Use Case Maps (https://third-bit.com/2018/12/27/use-case-maps/) e il Robustness Diagram della metodologia ICONIX."""
+
+[[punto]]
+titolo = "Scelta del formalismo per i diagrammi dei casi d'uso"
+sintesi = """Matteo Bellato ha chiesto a Gregorio Piccoli eventuali preferenze di Zucchetti S.p.A. tra Mermaid e PlantUML per i diagrammi dei casi d'uso. Il referente ha chiarito che non vi è alcuna preferenza aziendale, lasciando al gruppo piena libertà di concludere la scelta nell'attività prevista (#141)."""
+
+[[punto]]
+titolo = "Lingua dei casi d'uso e organizzazione di file e cartelle"
+sintesi = """Matteo Bellato ha proposto di limitare l'analisi iniziale dei casi d'uso alla sola lingua italiana per contenere la complessità; il referente ha espresso pieno accordo. Alla domanda sull'opportunità di adottare una specifica struttura per i file di ingresso (ad esempio un file per caso d'uso in una cartella dedicata), Gregorio Piccoli ha chiarito che Zucchetti S.p.A. non impone alcuna convenzione aziendale su file o cartelle e ha invitato il gruppo a organizzare il formato di SpecCheck in piena autonomia."""
+
+[[punto]]
+titolo = "Esiti della verifica, obiettivo di fattibilità e perimetro di SpecCheck"
+sintesi = """Matteo Bellato ha proposto un insieme finito di cinque esiti per classificare la verifica di ciascun caso d'uso: coperto, parzialmente coperto, non coperto, incoerente e non determinabile. Gregorio Piccoli ha condiviso la proposta. Il referente ha inoltre confermato che l'obiettivo prioritario del progetto è valutare la fattibilità della verifica automatica e misurare quanti casi d'uso risultino effettivamente verificabili su un campione di riferimento. Il perimetro di questa fase resta quindi circoscritto a dimostrare tale fattibilità di verifica tra casi d'uso e codice, senza dover consegnare nell'immediato un prodotto già integrato nei processi aziendali del proponente."""
+
+[[punto]]
+titolo = "Linguaggio target per i test sul codice e versione di OpenCode"
+sintesi = """Matteo Bellato ha proposto di concentrare i primi test di lettura e verifica del codice sul linguaggio TypeScript per disporre di un terreno concreto prima di eventuali estensioni ad altri linguaggi; il referente ha approvato. Riguardo alle versioni di OpenCode CLI, Gregorio Piccoli ha ribadito che vista la rapida evoluzione dello strumento non chiede di adeguarsi a una versione particolare; il gruppo può quindi mantenere senza vincoli contrari la versione 2.3.2 già fissata nelle Norme di Progetto."""
+
+[[decisione]]
+id = "VE-2026-11-26.1"
+testo = "Analizzare inizialmente i casi d'uso nella sola lingua italiana e definire in autonomia nel gruppo la struttura dei file e delle cartelle di SpecCheck."
+motivazione = "L'uso iniziale della sola lingua italiana riduce la complessità dello strumento; il proponente ha chiarito di non imporre alcuna organizzazione aziendale su file e cartelle, lasciando al gruppo piena libertà progettuale senza introdurre supporto obbligatorio a strutture arbitrarie."
+
+[[decisione]]
+id = "VE-2026-11-26.2"
+testo = "Adottare i cinque esiti proposti per classificare la verifica di ciascun caso d'uso (coperto, parzialmente coperto, non coperto, incoerente, non determinabile), raccordandoli con l'Analisi dei Requisiti."
+motivazione = "Una classificazione finita, condivisa con il proponente, permette di valutare in modo chiaro il grado di copertura e la fattibilità della verifica automatica, ma va armonizzata con gli esiti (in particolare «non giudicato») già presenti nella bozza di Analisi dei Requisiti."
+
+[[decisione]]
+id = "VE-2026-11-26.3"
+testo = "Focalizzare inizialmente le prove di lettura e verifica sul codice sorgente scritto in TypeScript, prima di valutare eventuali estensioni ad altri linguaggi."
+motivazione = "Il proponente ha approvato TypeScript come riferimento concreto iniziale su cui verificare la fattibilità del tracciamento."
+
+[[decisione]]
+id = "VE-2026-11-26.4"
+testo = "Mantenere per OpenCode e i relativi plugin la versione 2.3.2 fissata nelle Norme di Progetto (VE-2026-11-17.2)."
+motivazione = "Il proponente ha chiarito che non impone cambi di versione a fronte della rapida evoluzione di OpenCode, rendendo valido mantenere la versione già normata senza modificare le Norme di Progetto."
+
+[[decisione]]
+id = "VE-2026-11-26.5"
+testo = "Valutare in modo esplorativo i formalismi Use Case Maps e Robustness Diagram come possibile collegamento tra analisi dei casi d'uso e progettazione, senza introdurli come vincolo obbligatorio."
+motivazione = "Il proponente ha segnalato entrambi i formalismi come spunti non vincolanti utili a modellare flussi multi-attore e a colmare il divario tra casi d'uso e diagramma delle classi."
+
+[[azione]]
+decisione = "VE-2026-11-26.2"
+descrizione = "Aggiornare la bozza di Analisi dei Requisiti recependo le decisioni VE-2026-11-26.1 e VE-2026-11-26.2 (lingua italiana, organizzazione autonoma di file e cartelle e raccordo tra i cinque esiti e «non giudicato»)."
+assegnatario = "Matteo Bellato"
+scadenza = 2026-11-30
+issue = "#161"
+
+[[azione]]
+decisione = "VE-2026-11-26.3"
+descrizione = "Impostare le prove del Proof of Concept sul codice target TypeScript utilizzando la versione 2.3.2 di OpenCode fissata dalle Norme di Progetto."
+assegnatario = "David Sirbu"
+scadenza = 2026-11-30
+issue = "#157"
+
+[[azione]]
+decisione = "VE-2026-11-26.5"
+descrizione = "Esplorare l'applicabilità di Use Case Maps e Robustness Diagram in relazione ai casi d'uso multi-attore e al percorso verso la progettazione."
+assegnatario = "Patrizio Eleuteri"
+scadenza = 2026-11-30
+issue = "#158"
