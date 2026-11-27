@@ -173,7 +173,7 @@ Il gruppo ha individuato cinque fattori principali di rischio:
 
 - *Sessione d'esami accademici (gennaio -- febbraio 2027):* gli esami universitari invernali possono ridurre temporaneamente la disponibilità dei componenti. Per mitigare il problema, l'intensità oraria programmata scende a circa #intensita(5, 7) ore settimanali a persona negli sprint 5 -- 7. L'Analisi dei Requisiti e il PoC vengono completati in anticipo, entro la candidatura RTB del 2026-12-11. Il Responsabile assegna compiti indipendenti e asincroni;
 - *Festività natalizie (fine dicembre 2026 -- inizio gennaio 2027):* le festività possono rallentare le comunicazioni interne e rendere temporaneamente non reperibile il proponente. Le consegne principali vengono verificate prima della pausa. GitHub, Telegram e Discord rimangono operativi per brevi allineamenti periodici;
-- *Disponibilità dei componenti e gestione degli imprevisti:* cause personali o impegni didattici imprevisti possono generare squilibri temporanei nella suddivisione del lavoro. Il gruppo mitiga la criticità mediante due riunioni interne a settimana su Discord, come previsto dalle Norme di Progetto (VI-2026-10-26.2). In caso di necessità, il Responsabile riassegna prontamente i task tra i membri, nel rispetto del monte ore complessivo e del limite di 95 ore a persona. La rotazione dei ruoli garantisce competenze diffuse tra tutti i membri;
+- *Disponibilità dei componenti e gestione degli imprevisti:* cause personali o impegni didattici imprevisti possono generare squilibri temporanei nella suddivisione del lavoro. Il gruppo mitiga la criticità mediante due riunioni interne a settimana su Discord, come previsto dalle Norme di Progetto (VI-2026-10-26.2). In caso di necessità, il Responsabile riassegna prontamente i compiti tra i membri, nel rispetto del monte ore complessivo e del limite di 95 ore a persona. La rotazione dei ruoli garantisce competenze diffuse tra tutti i membri;
 - *Curva di apprendimento dello stack tecnologico:* le tecnologie del capitolato C9 (OpenCode e i suoi plugin, OpenSpec, Markdown con diagrammi Mermaid o PlantUML, TypeScript) sono in larga misura nuove per i componenti. Lo studio iniziale può richiedere più tempo del previsto e ritardare l'Analisi dei Requisiti e il PoC. Per mitigare il rischio, il gruppo ripartisce lo studio preliminare delle tecnologie tra i membri; attiva un ambiente di lavoro condiviso nello sprint 2 (\#140); sviluppa prove tecniche comparative (\#141) e mantiene un canale continuo di confronto con i referenti di Zucchetti;
 - *Perimetro aperto e verifiche non deterministiche:* la natura aperta del capitolato C9 e l'uso di #g("Large Language Model") (LLM) per verificare la conformità tra requisiti, casi d'uso e codice sorgente comportano due rischi: confini sfumati e risposte probabilistiche, difficili da valutare in modo deterministico. Per mitigarli, il gruppo adotta specifiche misure ingegneristiche nel rispetto di quanto concordato con Zucchetti nel verbale esterno del 2026-11-17:
   - istruzioni vincolanti e schemi strutturati per le risposte (JSON Schema) per guidare e rendere controllabili e analizzabili le valutazioni dell'LLM;
@@ -188,15 +188,15 @@ Il gruppo ha individuato cinque fattori principali di rischio:
     table.header([*Fattore di rischio*], [*Impatto potenziale*], [*Misure di mitigazione*]),
     [Sessione d'esami accademici (gennaio -- febbraio 2027)],
     [Riduzione del tempo disponibile e discontinuità operativa.],
-    [Intensità a circa #intensita(5, 7) h settimanali a persona; Analisi dei Requisiti e PoC completati entro il 2026-12-11; task asincroni.],
+    [Intensità a circa #intensita(5, 7) h settimanali a persona; Analisi dei Requisiti e PoC completati entro il 2026-12-11; compiti asincroni.],
 
     [Festività natalizie (fine dicembre 2026 -- inizio gennaio 2027)],
     [Rallentamento dei contatti interni e assenza temporanea del proponente.],
-    [Sprint 4 orientato a compiti autonomi; chiusura anticipata dei deliverable; coordinamento asincrono.],
+    [Sprint 4 orientato a compiti autonomi; chiusura anticipata dei prodotti; coordinamento asincrono.],
 
     [Disponibilità dei componenti e gestione degli imprevisti],
-    [Squilibri individuali di carico e ritardi su task critici.],
-    [Due riunioni interne a settimana; riassegnazione dei task da parte del Responsabile; competenze diffuse.],
+    [Squilibri individuali di carico e ritardi su compiti critici.],
+    [Due riunioni interne a settimana; riassegnazione dei compiti da parte del Responsabile; competenze diffuse.],
 
     [Curva di apprendimento dello stack tecnologico],
     [Tempi di apprendimento elevati e possibili ritardi su requisiti e PoC.],
