@@ -6,8 +6,8 @@
 
 # Versione e data dell'ultima modifica, come nei verbali: il glossario nasce alla 1.0.0 e ogni
 # modifica verificata fa crescere Y se aggiunge, toglie o cambia una voce, Z negli altri casi.
-versione = "1.0.0"
-aggiornato = 2026-10-23
+versione = "1.1.0"
+aggiornato = 2026-11-27
 
 [[voce]]
 termine = "Definition of Done"
@@ -38,3 +38,8 @@ sinonimi = ["PB"]
 termine = "Architecture Decision Record"
 definizione = "Documento sintetico che descrive una decisione architetturale rilevante, motivando il contesto, le opzioni scartate e le conseguenze."
 sinonimi = ["ADR"]
+
+[[voce]]
+termine = "Large Language Model"
+definizione = "Modello di intelligenza artificiale addestrato su grandi quantità di testo, in grado di interpretare e generare linguaggio naturale. Le sue risposte sono probabilistiche: la stessa richiesta può dare risultati diversi."
+sinonimi = ["LLM"]

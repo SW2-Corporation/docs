@@ -60,3 +60,4 @@ Supabase
 NEXUM
 Valentino Baraldo
 GitHub
+SpecCheck

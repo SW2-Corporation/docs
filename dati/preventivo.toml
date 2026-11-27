@@ -1,4 +1,4 @@
-# Tariffe orarie in euro fissate dal regolamento del progetto.
+# Tariffe orarie dei ruoli, in euro all'ora, fissate dal regolamento (PD1).
 [tariffe]
 Responsabile = 30
 Amministratore = 20
@@ -8,57 +8,58 @@ Programmatore = 15
 Verificatore = 15
 
 # Un blocco per membro in ordine alfabetico: tutti i ruoli con almeno un'ora, totale tra 80 e 95.
-# Le ore sono la somma, per ruolo, degli sprint della matrice di rotazione nella Dichiarazione degli impegni.
+# Le ore sono la somma, per ruolo, delle ore per sprint della Dichiarazione degli impegni (turni), contate per C9
+# dal 2026-11-24: se le due fonti non coincidono, la compilazione della Dichiarazione si ferma.
 [[ripartizione]]
 membro = "Davide Baraldo"
-Responsabile = 6
+Responsabile = 7
 Amministratore = 10
-Analista = 19
-Progettista = 6
-Programmatore = 27
-Verificatore = 24
+Analista = 7
+Progettista = 5
+Programmatore = 33
+Verificatore = 25
 
 [[ripartizione]]
 membro = "Matteo Bellato"
 Responsabile = 6
-Amministratore = 14
-Analista = 19
-Progettista = 13
-Programmatore = 20
-Verificatore = 18
+Amministratore = 8
+Analista = 14
+Progettista = 16
+Programmatore = 23
+Verificatore = 20
 
 [[ripartizione]]
 membro = "Patrizio Eleuteri"
-Responsabile = 10
-Amministratore = 6
-Analista = 12
-Progettista = 7
+Responsabile = 4
+Amministratore = 8
+Analista = 8
+Progettista = 5
 Programmatore = 29
-Verificatore = 27
+Verificatore = 33
 
 [[ripartizione]]
 membro = "Oussama Mahdi"
-Responsabile = 10
+Responsabile = 8
 Amministratore = 4
-Analista = 22
+Analista = 17
 Progettista = 17
-Programmatore = 11
-Verificatore = 25
+Programmatore = 15
+Verificatore = 26
 
 [[ripartizione]]
 membro = "Alessandro Paduret"
-Responsabile = 12
-Amministratore = 6
-Analista = 11
-Progettista = 13
-Programmatore = 30
-Verificatore = 20
+Responsabile = 16
+Amministratore = 4
+Analista = 15
+Progettista = 7
+Programmatore = 25
+Verificatore = 21
 
 [[ripartizione]]
 membro = "David Sirbu"
 Responsabile = 12
-Amministratore = 6
+Amministratore = 8
 Analista = 7
-Progettista = 23
-Programmatore = 12
-Verificatore = 30
+Progettista = 30
+Programmatore = 9
+Verificatore = 21
